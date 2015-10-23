@@ -10,6 +10,8 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     println(UUID.randomUUID().toString)
+    println(GenRegex().sample)
+    println(GenRegexMatch("[a-zA-Z0-9\\.]+@[a-z]+\\.[a-z]+").sample)
     println(GenRegexMatch("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}").sample)
     //    val swaggerGenerators = SwaggerGenerators(getClass.getResourceAsStream("/uber_api.yml"))
     //
