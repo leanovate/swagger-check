@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "io.swagger" % "swagger-parser" % "1.0.10",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
   "org.scalacheck" %% "scalacheck" % "1.12.5",
+  "com.typesafe.play" %% "play-test" % "2.4.3",
   "org.scala-lang" % "scala-reflect" % "2.11.7",
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.4",
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",

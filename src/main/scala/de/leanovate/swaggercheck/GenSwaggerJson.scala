@@ -50,7 +50,7 @@ object GenSwaggerJson {
       val minLen = Option(stringProperty.getMinLength).map(_.toInt).getOrElse(0)
       val maxLen = Option(stringProperty.getMaxLength).map(_.toInt).getOrElse(255)
       val generator: Gen[List[Char]] = Option(stringProperty.getPattern)
-        .map(pattern => new GenRegex().regexGenerator(pattern))
+        .map(pattern => new GenRegexMatch().regexGenerator(pattern))
         .getOrElse(Gen.chooseNum[Int](minLen, maxLen).flatMap(Gen.listOfN(_, Gen.alphaNumChar)))
       generator.map(chars => nodeFactory.textNode(chars.mkString))
     case decimalProperty: DecimalProperty =>
