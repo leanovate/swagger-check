@@ -28,7 +28,7 @@ class GenRegexMatch extends Parsers {
 
   val wildcard = elem('.')
   val alternation = elem('|')
-  
+
   val zeroOrOne = elem('?')
   val zeroOrMore = elem('*')
   val oneOrMore = elem('+')
@@ -82,7 +82,11 @@ class GenRegexMatch extends Parsers {
 
   def escaped: Atom = escape ~> anyChar ^^ {
     case 'd' => Gen.numChar
+    case 'D' => Gen.alphaChar
     case 'w' => Gen.alphaNumChar
+    case 'W' => Gen.numChar
+    case 's' => Gen.oneOf(' ', '\t')
+    case 'S' => Gen.alphaNumChar
     case lit => Gen.const(lit)
   }
 

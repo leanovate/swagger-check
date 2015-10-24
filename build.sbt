@@ -1,3 +1,4 @@
+import sbt.Keys._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 
 name := "swagger-check"
@@ -6,15 +7,16 @@ organization := "de.leanovate"
 
 scalaVersion := "2.11.7"
 
+val playVersion = "2.4.3"
+
 scalacOptions := Seq("-deprecation")
 
 libraryDependencies ++= Seq(
   "io.swagger" % "swagger-parser" % "1.0.10",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
   "org.scalacheck" %% "scalacheck" % "1.12.5",
-  "com.typesafe.play" %% "play-test" % "2.4.3",
-  "org.scala-lang" % "scala-reflect" % "2.11.7",
-  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.4",
+  "com.typesafe.play" %% "play-test" % playVersion % "provided",
+  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
   "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.mockito" % "mockito-core" % "1.10.19" % "test"
 )

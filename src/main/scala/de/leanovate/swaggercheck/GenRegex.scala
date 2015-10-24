@@ -25,9 +25,14 @@ object GenRegex {
 
   private def genOption = Gen.nonEmptyListOf(genOptionPart).map(parts => s"[${parts.mkString}]")
 
-  private def genTerm = Gen.oneOf(
+  private def genSimpleTerm = Gen.oneOf(
     genLiteral,
     genOption
+  )
+
+  private def genTerm = Gen.oneOf(
+    genSimpleTerm,
+    genGroup
   )
 
   private def genRepetition = Gen.oneOf(
@@ -42,6 +47,11 @@ object GenRegex {
   private def genExpr: Gen[String] = Gen.zip(genTerm, genRepetition).map {
     case (term, repetion) => s"$term$repetion"
   }
+
+  private def genGroup: Gen[String] = for {
+    size <- Gen.choose(1, 3)
+    groups <- Gen.listOfN(size, genSimpleTerm)
+  } yield s"(${groups.mkString("|")})"
 
   /**
    * Creates a generator of (non-empty) regular expression.
