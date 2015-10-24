@@ -12,16 +12,17 @@ import scala.util.parsing.input.CharSequenceReader
  * Regex parser to generate a generator of matches.
  */
 class GenRegexMatch extends Parsers {
+
+  import GenRegexMatch._
+
   type Elem = Char
   type Atom = Parser[Gen[Char]]
   type Composition = Parser[Gen[List[Char]]]
   type Transformer = Parser[Gen[List[Char]] => Gen[List[Char]]]
 
-  def genWildcard = Gen choose(32: Char, 126: Char)
-
   def regexGenerator(s: String): Gen[List[Char]] = regex.apply(new CharSequenceReader(s)) match {
     case Success(result, _) => result
-    case errorMsg => sys.error(errorMsg.toString)
+    case errorMsg => throw new RuntimeException(errorMsg.toString)
   }
 
   val metacharacters = Set('.', '*', '-', '+', '?', '(', ')', '{', '}', '[', ']', '\\', '$', '^', '|')
@@ -46,7 +47,7 @@ class GenRegexMatch extends Parsers {
   val anyChar = elem("Any char", _ => true)
   val digit = elem("Digit", _.isDigit)
 
-  def regex: Composition = sequence
+  def regex: Composition = phrase(opt(elem('^')) ~> sequence <~ opt(elem('$')))
 
   def repetitions: Transformer = (
     zeroOrOne ^^^ { term: Gen[List[Char]] => Gen.oneOf(term, Gen.const(Nil)) }
@@ -58,13 +59,11 @@ class GenRegexMatch extends Parsers {
     }
     )
 
-  def sequence: Composition = alt.* ^^ {
-    Gen.sequence[List[List[Char]], List[Char]](_).map(_.flatten)
-  }
+  def sequence: Composition = alt.* ^^ combine
 
-  def alt: Composition = rep1sep(reps, alternation) ^^ {
-    case a :: b :: rest => Gen oneOf(a, b, rest: _*)
-    case List(unique) => unique
+  def alt: Composition = rep1sep(reps.+, alternation) ^^ {
+    case a :: b :: rest => Gen oneOf(combine(a), combine(b), rest.map(combine): _*)
+    case List(unique) => combine(unique)
   }
 
   def reps: Composition = term ~ repetitions.? ^^ {
@@ -76,54 +75,74 @@ class GenRegexMatch extends Parsers {
 
   def group: Composition = startSubexpr ~> sequence <~ endSubexpr
 
-  def simpleTerm: Composition = (escaped | literal | wildcardMatch | negCharOptions | charOptions) map (_ map (List(_)))
+  def simpleTerm: Composition = (
+    escaped ^^ {set => Gen.oneOf(set.toSeq) }
+    | literal
+    | wildcardMatch
+    | negCharOptions
+    | charOptions
+    ) map (_ map (List(_)))
 
   def literal: Atom = literalChar ^^ Gen.const
 
-  def escaped: Atom = escape ~> anyChar ^^ {
-    case 'd' => Gen.numChar
-    case 'D' => Gen.alphaChar
-    case 'w' => Gen.alphaNumChar
-    case 'W' => Gen.numChar
-    case 's' => Gen.oneOf(' ', '\t')
-    case 'S' => Gen.alphaNumChar
-    case lit => Gen.const(lit)
+  def escaped: Parser[Set[Char]] = escape ~> anyChar ^^ {
+    case 'd' => digitSet
+    case 'D' => nonDigitSet
+    case 'w' => alphaNumSet
+    case 'W' => nonAlphaNumSet
+    case 's' => whiteSpaceSet
+    case 'S' => nonWhiteSpaceSet
+    case lit => Set(lit)
   }
 
-  def negCharOptions: Atom = startCharClass ~> elem('^') ~ charOptionRange.* <~ endCharClass ^^ {
+  def negCharOptions: Atom = startCharClass ~> elem('^') ~ charOptionRange.+ <~ endCharClass ^^ {
     case _ ~ options =>
       val allOptions = options.flatten
-      genWildcard.suchThat(!allOptions.contains(_))
+      genWildcard.retryUntil(!allOptions.contains(_))
   }
 
-  def charOptions: Atom = startCharClass ~> charOptionRange.* <~ endCharClass ^^ { options =>
-    Gen.oneOf(options.flatten)
+  def charOptions: Atom = startCharClass ~> charOptionRange.+ <~ endCharClass ^^ { options =>
+    Gen.oneOf(options.flatten.toSeq)
   }
 
   def wildcardMatch: Atom = wildcard ^^ { _ => genWildcard }
 
-  def charOptionRange: Parser[Seq[Char]] = (
-    escape ~> anyChar ^^ (Seq(_))
+  def charOptionRange: Parser[Set[Char]] = (
+    escaped
       | charRange
-      | literalChar ^^ (Seq(_))
+      | elem("In Range", _ != ']') ^^ (Set(_))
     )
 
   def charRange = literalChar ~ charRangeDelim ~ literalChar ^^ {
-    case from ~ _ ~ to => Range(from.toInt, to.toInt).map(_.toChar).toSeq
+    case from ~ _ ~ to => rangeChar(from, to).toSet
   }
 
   def number: Parser[Int] = digit.+ ^^ (_.mkString.toInt)
+
+  def combine(seq: List[Gen[List[Char]]]): Gen[List[Char]] =
+    Gen.sequence[List[List[Char]], List[Char]](seq).map(_.flatten)
 }
 
 object GenRegexMatch {
-  /**
-   * Create a string generator for matches to a regex.
-   *
-   * The outcome is the same a string generator with `suchThat` containing a regex match.
-   * We just find more positive this way (far far more positives, dependeing on the actualy regex)
-   *
-   * @param regex the regex that has to be matched
-   * @return generator of matches
-   */
-  def apply(regex: String): Gen[String] = new GenRegexMatch().regexGenerator(regex).map(_.mkString)
+  def rangeChar(from: Char, to: Char): TraversableOnce[Char] =
+    Range(from.toInt, to.toInt).map(_.toChar)
+
+  val anySet : Set[Char] = rangeChar(32: Char, 126: Char).toSet
+
+  val digitSet : Set[Char] = anySet.filter(_.isDigit)
+
+  val nonDigitSet : Set[Char] = anySet.filter(!_.isDigit)
+
+  val alphaSet : Set[Char] = anySet.filter(_.isLetter)
+
+  val alphaNumSet : Set[Char] = anySet.filter(_.isLetterOrDigit)
+
+  val nonAlphaNumSet : Set[Char] = anySet.filter(!_.isLetterOrDigit)
+
+  val whiteSpaceSet : Set[Char] = Set(' ', '\t')
+
+  val nonWhiteSpaceSet : Set[Char] = anySet - (' ', '\t')
+
+  val genWildcard = Gen choose(32: Char, 126: Char)
+
 }

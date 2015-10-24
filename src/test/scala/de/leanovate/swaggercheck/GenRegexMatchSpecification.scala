@@ -1,7 +1,12 @@
 package de.leanovate.swaggercheck
 
 import org.scalacheck.Prop.forAll
-import org.scalacheck.{Gen, Properties}
+import org.scalacheck.Properties
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
   property("Any match") = checkRegex(".*")
@@ -10,25 +15,19 @@ object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
 
   property("UUID like match") = checkRegex("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}")
 
-  property("Any regex") = forAll(genPair) {
-    case (regex, matchStrs) =>
-      matchStrs.forall {
-        matchStr =>
-          val matches = regex.r.findFirstIn(matchStr)
+  property("URL like match") = checkRegex("(https?|ftp)://[^\\s/$\\.?#].[^\\s]*")
 
-          matches.exists(_ == matchStr)
-      }
+  property("Strange 1") = checkRegex("[1-v5P-d sv-wO-jdLaEIG-a4-duK4-fj-rt-yh1-s;M8EV-rE-w,:\\&\\&]+[oR2];?")
+
+  property("Any regex") = forAll(Generators.regex) {
+    regex =>
+      checkRegex(regex)
   }
 
-  def checkRegex(regex: String) = forAll(GenRegexMatch(regex)) {
+  def checkRegex(regex: String) = forAll(Generators.regexMatch(regex)) {
     (str: String) =>
       val matches = regex.r.findFirstIn(str)
 
       matches.exists(_ == str)
   }
-
-  def genPair : Gen[(String, Seq[String])] = for {
-    regex <- GenRegex()
-    matchStr <- Gen.listOfN(10, GenRegexMatch(regex))
-  } yield (regex, matchStr)
 }
