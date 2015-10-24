@@ -16,7 +16,15 @@ object Generators {
   } yield s"$name@$domain.$tld"
 
   def url: Gen[String] = for {
-    schema <- Gen.oneOf("http", "https")
+    schema <- Gen.oneOf("http", "https", "ftp")
+    host <- Gen.identifier
+    port <- Gen.choose(80, 1024)
+    segmentCount <- Gen.choose(0, 10)
+    segments <- Gen.listOfN(segmentCount, Gen.identifier)
+  } yield s"$schema://$host:$port/${segments.mkString("/")}"
+
+  def uri: Gen[String] = for {
+    schema <- Gen.listOf(5, Gen.alphaChar)
     host <- Gen.identifier
     port <- Gen.choose(80, 1024)
     segmentCount <- Gen.choose(0, 10)

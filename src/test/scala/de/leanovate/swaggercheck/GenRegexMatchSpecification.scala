@@ -3,11 +3,6 @@ package de.leanovate.swaggercheck
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-
 object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
   property("Any match") = checkRegex(".*")
 
