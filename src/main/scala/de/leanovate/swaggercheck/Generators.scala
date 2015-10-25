@@ -24,7 +24,7 @@ object Generators {
   } yield s"$schema://$host:$port/${segments.mkString("/")}"
 
   def uri: Gen[String] = for {
-    schema <- Gen.listOf(5, Gen.alphaChar)
+    schema <- Gen.listOfN(5, Gen.alphaChar).map(_.mkString)
     host <- Gen.identifier
     port <- Gen.choose(80, 1024)
     segmentCount <- Gen.choose(0, 10)

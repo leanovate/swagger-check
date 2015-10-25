@@ -8,6 +8,8 @@ object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
 
   property("Email like match") = checkRegex("[a-zA-Z0-9\\.]+@[a-z]+\\.[a-z]+")
 
+  property("Strict email match") = checkRegex("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$")
+
   property("UUID like match") = checkRegex("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}")
 
   property("URL like match") = checkRegex("(https?|ftp)://[^\\s/$\\.?#].[^\\s]*")

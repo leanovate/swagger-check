@@ -1,5 +1,9 @@
 package de.leanovate.swaggercheck
 
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.swagger.models.Model
@@ -83,10 +87,22 @@ object GenSwaggerJson {
       val min = Option(longProperty.getMinimum).map(_.toLong).getOrElse(Long.MinValue)
       val max = Option(longProperty.getMaximum).map(_.toLong).getOrElse(Long.MaxValue)
       Gen.chooseNum[Long](min, max).map(nodeFactory.numberNode)
-    case uuidProperty: UUIDProperty =>
+    case _: UUIDProperty =>
       Gen.uuid.map(_.toString).map(nodeFactory.textNode)
-    case booleanProperty: BooleanProperty =>
+    case _: BooleanProperty =>
       Gen.oneOf(nodeFactory.booleanNode(true), nodeFactory.booleanNode(false))
+    case _: DateProperty =>
+      Gen.choose[Long](Long.MinValue, Long.MaxValue).map {
+        diff :Long =>
+          val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
+          nodeFactory.textNode(DateTimeFormatter.ISO_DATE.format(instant))
+      }
+    case _: DateTimeProperty =>
+      Gen.choose[Long](Long.MinValue, Long.MaxValue).map {
+        diff :Long =>
+          val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
+          nodeFactory.textNode(DateTimeFormatter.ISO_INSTANT.format(instant))
+      }
   }
 
   def arbitraryObj: Gen[JsonNode] = for {

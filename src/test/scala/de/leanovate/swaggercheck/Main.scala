@@ -1,9 +1,6 @@
 package de.leanovate.swaggercheck
 
 
-import java.util.UUID
-import java.util.regex.Pattern
-
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 
 object Main {
@@ -14,18 +11,19 @@ object Main {
     println(Generators.regex.sample)
     println(Generators.regexMatch("[a-zA-Z0-9\\.]+@[a-z]+\\.[a-z]+").sample)
     println(Generators.regexMatch("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}").sample)
-    val fail = "[1-v5P-d sv-wO-jdLaEIG-a4-duK4-fj-rt-yh1-s;M8EV-rE-w,:\\&\\&]+[oR2];?"
-    val gen = Generators.regexMatch(fail)
-    Range(0, 100).foreach {
-      idx =>
-        gen.sample.foreach {
-          sample =>
-            println(sample)
-val m =            Pattern.compile(fail).matcher(sample)
-            println(m.matches())
-        }
-    }
-    println(gen.sample)
+    println(Generators.regexMatch("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$").sample)
+//    val fail = "[1-v5P-d sv-wO-jdLaEIG-a4-duK4-fj-rt-yh1-s;M8EV-rE-w,:\\&\\&]+[oR2];?"
+//    val gen = Generators.regexMatch(fail)
+//    Range(0, 100).foreach {
+//      idx =>
+//        gen.sample.foreach {
+//          sample =>
+//            println(sample)
+//val m =            Pattern.compile(fail).matcher(sample)
+//            println(m.matches())
+//        }
+//    }
+//    println(gen.sample)
     //    val swaggerGenerators = SwaggerGenerators(getClass.getResourceAsStream("/uber_api.yml"))
     //
     //    val json1 = swaggerGenerators.genJson("PriceEstimate")
