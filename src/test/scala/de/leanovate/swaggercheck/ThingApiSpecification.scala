@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck
 
-import de.leanovate.swaggercheck.fixtures.model.{Thing, ServiceDocument}
+import de.leanovate.swaggercheck.fixtures.model.{ThingList, Thing, ServiceDocument}
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Properties}
 import play.api.libs.json.Json
@@ -28,5 +28,26 @@ object ThingApiSpecification extends Properties("Thing API") {
 
         verifier.verify(json)
     }
+  }
+
+  property("Thing can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("Thing")) {
+    json =>
+      Json.parse(json).validate[Thing].isSuccess
+  }
+
+  property("Thing list is correctly written") = {
+    val verifier = swaggerChecks.jsonVerifier("ThingList")
+
+    forAll(Arbitrary.arbitrary[ThingList]) {
+      thingList: ThingList =>
+        val json = Json.stringify(Json.toJson(thingList))
+
+        verifier.verify(json)
+    }
+  }
+
+  property("Thing list can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("ThingList")) {
+    json =>
+      Json.parse(json).validate[ThingList].isSuccess
   }
 }

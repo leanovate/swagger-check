@@ -54,7 +54,7 @@ class GenSwaggerJson(swagger: Swagger) {
         items =>
           for {
             size <- Gen.choose(0, 20)
-            items <- Gen.listOfN(size, propertyNodeGen(arrayProperty.getItems))
+            items <- Gen.listOfN(size, requiredPropertyNodeGen(arrayProperty.getItems))
           } yield items.foldLeft(nodeFactory.arrayNode()) {
             (result, value) =>
               result.add(value)
@@ -103,6 +103,11 @@ class GenSwaggerJson(swagger: Swagger) {
           val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
           nodeFactory.textNode(DateTimeFormatter.ISO_INSTANT.format(instant))
       }
+    case refProperty: RefProperty =>
+      Option(swagger.getDefinitions.get(refProperty.getSimpleRef)).map {
+        model =>
+          modelNodeGen(model)
+      }.getOrElse(throw new RuntimeException(s"Referenced model does not exists: ${refProperty.get$ref()}"))
   }
 
   def arbitraryObj: Gen[JsonNode] = for {

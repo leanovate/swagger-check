@@ -5,7 +5,8 @@ import play.api.libs.json.Json
 
 case class Thing(
                   id: Long,
-                  name: String
+                  name: String,
+                  description: Option[String]
                   )
 
 object Thing {
@@ -14,5 +15,6 @@ object Thing {
   implicit val arbitrary = Arbitrary(for {
     id <- Gen.posNum[Long]
     name <- Gen.identifier
-  } yield Thing(id, name))
+    description <- Gen.option(Gen.identifier)
+  } yield Thing(id, name, description))
 }
