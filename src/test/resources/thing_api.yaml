@@ -40,6 +40,8 @@ paths:
 definitions:
   ServiceDocument:
     type: object
+    required:
+      - _links
     properties:
       _links:
         type: object
@@ -78,4 +80,6 @@ definitions:
         type: integer
         format: int64
       name:
+        type: string
+      description:
         type: string

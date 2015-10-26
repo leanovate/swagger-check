@@ -4,16 +4,22 @@ import java.net.{URI, URL}
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-import com.fasterxml.jackson.databind.JsonNode
-import io.swagger.models.Model
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import io.swagger.models.properties._
+import io.swagger.models.{Model, Swagger}
 
 import scala.collection.JavaConversions._
 import scala.util.Try
 
-class SwaggerJsonVerifier(model: Model) {
+class SwaggerJsonVerifier(swagger: Swagger, rootModel: Model) extends Verifier[String] {
 
   import SwaggerJsonVerifier._
+
+  override def verify(value: String): VerifyResult = {
+    val tree = objectMapper.readTree(value)
+
+    verifyNode("", tree, rootModel.getProperties.toMap)
+  }
 
   def verifyNode(path: String, node: JsonNode, properties: Map[String, Property]): VerifyResult =
     properties.foldLeft(VerifyResult.success) {
@@ -76,7 +82,7 @@ class SwaggerJsonVerifier(model: Model) {
         }
       }
     case _: StringProperty => VerifyResult.error(s"${value.getNodeType} should be astring: $path")
-    case decimalProperty: DecimalProperty if value.isDouble =>
+    case decimalProperty: DecimalProperty if value.isNumber =>
       val doubleValue = value.asDouble()
       if (Option(decimalProperty.getMinimum).exists(_ > doubleValue)) {
         VerifyResult.error(s"'$doubleValue' has to be greater than ${decimalProperty.getMinimum}: $path")
@@ -86,7 +92,7 @@ class SwaggerJsonVerifier(model: Model) {
         VerifyResult.success
       }
     case _: DecimalProperty => VerifyResult.error(s"${value.getNodeType} should be number: $path")
-    case integerProperty: IntegerProperty if value.isInt =>
+    case integerProperty: IntegerProperty if value.isNumber && value.canConvertToInt =>
       val intValue = value.asInt()
       if (Option(integerProperty.getMinimum).exists(_ > intValue)) {
         VerifyResult.error(s"'$intValue' has to be greater than ${integerProperty.getMinimum}: $path")
@@ -96,7 +102,7 @@ class SwaggerJsonVerifier(model: Model) {
         VerifyResult.success
       }
     case _: IntegerProperty => VerifyResult.error(s"${value.getNodeType} should be an integer: $path")
-    case longProperty: LongProperty if value.isLong =>
+    case longProperty: LongProperty if value.isNumber && value.canConvertToLong =>
       val longValue = value.asLong()
       if (Option(longProperty.getMinimum).exists(_ > longValue)) {
         VerifyResult.error(s"'$longValue' has to be greater than ${longProperty.getMinimum}: $path")
@@ -116,22 +122,29 @@ class SwaggerJsonVerifier(model: Model) {
     case _: BooleanProperty if value.isBoolean => VerifyResult.success
     case _: BooleanProperty => VerifyResult.error(s"${value.getNodeType} should be a boolean: $path")
     case _: DateProperty if value.isTextual =>
-      if(Try(DateTimeFormatter.ISO_DATE.parse(value.asText())).isFailure) {
+      if (Try(DateTimeFormatter.ISO_DATE.parse(value.asText())).isFailure) {
         VerifyResult.error(s"'${value.asText()}' should be a date: $path")
       } else {
         VerifyResult.success
       }
     case _: DateProperty => VerifyResult.error(s"${value.getNodeType} should be a date: $path")
     case _: DateTimeProperty if value.isTextual =>
-      if(Try(DateTimeFormatter.ISO_INSTANT.parse(value.asText())).isFailure) {
+      if (Try(DateTimeFormatter.ISO_INSTANT.parse(value.asText())).isFailure) {
         VerifyResult.error(s"'${value.asText()}' should be a datetime: $path")
       } else {
         VerifyResult.success
       }
     case _: DateTimeProperty => VerifyResult.error(s"${value.getNodeType} should be a datetime: $path")
+    case refProperty: RefProperty =>
+      Option(swagger.getDefinitions.get(refProperty.getSimpleRef)).map {
+        model =>
+          verifyNode(path + ".", value, model.getProperties.toMap)
+      }.getOrElse(VerifyResult.error(s"Referenced model does not exists: ${refProperty.get$ref()}"))
   }
 }
 
 object SwaggerJsonVerifier {
   val emailPattern = "^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$".r
+
+  val objectMapper = new ObjectMapper()
 }

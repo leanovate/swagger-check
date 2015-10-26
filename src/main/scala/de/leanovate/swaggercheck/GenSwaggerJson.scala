@@ -6,13 +6,13 @@ import java.time.temporal.ChronoUnit
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import io.swagger.models.Model
 import io.swagger.models.properties._
+import io.swagger.models.{Model, Swagger}
 import org.scalacheck.Gen
 
 import scala.collection.JavaConversions._
 
-object GenSwaggerJson {
+class GenSwaggerJson(swagger: Swagger) {
   val nodeFactory = JsonNodeFactory.instance
 
   def modelJsonGen(model: Model): Gen[String] =
@@ -93,13 +93,13 @@ object GenSwaggerJson {
       Gen.oneOf(nodeFactory.booleanNode(true), nodeFactory.booleanNode(false))
     case _: DateProperty =>
       Gen.choose[Long](Long.MinValue, Long.MaxValue).map {
-        diff :Long =>
+        diff: Long =>
           val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
           nodeFactory.textNode(DateTimeFormatter.ISO_DATE.format(instant))
       }
     case _: DateTimeProperty =>
       Gen.choose[Long](Long.MinValue, Long.MaxValue).map {
-        diff :Long =>
+        diff: Long =>
           val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
           nodeFactory.textNode(DateTimeFormatter.ISO_INSTANT.format(instant))
       }

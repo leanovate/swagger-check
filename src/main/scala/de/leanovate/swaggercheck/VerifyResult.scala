@@ -1,5 +1,8 @@
 package de.leanovate.swaggercheck
 
+import org.scalacheck.Prop
+import org.scalacheck.Prop.Result
+
 sealed trait VerifyResult {
   def isSuccess: Boolean
 
@@ -25,4 +28,9 @@ object VerifyResult {
   val success: VerifyResult = VerifySuccess
 
   def error(failure: String): VerifyResult = VerifyError(Seq(failure))
+
+  implicit def verifyProp(verifyResult: VerifyResult): Prop = verifyResult match {
+    case VerifySuccess => Prop.proved
+    case VerifyError(failures) => Prop(Result(status = Prop.Exception(new RuntimeException(failures.mkString("\n")))))
+  }
 }
