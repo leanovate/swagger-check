@@ -2,6 +2,7 @@ package de.leanovate.swaggercheck
 
 import org.scalacheck.Prop
 import org.scalacheck.Prop.Result
+import scala.language.implicitConversions
 
 sealed trait VerifyResult {
   def isSuccess: Boolean

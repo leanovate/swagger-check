@@ -83,3 +83,5 @@ definitions:
         type: string
       description:
         type: string
+  SomeThing:
+    type: object
