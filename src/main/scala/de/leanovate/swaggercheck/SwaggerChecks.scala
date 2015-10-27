@@ -2,33 +2,36 @@ package de.leanovate.swaggercheck
 
 import java.io.InputStream
 
-import io.swagger.models.Swagger
-import io.swagger.parser.SwaggerParser
+import com.fasterxml.jackson.databind.ObjectMapper
+import de.leanovate.swaggercheck.parser.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
-import scala.io.Source
-
-class SwaggerChecks(swagger: Swagger) {
+class SwaggerChecks(swaggerAPI: SwaggerAPI) {
+  val context = SwaggerContext(swaggerAPI)
 
   def jsonGenerator(name: String): Gen[String] =
-    Option(swagger.getDefinitions.get(name))
-      .map(new GenSwaggerJson(swagger).modelJsonGen(_))
+    swaggerAPI.definitions.get(name)
+      .map(_.generate(context).map(_.toString))
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
-  def jsonVerifier(name: String): SwaggerJsonVerifier =
-    Option(swagger.getDefinitions.get(name))
-      .map(new SwaggerJsonVerifier(swagger, _))
+  def jsonVerifier(name: String): Verifier[String] =
+    swaggerAPI.definitions.get(name)
+      .map(schemaVerifier)
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
+
+  private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
+    override def verify(value: String): VerifyResult = {
+      val tree = new ObjectMapper().readTree(value)
+
+      schemaObject.verify(context, Nil, tree)
+    }
+  }
 }
 
 object SwaggerChecks {
-  def apply(swaggerAsString: String): SwaggerChecks = {
-    val swagger = new SwaggerParser().parse(swaggerAsString)
+  def apply(swaggerAsString: String): SwaggerChecks =
+    new SwaggerChecks(SwaggerAPI.parse(swaggerAsString))
 
-    new SwaggerChecks(swagger)
-  }
-
-  def apply(swaggerInput: InputStream): SwaggerChecks = {
-    apply(Source.fromInputStream(swaggerInput).mkString)
-  }
+  def apply(swaggerInput: InputStream): SwaggerChecks =
+    new SwaggerChecks(SwaggerAPI.parse(swaggerInput))
 }

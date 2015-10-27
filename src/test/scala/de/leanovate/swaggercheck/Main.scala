@@ -2,12 +2,17 @@ package de.leanovate.swaggercheck
 
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import de.leanovate.swaggercheck.ThingApiSpecification._
+import de.leanovate.swaggercheck.parser.SwaggerAPI
 
 object Main {
   val nodeFactory = JsonNodeFactory.instance
 
   def main(args: Array[String]): Unit = {
-//    println(UUID.randomUUID().toString)
+    val swaggerAPI = SwaggerAPI.parse(getClass.getClassLoader.getResourceAsStream("thing_api.yaml"))
+
+    println(swaggerAPI)
+    //    println(UUID.randomUUID().toString)
     println(Generators.regex.sample)
     println(Generators.regexMatch("[a-zA-Z0-9\\.]+@[a-z]+\\.[a-z]+").sample)
     println(Generators.regexMatch("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}").sample)
