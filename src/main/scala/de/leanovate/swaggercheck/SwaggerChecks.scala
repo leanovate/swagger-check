@@ -4,7 +4,7 @@ import java.io.InputStream
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.parser.{SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
 case class SwaggerChecks(

@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.parser
+package de.leanovate.swaggercheck.schema
 
 import java.io.{FileInputStream, InputStream}
 
