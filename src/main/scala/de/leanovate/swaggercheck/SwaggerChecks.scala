@@ -3,15 +3,19 @@ package de.leanovate.swaggercheck
 import java.io.InputStream
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
 import de.leanovate.swaggercheck.parser.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
-class SwaggerChecks(swaggerAPI: SwaggerAPI) {
-  val context = SwaggerContext(swaggerAPI)
-
+case class SwaggerChecks(
+                          swaggerAPI: SwaggerAPI,
+                          stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
+                          integerFormats: Map[String, Format[Long]] = IntegerFormats.defaultFormats,
+                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats
+                          ) {
   def jsonGenerator(name: String): Gen[String] =
     swaggerAPI.definitions.get(name)
-      .map(_.generate(context).map(_.toString))
+      .map(_.generate(this).map(_.toString))
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
   def jsonVerifier(name: String): Verifier[String] =
@@ -19,11 +23,20 @@ class SwaggerChecks(swaggerAPI: SwaggerAPI) {
       .map(schemaVerifier)
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
+  def withStringFormats(formats: (String, Format[String])*) =
+    copy(stringFormats = stringFormats ++ Map(formats: _*))
+
+  def withIntegerFormats(formats: (String, Format[Long])*) =
+    copy(integerFormats = integerFormats ++ Map(formats: _*))
+
+  def withNumberFormats(formats: (String, Format[Double])*) =
+    copy(numberFormats = numberFormats ++ Map(formats: _*))
+
   private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {
       val tree = new ObjectMapper().readTree(value)
 
-      schemaObject.verify(context, Nil, tree)
+      schemaObject.verify(SwaggerChecks.this, Nil, tree)
     }
   }
 }
