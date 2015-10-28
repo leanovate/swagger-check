@@ -9,14 +9,20 @@ import collection.JavaConversions._
 @JsonTypeName("object")
 case class ObjectDefinition(
                              required: Option[Set[String]],
-                             properties: Option[Map[String, SchemaObject]]
+                             properties: Option[Map[String, SchemaObject]],
+                             format: Option[String]
                              ) extends SchemaObject {
 
   import SchemaObject._
 
   override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {
     if (properties.isEmpty) {
-      arbitraryObj
+      format match {
+        case Some(objectFormat) if ctx.objectFormats.contains(objectFormat) =>
+          ctx.objectFormats(objectFormat).generate
+        case None =>
+          arbitraryObj
+      }
     } else {
       properties.map {
         props =>

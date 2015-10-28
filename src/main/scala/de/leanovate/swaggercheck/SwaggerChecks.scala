@@ -6,12 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
 import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
+import com.fasterxml.jackson.databind.JsonNode
 
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
                           stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
                           integerFormats: Map[String, Format[Long]] = IntegerFormats.defaultFormats,
-                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats
+                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats,
+                          objectFormats: Map[String, Format[JsonNode]] = Map.empty
                           ) {
   def jsonGenerator(name: String): Gen[String] =
     swaggerAPI.definitions.get(name)
@@ -31,6 +33,9 @@ case class SwaggerChecks(
 
   def withNumberFormats(formats: (String, Format[Double])*) =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
+
+  def withObjectFormats(formats: (String, Format[JsonNode])*) =
+    copy(objectFormats = objectFormats ++ Map(formats: _*))
 
   private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {
