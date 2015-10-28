@@ -2,11 +2,9 @@ package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import de.leanovate.swaggercheck.{VerifyResult, SwaggerChecks}
+import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
-@JsonDeserialize
 case class ReferenceDefinition(
                                 @JsonProperty("$ref")
                                 ref: String

@@ -1,12 +1,9 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.annotation.JsonTypeName
 import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.{VerifyResult, SwaggerChecks}
+import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
-
-@JsonTypeName("integer")
 case class IntegerDefinition(
                               format: Option[String],
                               minimum: Option[Long],

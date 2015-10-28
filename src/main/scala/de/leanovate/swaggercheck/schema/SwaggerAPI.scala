@@ -2,7 +2,8 @@ package de.leanovate.swaggercheck.schema
 
 import java.io.{FileInputStream, InputStream}
 
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.databind.{DeserializationFeature, MappingJsonFactory, ObjectMapper}
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
@@ -13,16 +14,11 @@ case class SwaggerAPI(
                        )
 
 object SwaggerAPI {
-  val jsonMapper = new ObjectMapper()
-  val yamlMapper = new ObjectMapper(new YAMLFactory())
-
-  jsonMapper.registerModule(DefaultScalaModule)
-  jsonMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-  yamlMapper.registerModule(DefaultScalaModule)
-  yamlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-
   def parse(jsonOrYaml: String): SwaggerAPI = {
-    val mapper = if (jsonOrYaml.trim().startsWith("{")) jsonMapper else yamlMapper
+    val mapper = if (jsonOrYaml.trim().startsWith("{"))
+      objectMapper(new MappingJsonFactory())
+    else
+      objectMapper(new YAMLFactory())
     mapper.readValue(jsonOrYaml, classOf[SwaggerAPI])
   }
 
@@ -34,5 +30,12 @@ object SwaggerAPI {
     val swagger = parse(new FileInputStream("./src/test/resources/thing_api.yaml"))
 
     println(swagger)
+  }
+
+  def objectMapper(jsonFactory: JsonFactory): ObjectMapper = {
+    val mapper = new ObjectMapper(jsonFactory)
+    mapper.registerModule(DefaultScalaModule)
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    mapper
   }
 }
