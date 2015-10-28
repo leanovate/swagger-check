@@ -18,7 +18,7 @@ case class NumberDefinition(
     val generator: Gen[Double] = format match {
       case Some(formatName) if ctx.numberFormats.contains(formatName) =>
         ctx.numberFormats(formatName).generate
-      case _ => Gen.choose(minimum.getOrElse(Double.MinValue), maximum.getOrElse(Double.MaxValue))
+      case _ => Gen.choose(minimum.getOrElse(0), maximum.getOrElse(Double.MaxValue))
     }
     generator.map(nodeFactory.numberNode)
   }

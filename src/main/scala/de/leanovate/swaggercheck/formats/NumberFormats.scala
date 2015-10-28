@@ -6,7 +6,7 @@ import org.scalacheck.Gen
 object NumberFormats {
 
   object FloatNumber extends Format[Double] {
-    override def generate: Gen[Double] = Gen.choose(Float.MinValue, Float.MaxValue)
+    override def generate: Gen[Double] = Gen.choose(0, Float.MaxValue)
 
     override def verify(path: String, value: Double): VerifyResult =
       if (value >= Float.MinValue && value <= Float.MaxValue)
@@ -16,7 +16,7 @@ object NumberFormats {
   }
 
   object DoubleNumber extends Format[Double] {
-    override def generate: Gen[Double] = Gen.choose(Double.MinValue, Double.MaxValue)
+    override def generate: Gen[Double] = Gen.choose(0, Double.MaxValue)
 
     override def verify(path: String, value: Double): VerifyResult =
       if (value >= Double.MinValue && value <= Double.MaxValue)
