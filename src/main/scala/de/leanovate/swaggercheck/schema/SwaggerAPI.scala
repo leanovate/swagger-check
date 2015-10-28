@@ -14,11 +14,11 @@ case class SwaggerAPI(
                        )
 
 object SwaggerAPI {
+  val jsonMapper = objectMapper(new MappingJsonFactory())
+  val yamlMapper = objectMapper(new YAMLFactory())
+
   def parse(jsonOrYaml: String): SwaggerAPI = {
-    val mapper = if (jsonOrYaml.trim().startsWith("{"))
-      objectMapper(new MappingJsonFactory())
-    else
-      objectMapper(new YAMLFactory())
+    val mapper = if (jsonOrYaml.trim().startsWith("{")) jsonMapper else yamlMapper
     mapper.readValue(jsonOrYaml, classOf[SwaggerAPI])
   }
 

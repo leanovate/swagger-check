@@ -11,7 +11,6 @@ case class ObjectDefinition(
                              properties: Option[Map[String, SchemaObject]],
                              format: Option[String]
                              ) extends SchemaObject {
-
   import SchemaObject._
 
   override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {

@@ -10,7 +10,7 @@ object Generators {
     new GenRegexMatch().regexGenerator(regex).map(_.mkString).suchThat(!_.isEmpty)
 
   def email: Gen[String] = for {
-    name <- Gen.identifier
+    name <- Gen.listOfN(20, Gen.alphaLowerChar).map(_.mkString)
     domain <- Gen.listOfN(20, Gen.alphaLowerChar).map(_.mkString)
     tld <- Gen.listOfN(3, Gen.alphaLowerChar).map(_.mkString)
   } yield s"$name@$domain.$tld"

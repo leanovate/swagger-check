@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck
 
-import de.leanovate.swaggercheck.fixtures.model.{ThingList, Thing, ServiceDocument}
+import de.leanovate.swaggercheck.fixtures.model._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Properties}
 import play.api.libs.json.Json
@@ -49,5 +49,26 @@ object ThingApiSpecification extends Properties("Thing API") {
   property("Thing list can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("ThingList")) {
     json =>
       Json.parse(json).validate[ThingList].isSuccess
+  }
+
+  property("SubBase can be written") = {
+    val verifier = swaggerChecks.jsonVerifier("SubBase")
+
+    forAll(Arbitrary.arbitrary[SubBase]) {
+      subBase: SubBase =>
+        val json = Json.stringify(Json.toJson(subBase))
+
+        verifier.verify(json)
+    }
+  }
+
+  property("SubBase can be parsed") = forAll(swaggerChecks.jsonGenerator("SubBase")) {
+    json =>
+      Json.parse(json).validate[SubBase].isSuccess
+  }
+
+  property("OtherBase can be parsed") = forAll(swaggerChecks.jsonGenerator("OtherBase")) {
+    json =>
+      Json.parse(json).validate[OtherBase].isSuccess
   }
 }

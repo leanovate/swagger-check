@@ -85,3 +85,30 @@ definitions:
         type: string
   SomeThing:
     type: object
+  Base:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        format: uuid
+  SubBase:
+    allOf:
+      schema:
+        $ref: "#/definitions/Base"
+      properties:
+        email:
+          type: string
+          format: email
+  OtherBase:
+    allOf:
+      - $ref: "#/definitions/Base"
+      - type: "object"
+        required:
+          - lastName
+        properties:
+          firstName:
+            type: string
+          lastName:
+            type: string
