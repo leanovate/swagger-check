@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck
 
-import java.io.InputStream
+import java.io.{InputStream, File, FileInputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
@@ -47,4 +47,7 @@ object SwaggerChecks {
 
   def apply(swaggerInput: InputStream): SwaggerChecks =
     new SwaggerChecks(SwaggerAPI.parse(swaggerInput))
+
+  def apply(swaggerFile: File): SwaggerChecks =
+    apply(new FileInputStream(swaggerFile))
 }
