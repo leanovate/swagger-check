@@ -9,15 +9,22 @@ import scala.collection.JavaConversions._
 case class ObjectDefinition(
                              required: Option[Set[String]],
                              properties: Option[Map[String, SchemaObject]],
-                             format: Option[String]
+                             additionalProperties: Option[SchemaObject]
                              ) extends SchemaObject {
   import SchemaObject._
 
   override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {
     if (properties.isEmpty) {
-      format match {
-        case Some(objectFormat) if ctx.objectFormats.contains(objectFormat) =>
-          ctx.objectFormats(objectFormat).generate
+      additionalProperties match {
+        case Some(additionalSchema) =>
+          for {
+            size <- Gen.choose(0, 10)
+            properties <- Gen.listOfN(size, Gen.zip(Gen.identifier, additionalSchema.generate(ctx)))
+          } yield properties.foldLeft(nodeFactory.objectNode()) {
+            (result, prop) =>
+              result.set(prop._1, prop._2)
+              result
+          }
         case None =>
           arbitraryObj
       }

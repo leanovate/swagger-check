@@ -20,6 +20,7 @@ class SchemaObjectBuilder @JsonCreator()(
                                           @JsonProperty("maxLength") maxLength: Option[Int],
                                           @JsonProperty("pattern") pattern: Option[String],
                                           @JsonProperty("properties") properties: Option[Map[String, SchemaObject]],
+                                          @JsonProperty("additionalProperties") additionalProperties : Option[SchemaObject],
                                           @JsonProperty("required") required: Option[Set[String]],
                                           @JsonProperty("$ref") ref: Option[String]) {
 
@@ -34,7 +35,7 @@ class SchemaObjectBuilder @JsonCreator()(
         AllOfDefinition(schemas)
       case _ =>
         `type` match {
-          case Some("object") => ObjectDefinition(required, properties, format)
+          case Some("object") => ObjectDefinition(required, properties, additionalProperties)
           case Some("array") => ArrayDefinition(minItems, maxItems, items)
           case Some("string") => StringDefinition(format, minLength, maxLength, pattern, enum)
           case Some("integer") => IntegerDefinition(format, minimum.map(_.longValue()), maximum.map(_.longValue()))
