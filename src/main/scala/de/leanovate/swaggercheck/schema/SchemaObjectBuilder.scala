@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 
 class SchemaObjectBuilder @JsonCreator()(
                                           @JsonProperty("type") `type`: Option[String],
-                                          @JsonProperty("allOf") allOf: Option[JsonNode],
+                                          @JsonProperty("allOf") allOf: Option[Seq[SchemaObject]],
                                           @JsonProperty("enum") enum: Option[List[String]],
                                           @JsonProperty("format") format: Option[String],
                                           @JsonProperty("items") items: Option[SchemaObject],
@@ -27,11 +27,7 @@ class SchemaObjectBuilder @JsonCreator()(
 
   def build(): SchemaObject = {
     allOf match {
-      case Some(objectNode : ObjectNode) =>
-        val compatAllOf =  SwaggerAPI.jsonMapper.treeToValue(objectNode, classOf[CompatAllOf])
-        AllOfDefinition(Seq(compatAllOf.schema, ObjectDefinition(compatAllOf.required, compatAllOf.properties, None)))
-      case Some(arrayNode : ArrayNode) =>
-        val schemas = arrayNode.map(SwaggerAPI.jsonMapper.treeToValue(_, classOf[SchemaObject])).toSeq
+      case Some(schemas) =>
         AllOfDefinition(schemas)
       case _ =>
         `type` match {
