@@ -41,7 +41,7 @@ object StringFormats {
       if (Try(UUID.fromString(value)).isSuccess)
         VerifyResult.success
       else
-        VerifyResult.error(s"'$value' is not an uri: $path")
+        VerifyResult.error(s"'$value' is not an uuid: $path")
   }
 
   object EmailString extends Format[String] {
