@@ -1,9 +1,13 @@
 package de.leanovate.swaggercheck.schema
 
+import java.net.URLEncoder
+
 import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
 import org.scalacheck.Gen
+
+import scala.collection.JavaConversions._
 
 case class Operation(
                       consumes: Option[Seq[String]],
@@ -49,12 +53,22 @@ object Operation {
         headers <- Gen.sequence(headerGens)
         optBody <- bodyGen
       } yield {
+        val queryString = queryParams.flatMap(_.toSeq).map {
+          case (name, value) =>
+            URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8")
+        }.mkString("&")
+        val pathWithParams = pathParams.foldLeft(path) {
+          case (result, Some((name, value))) =>
+            result.replace(s"{$name}", value)
+          case (result, _) => result
+        }
+        val fullPath = if (queryString.isEmpty) pathWithParams else pathWithParams + "?" + queryString
+
         optBody match {
-          case Some(body) => requestCreator.createJson(method, path, Seq.empty, body)
-          case None => requestCreator.createEmpty(method, path, Seq.empty)
+          case Some(body) => requestCreator.createJson(method.toUpperCase, fullPath, headers.flatMap(_.toSeq), body)
+          case None => requestCreator.createEmpty(method.toUpperCase, fullPath, headers.flatMap(_.toSeq))
         }
       }
     }
   }
-
 }

@@ -12,4 +12,10 @@ object UberApiSpecification extends Properties("Uber API") {
     json =>
       Json.parse(json).validate[UberError].isSuccess
   }
+
+//  property("Request endpoints exists") = forAll(swaggerChecks.requestGenerator[SimpleRequest](None)) {
+//    simpleRequest =>
+//      println(simpleRequest)
+//      true
+//  }
 }

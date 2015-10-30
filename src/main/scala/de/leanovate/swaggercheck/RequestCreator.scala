@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.schema
+package de.leanovate.swaggercheck
 
 import com.fasterxml.jackson.databind.JsonNode
 

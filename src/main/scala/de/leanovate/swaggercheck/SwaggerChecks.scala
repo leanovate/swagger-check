@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, InputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.schema.{RequestCreator, SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
 case class SwaggerChecks(
@@ -20,7 +20,7 @@ case class SwaggerChecks(
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
   def requestGenerator[R](matchingPath: Option[String])(implicit requestBuilder: RequestCreator[R]): Gen[R] = {
-    val operations = swaggerAPI.path.filterKeys(path => matchingPath.isEmpty || matchingPath.contains(path))
+    val operations = swaggerAPI.paths.getOrElse(Map.empty).filterKeys(path => matchingPath.isEmpty || matchingPath.contains(path))
 
     for {
       (path, methods) <- Gen.oneOf(operations.toSeq)
@@ -45,7 +45,7 @@ case class SwaggerChecks(
 
   def withMaxItems(newMaxItems: Int): SwaggerChecks = copy(maxItems = newMaxItems)
 
-  def childContext : SwaggerChecks = withMaxItems(maxItems / 2)
+  def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
 
   private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {

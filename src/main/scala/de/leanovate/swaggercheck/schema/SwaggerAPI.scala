@@ -13,7 +13,7 @@ case class SwaggerAPI(
                        basePath: Option[String],
                        consumes: Option[Seq[String]],
                        produces: Option[Seq[String]],
-                       path: Map[String, Map[String, Operation]],
+                       paths: Option[Map[String, Map[String, Operation]]],
                        definitions: Map[String, SchemaObject]
                        )
 
