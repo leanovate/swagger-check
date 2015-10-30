@@ -1,7 +1,6 @@
 package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.fixtures.model._
-import de.leanovate.swaggercheck.simple.SimpleRequestCreator
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Properties}
 import play.api.libs.json.Json
