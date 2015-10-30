@@ -11,7 +11,8 @@ case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
                           stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
                           integerFormats: Map[String, Format[Long]] = IntegerFormats.defaultFormats,
-                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats
+                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats,
+                          maxItems: Int = 10
                           ) {
   def jsonGenerator(name: String): Gen[String] =
     swaggerAPI.definitions.get(name)
@@ -41,6 +42,10 @@ case class SwaggerChecks(
 
   def withNumberFormats(formats: (String, Format[Double])*) =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
+
+  def withMaxItems(newMaxItems: Int): SwaggerChecks = copy(maxItems = newMaxItems)
+
+  def childContext : SwaggerChecks = withMaxItems(maxItems / 2)
 
   private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {

@@ -14,14 +14,16 @@ case class ArrayDefinition(
 
   override def generate(ctx: SwaggerChecks): Gen[JsonNode] = items.map {
     itemsSchema =>
+      val min = minItems.getOrElse(0)
+      val max = Math.min(min + ctx.maxItems, maxItems.getOrElse(min + ctx.maxItems))
       for {
-        size <- Gen.choose(minItems.getOrElse(0), maxItems.getOrElse(10))
-        elements <- Gen.listOfN(size, itemsSchema.generate(ctx))
+        size <- Gen.choose(min, max)
+        elements <- Gen.listOfN(size, itemsSchema.generate(ctx.childContext))
       } yield elements.foldLeft(nodeFactory.arrayNode()) {
         case (result, element) =>
           result.add(element)
       }
-  }.getOrElse(arbitraryArray)
+  }.getOrElse(arbitraryArray(ctx))
 
   override def verify(ctx: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult = {
     if (node.isArray) {

@@ -18,15 +18,15 @@ case class ObjectDefinition(
       additionalProperties match {
         case Some(additionalSchema) =>
           for {
-            size <- Gen.choose(0, 10)
-            properties <- Gen.listOfN(size, Gen.zip(Gen.identifier, additionalSchema.generate(ctx)))
+            size <- Gen.choose(0, ctx.maxItems)
+            properties <- Gen.listOfN(size, Gen.zip(Gen.identifier, additionalSchema.generate(ctx.childContext)))
           } yield properties.foldLeft(nodeFactory.objectNode()) {
             (result, prop) =>
               result.set(prop._1, prop._2)
               result
           }
         case None =>
-          arbitraryObj
+          arbitraryObj(ctx)
       }
     } else {
       properties.map {
@@ -34,11 +34,11 @@ case class ObjectDefinition(
           val propertyGens: Traversable[Gen[(String, JsonNode)]] = {
             props.map {
               case (name, schema) if required.exists(_.contains(name)) =>
-                schema.generate(ctx).map(value => name -> value)
+                schema.generate(ctx.childContext).map(value => name -> value)
               case (name, schema) =>
                 Gen.oneOf(
                   Gen.const(nodeFactory.nullNode()),
-                  schema.generate(ctx)
+                  schema.generate(ctx.childContext)
                 ).map(value => name -> value)
             }
           }
@@ -47,7 +47,7 @@ case class ObjectDefinition(
               result.set(element._1, element._2)
               result
           })
-      }.getOrElse(arbitraryObj)
+      }.getOrElse(arbitraryObj(ctx))
     }
   }
 

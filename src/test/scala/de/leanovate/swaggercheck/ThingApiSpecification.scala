@@ -71,4 +71,9 @@ object ThingApiSpecification extends Properties("Thing API") {
     json =>
       Json.parse(json).validate[OtherBase].isSuccess
   }
+
+  property("ThingNode can be parsed") = forAll(swaggerChecks.jsonGenerator("ThingNode")) {
+    json =>
+      Json.parse(json).validate[ThingNode].isSuccess
+  }
 }

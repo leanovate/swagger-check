@@ -16,8 +16,8 @@ trait SchemaObject {
 object SchemaObject {
   val nodeFactory = JsonNodeFactory.instance
 
-  def arbitraryObj: Gen[JsonNode] = for {
-    size <- Gen.choose(0, 10)
+  def arbitraryObj(ctx: SwaggerChecks): Gen[JsonNode] = for {
+    size <- Gen.choose(0, ctx.maxItems)
     properties <- Gen.listOfN(size, arbitraryProperty)
   } yield
     properties.foldLeft(nodeFactory.objectNode()) {
@@ -26,8 +26,8 @@ object SchemaObject {
         result
     }
 
-  def arbitraryArray: Gen[JsonNode] = for {
-    size <- Gen.choose(0, 10)
+  def arbitraryArray(ctx: SwaggerChecks): Gen[JsonNode] = for {
+    size <- Gen.choose(0, ctx.maxItems)
     items <- Gen.listOfN(size, arbitraryValue)
   } yield
     items.foldLeft(nodeFactory.arrayNode()) {

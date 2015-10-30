@@ -85,6 +85,18 @@ definitions:
         type: string
   SomeThing:
     type: object
+  ThingNode:
+    type: object
+    required:
+      - theThing
+      - children
+    properties:
+      theThing:
+        $ref: "#/definitions/Thing"
+      children:
+        type: array
+        items:
+          $ref: "#/definitions/ThingNode"
   Base:
     type: object
     required:
