@@ -1,12 +1,11 @@
 package de.leanovate.swaggercheck
 
-import java.io.{InputStream, File, FileInputStream}
+import java.io.{File, FileInputStream, InputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.schema.{RequestCreator, SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
-import com.fasterxml.jackson.databind.JsonNode
 
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
@@ -18,6 +17,16 @@ case class SwaggerChecks(
     swaggerAPI.definitions.get(name)
       .map(_.generate(this).map(_.toString))
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
+
+  def requestGenerator[R](matchingPath: Option[String])(implicit requestBuilder: RequestCreator[R]): Gen[R] = {
+    val operations = swaggerAPI.path.filterKeys(path => matchingPath.isEmpty || matchingPath.contains(path))
+
+    for {
+      (path, methods) <- Gen.oneOf(operations.toSeq)
+      (method, operation) <- Gen.oneOf(methods.toSeq)
+      request <- operation.generateRequest(this, method, path)
+    } yield request
+  }
 
   def jsonVerifier(name: String): Verifier[String] =
     swaggerAPI.definitions.get(name)

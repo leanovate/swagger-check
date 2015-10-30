@@ -10,6 +10,10 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import scala.io.Source
 
 case class SwaggerAPI(
+                       basePath: Option[String],
+                       consumes: Option[Seq[String]],
+                       produces: Option[Seq[String]],
+                       path: Map[String, Map[String, Operation]],
                        definitions: Map[String, SchemaObject]
                        )
 

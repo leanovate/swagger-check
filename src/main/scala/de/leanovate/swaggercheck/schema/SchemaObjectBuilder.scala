@@ -1,36 +1,31 @@
 package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
-
-import scala.collection.JavaConversions._
 
 class SchemaObjectBuilder @JsonCreator()(
-                                          @JsonProperty("type") `type`: Option[String],
-                                          @JsonProperty("allOf") allOf: Option[Seq[SchemaObject]],
-                                          @JsonProperty("enum") enum: Option[List[String]],
-                                          @JsonProperty("format") format: Option[String],
-                                          @JsonProperty("items") items: Option[SchemaObject],
-                                          @JsonProperty("minItems") minItems: Option[Int],
-                                          @JsonProperty("maxItems") maxItems: Option[Int],
-                                          @JsonProperty("minimum") minimum: Option[BigDecimal],
-                                          @JsonProperty("maximum") maximum: Option[BigDecimal],
-                                          @JsonProperty("minLength") minLength: Option[Int],
-                                          @JsonProperty("maxLength") maxLength: Option[Int],
-                                          @JsonProperty("pattern") pattern: Option[String],
-                                          @JsonProperty("properties") properties: Option[Map[String, SchemaObject]],
-                                          @JsonProperty("additionalProperties") additionalProperties : Option[SchemaObject],
-                                          @JsonProperty("required") required: Option[Set[String]],
-                                          @JsonProperty("$ref") ref: Option[String]) {
-
+                                          @JsonProperty("type") schemaType: Option[String] = None,
+                                          @JsonProperty("allOf") allOf: Option[Seq[SchemaObject]] = None,
+                                          @JsonProperty("enum") enum: Option[List[String]] = None,
+                                          @JsonProperty("format") format: Option[String] = None,
+                                          @JsonProperty("items") items: Option[SchemaObject] = None,
+                                          @JsonProperty("minItems") minItems: Option[Int] = None,
+                                          @JsonProperty("maxItems") maxItems: Option[Int] = None,
+                                          @JsonProperty("minimum") minimum: Option[BigDecimal] = None,
+                                          @JsonProperty("maximum") maximum: Option[BigDecimal] = None,
+                                          @JsonProperty("minLength") minLength: Option[Int] = None,
+                                          @JsonProperty("maxLength") maxLength: Option[Int] = None,
+                                          @JsonProperty("pattern") pattern: Option[String] = None,
+                                          @JsonProperty("properties") properties: Option[Map[String, SchemaObject]] = None,
+                                          @JsonProperty("additionalProperties") additionalProperties: Option[SchemaObject] = None,
+                                          @JsonProperty("required") required: Option[Set[String]] = None,
+                                          @JsonProperty("$ref") ref: Option[String] = None) {
 
   def build(): SchemaObject = {
     allOf match {
       case Some(schemas) =>
         AllOfDefinition(schemas)
       case _ =>
-        `type` match {
+        schemaType match {
           case Some("object") => ObjectDefinition(required, properties, additionalProperties)
           case Some("array") => ArrayDefinition(minItems, maxItems, items)
           case Some("string") => StringDefinition(format, minLength, maxLength, pattern, enum)
