@@ -1,5 +1,7 @@
 # swagger-check
 
+Build status: [![Build Status](https://travis-ci.org/leanovate/swagger-check.svg?branch=master)](https://travis-ci.org/leanovate/swagger-check)
+
 Toolbox for property based testing of an API specified with swagger
 
 ## The problem
@@ -23,6 +25,14 @@ matches reality in the long term. `swagger-check` might help you in this case.
 
 As an additional party gimmic there is also ein generator to generate matches to a regex that you might consider useful for other things.
 
+## Usage
+
+Add the following to your `build.sbt`
+
+```
+libraryDependencies += "de.leanovate" %% "swagger-check" % "0.12" % "test"
+```
+
 ## Examples
 
 Sorry, this is all still in the flow.
@@ -30,10 +40,6 @@ Sorry, this is all still in the flow.
 At the moment the best starting point might be some of tests:
 
 * [ThingApiSpecification](src/test/scala/de/leanovate/swaggercheck/ThingApiSpecification.scala)
-
-## Build status
-
-Travis-CI: [![Build Status](https://travis-ci.org/leanovate/swagger-check.svg?branch=master)](https://travis-ci.org/leanovate/swagger-check)
 
 ## License
 
