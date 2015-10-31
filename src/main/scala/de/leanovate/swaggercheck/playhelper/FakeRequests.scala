@@ -11,10 +11,10 @@ object FakeRequests {
   val mapper = (new ObjectMapper).registerModule(PlayJsonModule)
 
   implicit val creator = new RequestCreator[FakeRequest[_ <: AnyContent]] {
-    override def createEmpty(method: String, path: String, headers: Seq[(String, String)]): FakeRequest[_ <: AnyContent] =
-      FakeRequest(method, path).withHeaders(headers: _ *)
+    override def createEmpty(method: String, uri: String, headers: Seq[(String, String)]): FakeRequest[_ <: AnyContent] =
+      FakeRequest(method, uri).withHeaders(headers: _ *)
 
-    override def createJson(method: String, path: String, headers: Seq[(String, String)], body: JsonNode): FakeRequest[_ <: AnyContent] =
-      FakeRequest(method, path).withHeaders(headers: _*).withJsonBody(mapper.treeToValue(body, classOf[JsValue]))
+    override def createJson(method: String, uri: String, headers: Seq[(String, String)], body: JsonNode): FakeRequest[_ <: AnyContent] =
+      FakeRequest(method, uri).withHeaders(headers: _*).withJsonBody(mapper.treeToValue(body, classOf[JsValue]))
   }
 }
