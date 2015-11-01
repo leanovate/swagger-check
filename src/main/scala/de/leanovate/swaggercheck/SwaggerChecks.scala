@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, InputStream}
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
 /**
@@ -38,24 +38,6 @@ case class SwaggerChecks(
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
   /**
-   * Create a generator for requests based on a swagger file.
-   *
-   * @param matchingPath Optional filter for paths (exact match)
-   * @param requestBuilder implicit creator for request instances
-   * @tparam R request class (depends on the web framework, in play FakeRequest might be desired)
-   * @return generator for requests
-   */
-  def requestGenerator[R](matchingPath: Option[String])(implicit requestBuilder: RequestCreator[R]): Gen[R] = {
-    val operations = swaggerAPI.paths.getOrElse(Map.empty).filterKeys(path => matchingPath.isEmpty || matchingPath.contains(path))
-
-    for {
-      (path, methods) <- Gen.oneOf(operations.toSeq)
-      (method, operation) <- Gen.oneOf(methods.toSeq)
-      request <- operation.generateRequest(this, method, path)
-    } yield request
-  }
-
-  /**
    * Get a verifier that verifies, if a string contains a json that matches to a swagger definition.
    *
    * Usually you want to use this to ensure that all your serializers are working.
@@ -65,8 +47,43 @@ case class SwaggerChecks(
    */
   def jsonVerifier(name: String): Verifier[String] =
     swaggerAPI.definitions.get(name)
-      .map(schemaVerifier)
+      .map(verifierForSchema)
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
+
+  /**
+   * Create a generator for requests based on a swagger file.
+   *
+   * @param matchingPath Optional filter for paths (exact match)
+   * @param requestBuilder implicit creator for request instances
+   * @tparam R request class (depends on the web framework, in play FakeRequest might be desired)
+   * @return generator for requests
+   */
+  def requestGenerator[R](matchingPath: Option[String])(implicit requestBuilder: RequestCreator[R]): Gen[R] = {
+    val operations = swaggerAPI.paths.filterKeys(path => matchingPath.isEmpty || matchingPath.contains(path))
+
+    for {
+      (path, methods) <- Gen.oneOf(operations.toSeq)
+      (method, operation) <- Gen.oneOf(methods.toSeq)
+      request <- operation.generateRequest(this, method, path)
+    } yield request
+  }
+
+  /**
+   * Create response verifier.
+   *
+   * @param method method of request
+   * @param path path of request
+   * @param responseExtractor implicit extractor for response instances
+   * @tparam R response class (depends on the web framework)
+   * @return
+   */
+  def responseVerifier[R](method: String, path: String)
+                         (implicit responseExtractor: ResponseExtractor[R]): Verifier[R] = {
+    swaggerAPI.paths.get(path).flatMap {
+      methods =>
+        methods.get(method.toUpperCase).map(verifierForOperation[R])
+    }.getOrElse(failingVerifier(s"No operation for method=$method path=$path"))
+  }
 
   /**
    * Add a self-defined string format.
@@ -98,12 +115,27 @@ case class SwaggerChecks(
    */
   def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
 
-  private def schemaVerifier(schemaObject: SchemaObject): Verifier[String] = new Verifier[String] {
+  private def verifierForSchema(expectedSchema: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {
       val tree = new ObjectMapper().readTree(value)
 
-      schemaObject.verify(SwaggerChecks.this, Nil, tree)
+      expectedSchema.verify(SwaggerChecks.this, Nil, tree)
     }
+  }
+
+  private def verifierForOperation[R](operation: Operation)
+                                     (implicit responseExtractor: ResponseExtractor[R]) = new Verifier[R] {
+    override def verify(value: R): VerifyResult = {
+      val status = responseExtractor.status(value)
+
+      operation.responses.get(status.toString).orElse(operation.responses.get("default"))
+        .map(_.verify(SwaggerChecks.this, responseExtractor.headers(value), responseExtractor.body(value)))
+        .getOrElse(VerifyResult.error(s"Invalid status=$status"))
+    }
+  }
+
+  private def failingVerifier[T](failure: String) = new Verifier[T] {
+    override def verify(value: T): VerifyResult = VerifyResult.error(failure)
   }
 }
 

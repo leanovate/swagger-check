@@ -2,24 +2,32 @@ package de.leanovate.swaggercheck.schema
 
 import java.net.URLEncoder
 
+import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
+import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import org.scalacheck.Gen
 
 import scala.collection.JavaConversions._
 
+@JsonDeserialize(builder = classOf[OperationBuilder])
 case class Operation(
-                      consumes: Option[Seq[String]],
-                      produces: Option[Seq[String]],
-                      parameters: Option[Seq[OperationParameter]],
-                      responses: Option[Map[String, OperationResponse]]
+                      consumes: Set[String],
+                      produces: Set[String],
+                      parameters: Seq[OperationParameter],
+                      responses: Map[String, OperationResponse]
                       ) {
-  def generateRequest[R](context: SwaggerChecks, method: String, path: String)(implicit requestCreator: RequestCreator[R]): Gen[R] = {
-    val builder = parameters.toSeq.flatten.foldLeft(RequestBuilder(method, path)) {
+
+  def withDefaults(defaultConsumes: Set[String], defaultProduces: Set[String]): Operation =
+    copy(consumes = consumes ++ defaultConsumes, produces = produces ++ defaultProduces)
+
+  def generateRequest[R](context: SwaggerChecks, method: String, path: String)
+                        (implicit requestCreator: RequestCreator[R]): Gen[R] = {
+    val builder = parameters.foldLeft(RequestBuilder(method, path)) {
       (result, parameter) =>
         parameter.applyTo(context, result)
-    }
+    }.withConsumes(consumes.toSeq).withProduces(produces.toSeq)
 
     builder.build()
   }
@@ -33,6 +41,18 @@ object Operation {
                             queryParamGens: Seq[Gen[Option[(String, String)]]] = Seq.empty,
                             headerGens: Seq[Gen[Option[(String, String)]]] = Seq.empty,
                             bodyGen: Gen[Option[JsonNode]] = Gen.const(None)) {
+
+    def withConsumes(consumes: Seq[String]): RequestBuilder =
+      if (consumes.isEmpty)
+        this
+      else
+        copy(headerGens = headerGens :+ Gen.oneOf(consumes).map(c => Some("Content-Type" -> c)))
+
+    def withProduces(produces: Seq[String]): RequestBuilder =
+      if (produces.isEmpty)
+        this
+      else
+        copy(headerGens = headerGens :+ Gen.oneOf(produces).map(p => Some("Accept" -> p)))
 
     def withPathParam(pathGen: Gen[Option[(String, String)]]): RequestBuilder =
       copy(pathParamGens = pathParamGens :+ pathGen)
@@ -71,4 +91,17 @@ object Operation {
       }
     }
   }
+}
+
+class OperationBuilder @JsonCreator()(
+                                       @JsonProperty("consumes") consumes: Option[Seq[String]],
+                                       @JsonProperty("produces") produces: Option[Seq[String]],
+                                       @JsonProperty("parameters") parameters: Option[Seq[OperationParameter]],
+                                       @JsonProperty("responses") responses: Option[Map[String, OperationResponse]]
+                                       ) {
+  def build(): Operation = Operation(
+    consumes.map(_.toSet).getOrElse(Set.empty),
+    produces.map(_.toSet).getOrElse(Set.empty),
+    parameters.getOrElse(Seq.empty),
+    responses.getOrElse(Map.empty))
 }
