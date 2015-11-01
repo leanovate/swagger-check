@@ -15,7 +15,7 @@ import de.leanovate.swaggercheck.ResponseExtractor
 case class SimpleResponse(
                            status: Int,
                            headers: Map[String, String],
-                           body: Option[String]
+                           body: String
                            )
 
 object SimpleResponse {
@@ -28,6 +28,6 @@ object SimpleResponse {
           name.toLowerCase -> value
       }
 
-    override def body(response: SimpleResponse): Option[String] = response.body
+    override def body(response: SimpleResponse): String = response.body
   }
 }

@@ -11,11 +11,13 @@ trait ResponseExtractor[R] {
 
   /**
    * Get the response headers.
+   *
+   * Header names are suppose to be extracted as lower case.
    */
   def headers(value: R): Map[String, String]
 
   /**
    * Get the response body.
    */
-  def body(value: R): Option[String]
+  def body(value: R): String
 }

@@ -11,11 +11,11 @@ case class OperationResponse(
                               schema: Option[SchemaObject],
                               headers: Seq[(String, SchemaObject)]
                               ) {
-  def verify(context: SwaggerChecks, requestHeader: Map[String, String], requestBody: Option[String]): VerifyResult = {
+  def verify(context: SwaggerChecks, requestHeader: Map[String, String], requestBody: String): VerifyResult = {
     val bodyVerify = schema.map {
       expected =>
-        requestBody.map(new ObjectMapper().readTree).map(expected.verify(context, Nil, _))
-          .getOrElse(VerifyResult.error("Response should have a body"))
+        val tree = new ObjectMapper().readTree(requestBody)
+        expected.verify(context, Nil, tree)
     }.getOrElse(VerifyResult.success)
 
     headers.foldLeft(bodyVerify) {
