@@ -9,7 +9,7 @@ object NumberFormats {
     override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(BigDecimal.decimal)
 
     override def verify(path: String, value: BigDecimal): VerifyResult = {
-      if (value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
+      if (value.isDecimalDouble && value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
         // We have to be somewhat lenient here, most implementation do not produce valid float decimals
         VerifyResult.success
       else {

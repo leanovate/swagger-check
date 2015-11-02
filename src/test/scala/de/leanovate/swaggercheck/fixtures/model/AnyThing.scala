@@ -17,7 +17,8 @@ case class AnyThing(
                      anInt32: Int,
                      anInt64: Long,
                      aFloat: Float,
-                     aDouble: Double
+                     aDouble: Double,
+                     aBoolean: Boolean
                      )
 
 object AnyThing {
@@ -34,5 +35,6 @@ object AnyThing {
     anInt64 <- Arbitrary.arbitrary[Long]
     aFloat <- Arbitrary.arbitrary[Float]
     aDouble <- Arbitrary.arbitrary[Double]
-  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble))
+    aBoolean <- Arbitrary.arbitrary[Boolean]
+  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble, aBoolean))
 }

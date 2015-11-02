@@ -118,6 +118,8 @@ definitions:
       aDouble:
         type: number
         format: double
+      aBoolean:
+        type: boolean
     required:
       - anUUID
       - anURL
@@ -129,6 +131,7 @@ definitions:
       - anInt64
       - aFloat
       - aDouble
+      - aBoolean
   ThingNode:
     type: object
     required:
