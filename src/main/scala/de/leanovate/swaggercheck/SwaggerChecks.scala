@@ -20,8 +20,8 @@ import org.scalacheck.Gen
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
                           stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
-                          integerFormats: Map[String, Format[Long]] = IntegerFormats.defaultFormats,
-                          numberFormats: Map[String, Format[Double]] = NumberFormats.defaultFormats,
+                          integerFormats: Map[String, Format[BigDecimal]] = IntegerFormats.defaultFormats,
+                          numberFormats: Map[String, Format[BigDecimal]] = NumberFormats.defaultFormats,
                           maxItems: Int = 10
                           ) {
   /**
@@ -94,13 +94,13 @@ case class SwaggerChecks(
   /**
    * Add a self-defined integer format.
    */
-  def withIntegerFormats(formats: (String, Format[Long])*) =
+  def withIntegerFormats(formats: (String, Format[BigDecimal])*) =
     copy(integerFormats = integerFormats ++ Map(formats: _*))
 
   /**
    * Add a self-defined number format.
    */
-  def withNumberFormats(formats: (String, Format[Double])*) =
+  def withNumberFormats(formats: (String, Format[BigDecimal])*) =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
 
   /**

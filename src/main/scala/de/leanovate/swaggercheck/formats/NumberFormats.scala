@@ -1,28 +1,34 @@
 package de.leanovate.swaggercheck.formats
 
 import de.leanovate.swaggercheck.VerifyResult
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 
 object NumberFormats {
 
-  object FloatNumber extends Format[Double] {
-    override def generate: Gen[Double] = Gen.choose(0, Float.MaxValue)
+  object FloatNumber extends Format[BigDecimal] {
+    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(BigDecimal.decimal)
 
-    override def verify(path: String, value: Double): VerifyResult =
-      if (value >= Float.MinValue && value <= Float.MaxValue)
+    override def verify(path: String, value: BigDecimal): VerifyResult = {
+      if (value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
+        // We have to be somewhat lenient here, most implementation do not produce valid float decimals
         VerifyResult.success
-      else
-        VerifyResult.error(s"$value is not an float: $path")
+      else {
+        val parsed = BigDecimal.decimal(value.toFloat)
+        VerifyResult.error(s"$value is not a float ($value != $parsed): $path")
+      }
+    }
   }
 
-  object DoubleNumber extends Format[Double] {
-    override def generate: Gen[Double] = Gen.choose(0, Double.MaxValue)
+  object DoubleNumber extends Format[BigDecimal] {
+    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Double].map(BigDecimal.decimal)
 
-    override def verify(path: String, value: Double): VerifyResult =
-      if (value >= Double.MinValue && value <= Double.MaxValue)
+    override def verify(path: String, value: BigDecimal): VerifyResult =
+      if (value.isDecimalDouble)
         VerifyResult.success
-      else
-        VerifyResult.error(s"$value is not an double: $path")
+      else {
+        val parsed = BigDecimal.decimal(value.toDouble)
+        VerifyResult.error(s"$value is not a double ($value != $parsed): $path")
+      }
   }
 
   val defaultFormats = Map(

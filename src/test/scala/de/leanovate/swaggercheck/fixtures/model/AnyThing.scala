@@ -29,7 +29,7 @@ object AnyThing {
     anURI <- Generators.uri
     anEmail <- Generators.email
     aDate <- Arbitrary.arbitrary[Int].map(diff => LocalDate.now().plus(diff, ChronoUnit.DAYS))
-    aDateTime <- Arbitrary.arbitrary[Long].map(diff => Instant.now().plus(diff, ChronoUnit.MILLIS))
+    aDateTime <- Arbitrary.arbitrary[Long].map(diff => Instant.now().plus(diff, ChronoUnit.NANOS))
     anInt32 <- Arbitrary.arbitrary[Int]
     anInt64 <- Arbitrary.arbitrary[Long]
     aFloat <- Arbitrary.arbitrary[Float]

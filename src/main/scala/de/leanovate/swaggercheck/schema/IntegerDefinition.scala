@@ -2,28 +2,28 @@ package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.databind.JsonNode
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 
 case class IntegerDefinition(
                               format: Option[String],
-                              minimum: Option[Long],
-                              maximum: Option[Long]
+                              minimum: Option[BigDecimal],
+                              maximum: Option[BigDecimal]
                               ) extends SchemaObject {
 
   import SchemaObject._
 
   override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {
-    val generator: Gen[Long] = format match {
+    val generator: Gen[BigInt] = format match {
       case Some(formatName) if ctx.integerFormats.contains(formatName) =>
-        ctx.integerFormats(formatName).generate
-      case _ => Gen.choose(minimum.getOrElse(Long.MinValue), maximum.getOrElse(Long.MaxValue))
+        ctx.integerFormats(formatName).generate.map(_.toBigInt())
+      case _ => Arbitrary.arbitrary[BigInt]
     }
-    generator.map(nodeFactory.numberNode)
+    generator.map(value => nodeFactory.numberNode(value.underlying()))
   }
 
   override def verify(ctx: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult = {
-    if (node.isNumber && node.canConvertToLong) {
-      val value = node.asLong()
+    if (node.isNumber) {
+      val value = node.decimalValue()
       if (minimum.exists(_ > value))
         VerifyResult.error(s"'$value' has to be greater than ${minimum.mkString}: ${path.mkString(".")}")
       else if (maximum.exists(_ < value))
