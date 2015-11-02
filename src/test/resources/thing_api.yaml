@@ -85,6 +85,50 @@ definitions:
         type: string
   SomeThing:
     type: object
+  AnyThing:
+    type: object
+    properties:
+      anUUID:
+        type: string
+        format: uuid
+      anURL:
+        type: string
+        format: url
+      anURI:
+        type: string
+        format: uri
+      anEmail:
+        type: string
+        format: email
+      aDate:
+        type: string
+        format: date
+      aDateTime:
+        type: string
+        format: date-time
+      anInt32:
+        type: integer
+        format: int32
+      anInt64:
+        type: integer
+        format: int64
+      aFloat:
+        type: number
+        format: float
+      aDouble:
+        type: number
+        format: double
+    required:
+      - anUUID
+      - anURL
+      - anURI
+      - anEmail
+      - aDate
+      - aDateTime
+      - anInt32
+      - anInt64
+      - aFloat
+      - aDouble
   ThingNode:
     type: object
     required:

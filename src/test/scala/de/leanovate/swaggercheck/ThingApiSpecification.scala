@@ -76,4 +76,20 @@ object ThingApiSpecification extends Properties("Thing API") {
     json =>
       Json.parse(json).validate[ThingNode].isSuccess
   }
+
+  property("AnyThing can be read") = forAll(swaggerChecks.jsonGenerator("AnyThing")) {
+    json =>
+      Json.parse(json).validate[AnyThing].isSuccess
+  }
+
+  property("AnyThing can be written") = {
+    val verifier = swaggerChecks.jsonVerifier("AnyThing")
+
+    forAll(Arbitrary.arbitrary[AnyThing]) {
+      anyThing : AnyThing =>
+        val json = Json.stringify(Json.toJson(anyThing))
+
+        verifier.verify(json)
+    }
+  }
 }

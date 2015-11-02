@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.formats
 
 import java.net.{URI, URL}
-import java.time.Instant
+import java.time.{LocalDate, Instant}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -58,9 +58,9 @@ object StringFormats {
 
   object DateString extends Format[String] {
     override def generate: Gen[String] = {
-      Gen.choose[Long](Long.MinValue, Long.MaxValue).map {
-        diff: Long =>
-          val instant = Instant.now().plus(diff, ChronoUnit.NANOS)
+      Gen.choose[Int](Int.MinValue, Int.MaxValue).map {
+        diff: Int =>
+          val instant = LocalDate.now().plus(diff, ChronoUnit.DAYS)
           DateTimeFormatter.ISO_DATE.format(instant)
       }
     }
