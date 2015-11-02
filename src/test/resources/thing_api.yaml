@@ -120,6 +120,12 @@ definitions:
         format: double
       aBoolean:
         type: boolean
+      anEnum:
+        type: string
+        enum:
+          - V1
+          - V2
+          - V3
     required:
       - anUUID
       - anURL
@@ -132,6 +138,7 @@ definitions:
       - aFloat
       - aDouble
       - aBoolean
+      - anEnum
   ThingNode:
     type: object
     required:

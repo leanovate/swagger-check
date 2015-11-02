@@ -3,7 +3,7 @@ package de.leanovate.swaggercheck
 import de.leanovate.swaggercheck.fixtures.model._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Arbitrary, Properties}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsSuccess, Json}
 
 object ThingApiSpecification extends Properties("Thing API") {
   val swaggerChecks = SwaggerChecks(getClass.getClassLoader.getResourceAsStream("thing_api.yaml"))
@@ -79,7 +79,9 @@ object ThingApiSpecification extends Properties("Thing API") {
 
   property("AnyThing can be read") = forAll(swaggerChecks.jsonGenerator("AnyThing")) {
     json =>
-      Json.parse(json).validate[AnyThing].isSuccess
+      val JsSuccess(anyThing,_) = Json.parse(json).validate[AnyThing]
+
+      anyThing.isValid()
   }
 
   property("AnyThing can be written") = {

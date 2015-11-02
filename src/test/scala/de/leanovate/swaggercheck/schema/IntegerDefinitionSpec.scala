@@ -16,5 +16,21 @@ class IntegerDefinitionSpec extends WordSpec with MustMatchers with MockitoSugar
       integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.booleanNode(false)).isSuccess mustBe false
       integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.textNode("")).isSuccess mustBe false
     }
+
+    "fail verify if less than minimum" in {
+      val mockContext = mock[SwaggerChecks]
+      val integerDefinition = IntegerDefinition(None, Some(10), None)
+
+      integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.numberNode(10)).isSuccess mustBe true
+      integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.numberNode(9)).isSuccess mustBe false
+    }
+
+    "fail verify if greater than maximum" in {
+      val mockContext = mock[SwaggerChecks]
+      val integerDefinition = IntegerDefinition(None, None, Some(20))
+
+      integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.numberNode(20)).isSuccess mustBe true
+      integerDefinition.verify(mockContext, Seq.empty, JsonNodeFactory.instance.numberNode(21)).isSuccess mustBe false
+    }
   }
 }

@@ -1,11 +1,15 @@
 package de.leanovate.swaggercheck.fixtures.model
 
+import java.net.{URI, URL}
 import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate}
+import java.util.UUID
 
 import de.leanovate.swaggercheck.Generators
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.libs.json.Json
+
+import scala.util.Try
 
 case class AnyThing(
                      anUUID: String,
@@ -18,8 +22,17 @@ case class AnyThing(
                      anInt64: Long,
                      aFloat: Float,
                      aDouble: Double,
-                     aBoolean: Boolean
-                     )
+                     aBoolean: Boolean,
+                     anEnum: String
+                     ) {
+  def isValid(): Boolean = {
+    Try {
+      UUID.fromString(anUUID)
+      new URL(anURL)
+      new URI(anURI)
+    }.isSuccess && Set("V1", "V2", "V3").contains(anEnum)
+  }
+}
 
 object AnyThing {
   implicit val jsonFormat = Json.format[AnyThing]
@@ -36,5 +49,6 @@ object AnyThing {
     aFloat <- Arbitrary.arbitrary[Float]
     aDouble <- Arbitrary.arbitrary[Double]
     aBoolean <- Arbitrary.arbitrary[Boolean]
-  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble, aBoolean))
+    anEnum <- Gen.oneOf("V1", "V2", "V3")
+  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble, aBoolean, anEnum))
 }
