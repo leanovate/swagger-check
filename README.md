@@ -33,7 +33,7 @@ As an additional party gimmic there is also ein generator to generate matches to
 Add the following to your `build.sbt`
 
 ```
-libraryDependencies += "de.leanovate" %% "swagger-check" % "0.12" % "test"
+libraryDependencies += "de.leanovate" %% "swagger-check" % "0.13" % "test"
 ```
 
 ## Examples
