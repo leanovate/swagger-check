@@ -8,4 +8,3 @@ jdk:
 sudo: false
 after_success:
   - pip install --user codecov && codecov
-  
