@@ -34,9 +34,9 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
       result.asInstanceOf[JsFormattedString].value mustEqual "one piece of string"
     }
 
-    "deserialize booleans to JsTrue or JsFalse" in {
-      mapper.readValue("true", classOf[JsValue]) mustEqual JsTrue
-      mapper.readValue("false", classOf[JsValue]) mustEqual JsFalse
+    "deserialize booleans to JsBoolean" in {
+      mapper.readValue("true", classOf[JsValue]) mustEqual JsBoolean(true)
+      mapper.readValue("false", classOf[JsValue]) mustEqual JsBoolean(false)
     }
 
     "deserialize arrays to JsArray" in {
@@ -46,7 +46,7 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
       result.asInstanceOf[JsArray].elements mustEqual Seq(
         JsInteger.fixed(1234),
         JsNumber.fixed(1234.5),
-        JsTrue,
+        JsBoolean(true),
         JsFormattedString("one piece of string")
       )
       result.asInstanceOf[JsArray].minSize mustEqual Some(4)
@@ -61,7 +61,7 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
       )
       result.asInstanceOf[JsObject].fields mustEqual Map(
         "one" -> JsInteger.fixed(1234),
-        "two" -> JsTrue,
+        "two" -> JsBoolean(true),
         "three" -> JsFormattedString("one piece of string")
       )
     }

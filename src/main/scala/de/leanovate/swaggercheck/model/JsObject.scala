@@ -1,5 +1,7 @@
 package de.leanovate.swaggercheck.model
 
+import com.fasterxml.jackson.core.JsonGenerator
+
 /**
   * Json object.
   *
@@ -9,7 +11,17 @@ package de.leanovate.swaggercheck.model
 case class JsObject(
                      required: Set[String],
                      fields: Map[String, JsValue]
-                   ) extends JsValue
+                   ) extends JsValue {
+  override def generate(json: JsonGenerator): Unit = {
+    json.writeStartObject()
+    fields.foreach {
+      case (key, value) =>
+        json.writeFieldName(key)
+        value.generate(json)
+    }
+    json.writeEndObject()
+  }
+}
 
 object JsObject {
   /**

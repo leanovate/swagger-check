@@ -28,8 +28,8 @@ class JsValueDeserializer extends JsonDeserializer[JsValue] {
       case JsonTokenId.ID_NUMBER_INT => (Some(JsInteger.fixed(jp.getBigIntegerValue)), current)
       case JsonTokenId.ID_NUMBER_FLOAT => (Some(JsNumber.fixed(jp.getDecimalValue)), current)
       case JsonTokenId.ID_STRING => (Some(JsFormattedString(jp.getText)), current)
-      case JsonTokenId.ID_TRUE => (Some(JsTrue), current)
-      case JsonTokenId.ID_FALSE => (Some(JsFalse), current)
+      case JsonTokenId.ID_TRUE => (Some(JsBoolean(true)), current)
+      case JsonTokenId.ID_FALSE => (Some(JsBoolean(false)), current)
       case JsonTokenId.ID_NULL => (Some(JsNull), current)
       case JsonTokenId.ID_START_ARRAY => (None, new ReadList() :: current)
       case JsonTokenId.ID_END_ARRAY => (current.headOption.map(_.asJsArray), current.tail)
@@ -51,7 +51,7 @@ class JsValueDeserializer extends JsonDeserializer[JsValue] {
         val toPass = optValue.map {
           v =>
             val head :: stack = next
-            (head.addValue(v)) :: stack
+            head.addValue(v) :: stack
         }.getOrElse(next)
 
         deserialize(jp, ctx, toPass)
@@ -99,7 +99,7 @@ object JsValueDeserializer {
     }
 
     override def setField(fieldName: String): Context = currentField match {
-      case Some(fieldName) =>
+      case Some(_) =>
         throw new RuntimeException("We should have been reading object, something got wrong (duplicate field name)")
       case _ =>
         currentField = Some(fieldName)

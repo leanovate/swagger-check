@@ -1,5 +1,9 @@
 package de.leanovate.swaggercheck.model
 
+import java.math.BigInteger
+
+import com.fasterxml.jackson.core.JsonGenerator
+
 /**
   * Json integer.
   *
@@ -9,7 +13,9 @@ package de.leanovate.swaggercheck.model
 case class JsInteger(
                       min: Option[BigInt],
                       value: BigInt
-                    ) extends JsValue
+                    ) extends JsValue {
+  override def generate(json: JsonGenerator): Unit = json.writeNumber(value.underlying())
+}
 
 object JsInteger {
   /**

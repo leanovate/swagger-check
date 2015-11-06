@@ -1,5 +1,7 @@
 package de.leanovate.swaggercheck.model
 
+import com.fasterxml.jackson.core.JsonGenerator
+
 /**
   * A json string that is formatted according to some rule.
   *
@@ -7,4 +9,6 @@ package de.leanovate.swaggercheck.model
   */
 case class JsFormattedString(
                               value: String
-                            ) extends JsValue
+                            ) extends JsValue {
+  override def generate(json: JsonGenerator): Unit = json.writeString(value)
+}
