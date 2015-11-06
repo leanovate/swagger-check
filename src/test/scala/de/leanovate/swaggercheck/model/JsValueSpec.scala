@@ -3,16 +3,14 @@ package de.leanovate.swaggercheck.model
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{MustMatchers, WordSpec}
 
-class JsValueDeserializerSpec extends WordSpec with MustMatchers {
-  val mapper = new ObjectMapper()
-
+class JsValueSpec extends WordSpec with MustMatchers {
   "JsValueDeserializer" should {
     "deserialize null to JsNull" in {
-      mapper.readValue("null", classOf[JsValue]) mustEqual JsNull
+      JsValue.parse("null") mustEqual JsNull
     }
 
     "deserialize integers to JsInteger" in {
-      val result = mapper.readValue("1234", classOf[JsValue])
+      val result = JsValue.parse("1234")
 
       result mustBe an[JsInteger]
       result.asInstanceOf[JsInteger].value mustEqual BigInt(1234)
@@ -20,7 +18,7 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
     }
 
     "deserialize floats to JsNumber" in {
-      val result = mapper.readValue("1234.5", classOf[JsValue])
+      val result = JsValue.parse("1234.5")
 
       result mustBe an[JsNumber]
       result.asInstanceOf[JsNumber].value mustEqual BigDecimal(1234.5)
@@ -28,19 +26,19 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
     }
 
     "deserialize strings to JsFormatterString" in {
-      val result = mapper.readValue( """"one piece of string"""", classOf[JsValue])
+      val result = JsValue.parse( """"one piece of string"""")
 
       result mustBe an[JsFormattedString]
       result.asInstanceOf[JsFormattedString].value mustEqual "one piece of string"
     }
 
     "deserialize booleans to JsBoolean" in {
-      mapper.readValue("true", classOf[JsValue]) mustEqual JsBoolean(true)
-      mapper.readValue("false", classOf[JsValue]) mustEqual JsBoolean(false)
+      JsValue.parse("true") mustEqual JsBoolean(true)
+      JsValue.parse("false") mustEqual JsBoolean(false)
     }
 
     "deserialize arrays to JsArray" in {
-      val result = mapper.readValue( """[1234, 1234.5, true, "one piece of string"]""", classOf[JsValue])
+      val result = JsValue.parse( """[1234, 1234.5, true, "one piece of string"]""")
 
       result mustBe an[JsArray]
       result.asInstanceOf[JsArray].elements mustEqual Seq(
@@ -53,7 +51,7 @@ class JsValueDeserializerSpec extends WordSpec with MustMatchers {
     }
 
     "deserialize objects to JsObject" in {
-      val result = mapper.readValue( """{"one": 1234, "two": true, "three": "one piece of string"}""", classOf[JsValue])
+      val result = JsValue.parse( """{"one": 1234, "two": true, "three": "one piece of string"}""")
 
       result mustBe an[JsObject]
       result.asInstanceOf[JsObject].required mustEqual Set(
