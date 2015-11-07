@@ -12,5 +12,21 @@ class JsIntegerSpec extends WordSpec with MustMatchers {
 
       shrink mustBe empty
     }
+
+    "not shrink beneath min" in {
+      val original = JsInteger(Some(1234), None, 1234)
+
+      val shrink = Shrink.shrink(original)
+
+      shrink mustBe empty
+    }
+
+    "not shrink over max" in {
+      val original = JsInteger(Some(-1234), None, -1234)
+
+      val shrink = Shrink.shrink(original)
+
+      shrink mustBe empty
+    }
   }
 }

@@ -20,12 +20,12 @@ case class JsInteger(
 
   override def shrink: Stream[JsInteger] = {
     def halfs(n: BigInt): Stream[BigInt] =
-      if (n == BigInt(0) || min.exists(_ > n) || max.exists(_ < n))
+      if (n == BigInt(0) || min.exists(_ >= n) || max.exists(_ <= n))
         empty
       else
         cons(n, halfs(n / 2))
 
-    if (value == BigInt(0) || min.exists(_ > value) || max.exists(_ < value))
+    if (value == BigInt(0) || min.exists(_ >= value) || max.exists(_ <= value))
       empty
     else {
       val ns = halfs(value / 2).map(value - _)
