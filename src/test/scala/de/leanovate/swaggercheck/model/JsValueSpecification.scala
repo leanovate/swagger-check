@@ -13,6 +13,7 @@ object JsValueSpecification extends Properties("JsValueDeserializer") {
       val jsValue = JsValue.parse(json)
 
       jsValue.isInstanceOf[JsObject] && jsValue.minified == json
+      JsValue.parse(jsValue.prettyfied) == jsValue
   }
 
   property("arbitraryArray") = forAllNoShrink(SchemaObject.arbitraryArray(swaggerChecks).map(_.toString)) {
@@ -20,5 +21,6 @@ object JsValueSpecification extends Properties("JsValueDeserializer") {
       val jsValue = JsValue.parse(json)
 
       jsValue.isInstanceOf[JsArray] && jsValue.minified == json
+      JsValue.parse(jsValue.prettyfied) == jsValue
   }
 }

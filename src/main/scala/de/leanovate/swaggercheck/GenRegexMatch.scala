@@ -135,9 +135,9 @@ object GenRegexMatch {
 
   val alphaSet : Set[Char] = anySet.filter(_.isLetter)
 
-  val alphaNumSet : Set[Char] = anySet.filter(_.isLetterOrDigit)
+  val alphaNumSet : Set[Char] = anySet.filter(ch => ch.isLetterOrDigit || ch == '_')
 
-  val nonAlphaNumSet : Set[Char] = anySet.filter(!_.isLetterOrDigit)
+  val nonAlphaNumSet : Set[Char] = anySet.filter(ch => !ch.isLetterOrDigit && ch != '_')
 
   val whiteSpaceSet : Set[Char] = Set(' ', '\t')
 

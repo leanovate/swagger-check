@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck
 
-import org.scalacheck.Prop.forAll
+import org.scalacheck.Prop.forAllNoShrink
 import org.scalacheck.Properties
 
 object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
@@ -14,17 +14,19 @@ object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
 
   property("URL like match") = checkRegex("(https?|ftp)://[^\\s/$\\.?#].[^\\s]*")
 
+  property("Escapes") = checkRegex("\\d\\D\\s\\S\\w\\W")
+
   property("Strange 1") = checkRegex("[1-v5P-d sv-wO-jdLaEIG-a4-duK4-fj-rt-yh1-s;M8EV-rE-w,:\\&\\&]+[oR2];?")
 
-  property("Any regex") = forAll(Generators.regex) {
+  property("Any regex") = forAllNoShrink(Generators.regex) {
     regex =>
       checkRegex(regex)
   }
 
-  def checkRegex(regex: String) = forAll(Generators.regexMatch(regex)) {
+  def checkRegex(regex: String) = forAllNoShrink(Generators.regexMatch(regex)) {
     (str: String) =>
       val matches = regex.r.findFirstIn(str)
 
-      matches.exists(_ == str)
+      matches.contains(str)
   }
 }
