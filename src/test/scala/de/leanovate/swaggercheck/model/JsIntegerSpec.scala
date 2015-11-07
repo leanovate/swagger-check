@@ -5,17 +5,12 @@ import org.scalatest.{MustMatchers, WordSpec}
 
 class JsIntegerSpec extends WordSpec with MustMatchers {
   "JsInteger" should {
-    "shrink without min" in {
-      val original = JsInteger(None, 12345678)
+    "not shrink 0" in {
+      val original = JsInteger(None, None, 0)
 
       val shrink = Shrink.shrink(original)
 
-      shrink must not be empty
-      shrink.foreach {
-        value =>
-          value.min mustBe empty
-          value.value must be < BigInt(12345678)
-      }
+      shrink mustBe empty
     }
   }
 }

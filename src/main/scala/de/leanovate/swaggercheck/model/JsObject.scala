@@ -39,7 +39,7 @@ case class JsObject(
     json.writeEndObject()
   }
 
-  override def shrink: Stream[JsValue] = shrinkOne(fields)
+  override def shrink: Stream[JsObject] = shrinkOne(fields)
 
   private def shrinkOne(remaining: Map[String, JsValue]): Stream[JsObject] =
     if (remaining.isEmpty)
@@ -60,4 +60,6 @@ object JsObject {
     */
   def fixed(fields: Seq[(String, JsValue)]): JsObject =
     JsObject(fields.map(_._1).toSet, Some(fields.map(_._1)), fields.toMap)
+
+  implicit lazy val shrinkJsValue: Shrink[JsObject] = Shrink[JsObject](_.shrink)
 }
