@@ -3,10 +3,10 @@ package de.leanovate.swaggercheck.model
 import org.scalacheck.Shrink
 import org.scalatest.{MustMatchers, WordSpec}
 
-class JsBooleanSpec extends WordSpec with MustMatchers {
-  "JsBoolean" should {
+class CheckJsFormattedStringSpec extends WordSpec with MustMatchers {
+  "JsFormattedString" should {
     "not shrink" in {
-      val original = JsBoolean(true)
+      val original = CheckJsFormattedString("0123456789abcdefghijklmnopqrstuvxyz")
 
       val shrink = Shrink.shrink(original)
 

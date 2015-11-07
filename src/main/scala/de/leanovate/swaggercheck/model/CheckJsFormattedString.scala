@@ -7,10 +7,10 @@ import com.fasterxml.jackson.core.JsonGenerator
   *
   * Formatted values will not shrink.
   */
-case class JsFormattedString(
+case class CheckJsFormattedString(
                               value: String
-                            ) extends JsValue {
+                            ) extends CheckJsValue {
   override def generate(json: JsonGenerator): Unit = json.writeString(value)
 
-  override def shrink: Stream[JsFormattedString] = Stream.empty
+  override def shrink: Stream[CheckJsFormattedString] = Stream.empty
 }

@@ -3,7 +3,6 @@ package de.leanovate.swaggercheck.model
 import com.fasterxml.jackson.core.JsonGenerator
 import org.scalacheck.Shrink
 
-import scala.annotation.tailrec
 import scala.collection.immutable.Stream._
 
 /**
@@ -13,11 +12,11 @@ import scala.collection.immutable.Stream._
   * @param order optional order of fields
   * @param fields the fields of the object
   */
-case class JsObject(
+case class CheckJsObject(
                      required: Set[String],
                      order: Option[Seq[String]],
-                     fields: Map[String, JsValue]
-                   ) extends JsValue {
+                     fields: Map[String, CheckJsValue]
+                   ) extends CheckJsValue {
   override def generate(json: JsonGenerator): Unit = {
     json.writeStartObject()
     order match {
@@ -39,27 +38,27 @@ case class JsObject(
     json.writeEndObject()
   }
 
-  override def shrink: Stream[JsObject] = shrinkOne(fields)
+  override def shrink: Stream[CheckJsObject] = shrinkOne(fields)
 
-  private def shrinkOne(remaining: Map[String, JsValue]): Stream[JsObject] =
+  private def shrinkOne(remaining: Map[String, CheckJsValue]): Stream[CheckJsObject] =
     if (remaining.isEmpty)
       empty
     else {
       val head = remaining.head
       val tail = remaining.tail
 
-      val headShrink = Shrink.shrink[JsValue](head._2).map(v => JsObject(required, order, fields.updated(head._1, v)))
+      val headShrink = Shrink.shrink[CheckJsValue](head._2).map(v => CheckJsObject(required, order, fields.updated(head._1, v)))
 
       headShrink.append(shrinkOne(tail))
     }
 }
 
-object JsObject {
+object CheckJsObject {
   /**
     * Create a fixed json object that will not shrink.
     */
-  def fixed(fields: Seq[(String, JsValue)]): JsObject =
-    JsObject(fields.map(_._1).toSet, Some(fields.map(_._1)), fields.toMap)
+  def fixed(fields: Seq[(String, CheckJsValue)]): CheckJsObject =
+    CheckJsObject(fields.map(_._1).toSet, Some(fields.map(_._1)), fields.toMap)
 
-  implicit lazy val shrinkJsValue: Shrink[JsObject] = Shrink[JsObject](_.shrink)
+  implicit lazy val shrinkJsValue: Shrink[CheckJsObject] = Shrink[CheckJsObject](_.shrink)
 }

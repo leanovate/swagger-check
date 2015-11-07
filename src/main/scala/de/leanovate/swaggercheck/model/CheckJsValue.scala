@@ -9,10 +9,10 @@ import scala.annotation.{switch, tailrec}
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
-trait JsValue {
-  import JsValue._
+trait CheckJsValue {
+  import CheckJsValue._
 
-  def shrink: Stream[JsValue]
+  def shrink: Stream[CheckJsValue]
 
   def generate(json: JsonGenerator): Unit
 
@@ -43,14 +43,14 @@ trait JsValue {
   override def toString = minified
 }
 
-object JsValue {
+object CheckJsValue {
   val jsonFactory = new JsonFactory()
 
   def parse(json: String) = deserialize(jsonFactory.createParser(json), EmptyState)
 
-  implicit lazy val shrinkJsValue: Shrink[JsValue] = Shrink[JsValue](_.shrink)
+  implicit lazy val shrinkJsValue: Shrink[CheckJsValue] = Shrink[CheckJsValue](_.shrink)
 
-  implicit def prettyJsValue(jsValue: JsValue): Pretty = Pretty {
+  implicit def prettyJsValue(jsValue: CheckJsValue): Pretty = Pretty {
     p =>
       if (p.verbosity == 0)
         jsValue.minified
@@ -59,18 +59,18 @@ object JsValue {
   }
 
   @tailrec
-  private def deserialize(jp: JsonParser, current: State): JsValue = {
+  private def deserialize(jp: JsonParser, current: State): CheckJsValue = {
     if (jp.getCurrentToken == null) {
       jp.nextToken()
     }
 
     val (optValue, next) = (jp.getCurrentToken.id(): @switch) match {
-      case JsonTokenId.ID_NUMBER_INT => (Some(JsInteger.fixed(jp.getBigIntegerValue)), current)
-      case JsonTokenId.ID_NUMBER_FLOAT => (Some(JsNumber.fixed(jp.getDecimalValue)), current)
-      case JsonTokenId.ID_STRING => (Some(JsFormattedString(jp.getText)), current)
-      case JsonTokenId.ID_TRUE => (Some(JsBoolean(true)), current)
-      case JsonTokenId.ID_FALSE => (Some(JsBoolean(false)), current)
-      case JsonTokenId.ID_NULL => (Some(JsNull), current)
+      case JsonTokenId.ID_NUMBER_INT => (Some(CheckJsInteger.fixed(jp.getBigIntegerValue)), current)
+      case JsonTokenId.ID_NUMBER_FLOAT => (Some(CheckJsNumber.fixed(jp.getDecimalValue)), current)
+      case JsonTokenId.ID_STRING => (Some(CheckJsFormattedString(jp.getText)), current)
+      case JsonTokenId.ID_TRUE => (Some(CheckJsBoolean(true)), current)
+      case JsonTokenId.ID_FALSE => (Some(CheckJsBoolean(false)), current)
+      case JsonTokenId.ID_NULL => (Some(CheckJsNull), current)
       case JsonTokenId.ID_START_ARRAY => (None, current.startArray())
       case JsonTokenId.ID_END_ARRAY => (Some(current.asJsArray), current.parent)
       case JsonTokenId.ID_START_OBJECT => (None, current.startObject())
@@ -95,17 +95,17 @@ object JsValue {
 
     def isEmpty: Boolean
 
-    def addValue(value: JsValue): State
+    def addValue(value: CheckJsValue): State
 
     def setField(fieldName: String): State = {
       throw new RuntimeException("We should have been reading object, something got wrong")
     }
 
-    def asJsArray: JsArray = {
+    def asJsArray: CheckJsArray = {
       throw new RuntimeException("We should have been reading list, something got wrong")
     }
 
-    def asJsObject: JsObject = {
+    def asJsObject: CheckJsObject = {
       throw new RuntimeException("We should have been reading object, something got wrong")
     }
 
@@ -119,28 +119,28 @@ object JsValue {
       throw new RuntimeException("We should have been value, something got wrong")
     }
 
-    override def addValue(value: JsValue): State = {
+    override def addValue(value: CheckJsValue): State = {
       throw new RuntimeException("We should have been value, something got wrong")
     }
 
     override val isEmpty: Boolean = true
   }
 
-  class InArrayState(val parent: State, content: ListBuffer[JsValue] = ListBuffer.empty) extends State {
-    override def addValue(value: JsValue): State = {
+  class InArrayState(val parent: State, content: ListBuffer[CheckJsValue] = ListBuffer.empty) extends State {
+    override def addValue(value: CheckJsValue): State = {
       content.append(value)
       this
     }
 
-    override def asJsArray: JsArray = JsArray.fixed(content.toSeq)
+    override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.toSeq)
 
     override val isEmpty: Boolean = false
   }
 
-  class InObjectState(val parent: State, content: ListBuffer[(String, JsValue)] = ListBuffer.empty) extends State {
+  class InObjectState(val parent: State, content: ListBuffer[(String, CheckJsValue)] = ListBuffer.empty) extends State {
     var currentField: Option[String] = None
 
-    override def addValue(value: JsValue): State = currentField match {
+    override def addValue(value: CheckJsValue): State = currentField match {
       case Some(fieldName) =>
         content.append(fieldName -> value)
         currentField = None
@@ -157,7 +157,7 @@ object JsValue {
         this
     }
 
-    override def asJsObject: JsObject = JsObject.fixed(content)
+    override def asJsObject: CheckJsObject = CheckJsObject.fixed(content)
 
     override val isEmpty: Boolean = false
   }

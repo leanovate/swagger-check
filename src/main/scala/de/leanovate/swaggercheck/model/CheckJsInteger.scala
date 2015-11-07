@@ -11,14 +11,14 @@ import scala.collection.immutable.Stream._
   * @param min Optional minimum for shrinking
   * @param value the integer value
   */
-case class JsInteger(
-                      min: Option[BigInt],
-                      max: Option[BigInt],
-                      value: BigInt
-                    ) extends JsValue {
+case class CheckJsInteger(
+                           min: Option[BigInt],
+                           max: Option[BigInt],
+                           value: BigInt
+                         ) extends CheckJsValue {
   override def generate(json: JsonGenerator): Unit = json.writeNumber(value.underlying())
 
-  override def shrink: Stream[JsInteger] = {
+  override def shrink: Stream[CheckJsInteger] = {
     def halfs(n: BigInt): Stream[BigInt] =
       if (n == BigInt(0) || min.exists(_ >= n) || max.exists(_ <= n))
         empty
@@ -30,16 +30,16 @@ case class JsInteger(
     else {
       val ns = halfs(value / 2).map(value - _)
       val start = min.filter(_ > 0).orElse(max.filter(_ < 0)).getOrElse(BigInt(0))
-      cons(start, ns).map(JsInteger(min, max, _))
+      cons(start, ns).map(CheckJsInteger(min, max, _))
     }
   }
 }
 
-object JsInteger {
+object CheckJsInteger {
   /**
     * Get a fixed json integer that will not shrink.
     */
-  def fixed(value: BigInt) = JsInteger(Some(value), Some(value), value)
+  def fixed(value: BigInt) = CheckJsInteger(Some(value), Some(value), value)
 
-  implicit lazy val shrinkJsValue: Shrink[JsInteger] = Shrink[JsInteger](_.shrink)
+  implicit lazy val shrinkJsValue: Shrink[CheckJsInteger] = Shrink[CheckJsInteger](_.shrink)
 }

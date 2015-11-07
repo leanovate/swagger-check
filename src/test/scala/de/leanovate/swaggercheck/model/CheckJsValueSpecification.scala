@@ -5,22 +5,22 @@ import de.leanovate.swaggercheck.schema.{SchemaObject, SwaggerAPI}
 import org.scalacheck.Prop._
 import org.scalacheck.Properties
 
-object JsValueSpecification extends Properties("JsValueDeserializer") {
+object CheckJsValueSpecification extends Properties("JsValueDeserializer") {
   val swaggerChecks = SwaggerChecks(SwaggerAPI(None, Map.empty, Map.empty))
 
   property("arbitraryObject") = forAllNoShrink(SchemaObject.arbitraryObj(swaggerChecks).map(_.toString)) {
     json: String =>
-      val jsValue = JsValue.parse(json)
+      val jsValue = CheckJsValue.parse(json)
 
-      jsValue.isInstanceOf[JsObject] && jsValue.minified == json
-      JsValue.parse(jsValue.prettyfied) == jsValue
+      jsValue.isInstanceOf[CheckJsObject] && jsValue.minified == json
+      CheckJsValue.parse(jsValue.prettyfied) == jsValue
   }
 
   property("arbitraryArray") = forAllNoShrink(SchemaObject.arbitraryArray(swaggerChecks).map(_.toString)) {
     json: String =>
-      val jsValue = JsValue.parse(json)
+      val jsValue = CheckJsValue.parse(json)
 
-      jsValue.isInstanceOf[JsArray] && jsValue.minified == json
-      JsValue.parse(jsValue.prettyfied) == jsValue
+      jsValue.isInstanceOf[CheckJsArray] && jsValue.minified == json
+      CheckJsValue.parse(jsValue.prettyfied) == jsValue
   }
 }

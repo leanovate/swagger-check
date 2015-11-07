@@ -2,8 +2,8 @@ package de.leanovate.swaggercheck.model
 
 import com.fasterxml.jackson.core.JsonGenerator
 
-case object JsNull extends JsValue {
+case object CheckJsNull extends CheckJsValue {
   override def generate(json: JsonGenerator): Unit = json.writeNull()
 
-  override def shrink: Stream[JsValue] = Stream.empty
+  override def shrink: Stream[CheckJsValue] = Stream.empty
 }

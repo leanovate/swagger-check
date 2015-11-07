@@ -3,10 +3,10 @@ package de.leanovate.swaggercheck.model
 import org.scalacheck.Shrink
 import org.scalatest.{MustMatchers, WordSpec}
 
-class JsUnformattedStringSpec extends WordSpec with MustMatchers {
+class CheckJsUnformattedStringSpec extends WordSpec with MustMatchers {
   "JsUnformattedString" should {
     "shrink without min length" in {
-      val original = JsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 
@@ -20,7 +20,7 @@ class JsUnformattedStringSpec extends WordSpec with MustMatchers {
     }
 
     "shrink with min length" in {
-      val original = JsUnformattedString(Some(30), "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsUnformattedString(Some(30), "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 
@@ -35,7 +35,7 @@ class JsUnformattedStringSpec extends WordSpec with MustMatchers {
     }
 
     "not shrink beneath min length" in {
-      val original = JsUnformattedString(Some(36), "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsUnformattedString(Some(36), "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 

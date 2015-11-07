@@ -3,10 +3,10 @@ package de.leanovate.swaggercheck.model
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Properties, Shrink}
 
-object JsIntegerSpecification extends Properties("JsInteger") {
+object CheckJsIntegerSpecification extends Properties("JsInteger") {
   property("shrink no min/max") = forAll(Arbitrary.arbitrary[BigInt].suchThat(_ != 0)) {
     value =>
-      val original = JsInteger(None, None, value)
+      val original = CheckJsInteger(None, None, value)
 
       val shrink = Shrink.shrink(original)
 
@@ -24,7 +24,7 @@ object JsIntegerSpecification extends Properties("JsInteger") {
     Arbitrary.arbitrary[BigInt].suchThat(_ != 0).map(_.abs)) {
     (min, diff) =>
       val value = min + diff
-      val original = JsInteger(Some(min), None, value)
+      val original = CheckJsInteger(Some(min), None, value)
 
       val shrink = Shrink.shrink(original)
 
@@ -45,7 +45,7 @@ object JsIntegerSpecification extends Properties("JsInteger") {
     Arbitrary.arbitrary[BigInt].suchThat(_ != 0).map(_.abs)) {
     (max, diff) =>
       val value = max - diff
-      val original = JsInteger(None, Some(max), value)
+      val original = CheckJsInteger(None, Some(max), value)
 
       val shrink = Shrink.shrink(original)
 
@@ -70,7 +70,7 @@ object JsIntegerSpecification extends Properties("JsInteger") {
     (min, diff1, diff2) =>
       val max = min + diff1 + diff2
       val value = min + diff1
-      val original = JsInteger(Some(min), Some(max), value)
+      val original = CheckJsInteger(Some(min), Some(max), value)
 
       val shrink = Shrink.shrink(original)
 
