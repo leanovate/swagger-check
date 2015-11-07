@@ -10,11 +10,14 @@ import com.fasterxml.jackson.core.JsonGenerator
   */
 case class JsNumber(
                      min: Option[BigDecimal],
+                     max: Option[BigDecimal],
                      value: BigDecimal
                    ) extends JsValue {
   override def generate(json: JsonGenerator): Unit = json.writeNumber(value.underlying())
+
+  override def shrink: Stream[JsValue] = Stream.empty
 }
 
 object JsNumber {
-  def fixed(value: BigDecimal) = JsNumber(Some(value),value)
+  def fixed(value: BigDecimal) = JsNumber(Some(value), Some(value), value)
 }

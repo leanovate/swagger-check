@@ -11,4 +11,6 @@ case class JsFormattedString(
                               value: String
                             ) extends JsValue {
   override def generate(json: JsonGenerator): Unit = json.writeString(value)
+
+  override def shrink: Stream[JsFormattedString] = Stream.empty
 }

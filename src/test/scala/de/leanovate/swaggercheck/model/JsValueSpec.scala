@@ -1,6 +1,5 @@
 package de.leanovate.swaggercheck.model
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.scalatest.{MustMatchers, WordSpec}
 
 class JsValueSpec extends WordSpec with MustMatchers {

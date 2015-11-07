@@ -1,6 +1,10 @@
 package de.leanovate.swaggercheck.model
 
 import com.fasterxml.jackson.core.JsonGenerator
+import org.scalacheck.Shrink
+
+import scala.annotation.tailrec
+import scala.collection.immutable.Stream._
 
 /**
   * Json object.
@@ -19,8 +23,11 @@ case class JsObject(
     order match {
       case Some(fieldNames) => fieldNames.foreach {
         name =>
-          json.writeFieldName(name)
-          fields(name).generate(json)
+          fields.get(name).foreach {
+            value =>
+              json.writeFieldName(name)
+              value.generate(json)
+          }
       }
       case None =>
         fields.foreach {
@@ -31,6 +38,20 @@ case class JsObject(
     }
     json.writeEndObject()
   }
+
+  override def shrink: Stream[JsValue] = shrinkOne(fields)
+
+  private def shrinkOne(remaining: Map[String, JsValue]): Stream[JsObject] =
+    if (remaining.isEmpty)
+      empty
+    else {
+      val head = remaining.head
+      val tail = remaining.tail
+
+      val headShrink = Shrink.shrink[JsValue](head._2).map(v => JsObject(required, order, fields.updated(head._1, v)))
+
+      headShrink.append(shrinkOne(tail))
+    }
 }
 
 object JsObject {

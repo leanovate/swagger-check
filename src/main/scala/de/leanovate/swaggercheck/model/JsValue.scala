@@ -2,6 +2,7 @@ package de.leanovate.swaggercheck.model
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.core.{JsonFactory, JsonGenerator, JsonParser, JsonTokenId}
+import org.scalacheck.Shrink
 import org.scalacheck.util.Pretty
 
 import scala.annotation.{switch, tailrec}
@@ -9,8 +10,9 @@ import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
 trait JsValue {
-
   import JsValue._
+
+  def shrink: Stream[JsValue]
 
   def generate(json: JsonGenerator): Unit
 
@@ -45,6 +47,8 @@ object JsValue {
   val jsonFactory = new JsonFactory()
 
   def parse(json: String) = deserialize(jsonFactory.createParser(json), EmptyState)
+
+  implicit lazy val shrinkJsValue: Shrink[JsValue] = Shrink[JsValue](_.shrink)
 
   implicit def prettyJsValue(jsValue: JsValue): Pretty = Pretty {
     p =>
@@ -157,5 +161,4 @@ object JsValue {
 
     override val isEmpty: Boolean = false
   }
-
 }

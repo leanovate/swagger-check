@@ -1,6 +1,7 @@
 package de.leanovate.swaggercheck.model
 
 import com.fasterxml.jackson.core.JsonGenerator
+import org.scalacheck.Shrink
 
 /**
   * Json array.
@@ -17,6 +18,12 @@ case class JsArray(
     elements.foreach(_.generate(json))
     json.writeEndArray()
   }
+
+  override def shrink: Stream[JsArray] = minSize match {
+    case Some(size) if elements.size <= size => Stream.empty
+    case Some(size) => Shrink.shrink(elements).filter(_.size >= size).map(JsArray(minSize, _))
+    case None => Shrink.shrink(elements).map(JsArray(minSize, _))
+  }
 }
 
 object JsArray {
@@ -24,4 +31,6 @@ object JsArray {
     * Get a fixed json array that will not shrink.
     */
   def fixed(elements: Seq[JsValue]) = JsArray(Some(elements.size), elements)
+
+  implicit lazy val shrinkJsValue: Shrink[JsArray] = Shrink[JsArray](_.shrink)
 }
