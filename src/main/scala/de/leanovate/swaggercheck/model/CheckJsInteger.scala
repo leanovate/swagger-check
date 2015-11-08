@@ -16,6 +16,8 @@ case class CheckJsInteger(
                            max: Option[BigInt],
                            value: BigInt
                          ) extends CheckJsValue {
+  override def asText(default: String): String = value.toString
+
   override def generate(json: JsonGenerator): Unit = json.writeNumber(value.underlying())
 
   override def shrink: Stream[CheckJsInteger] = {

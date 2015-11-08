@@ -13,6 +13,8 @@ case class CheckJsNumber(
                           max: Option[BigDecimal],
                           value: BigDecimal
                         ) extends CheckJsValue {
+  override def asText(default: String): String = value.toString
+
   override def generate(json: JsonGenerator): Unit = json.writeNumber(value.underlying())
 
   override def shrink: Stream[CheckJsValue] = Stream.empty

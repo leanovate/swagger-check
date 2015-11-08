@@ -8,11 +8,11 @@ class CheckJsObjectSpec extends WordSpec with MustMatchers {
     "shrink without order or required" in {
       val original = CheckJsObject(Set.empty, None, Map(
         "one" -> CheckJsInteger(None, None, 1000000),
-        "two" -> CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz"),
+        "two" -> CheckJsString.unformatted("0123456789abcdefghijklmnopqrstuvwxyz"),
         "three" -> CheckJsBoolean(true),
         "four" -> CheckJsBoolean(false),
         "five" ->CheckJsInteger(None, None, 10000),
-        "six" -> CheckJsUnformattedString(None, "zyxwvutsrqponmlkjihgfedcba9876543210")
+        "six" -> CheckJsString.unformatted("zyxwvutsrqponmlkjihgfedcba9876543210")
       ))
       val originalJson = original.minified
 
@@ -29,11 +29,11 @@ class CheckJsObjectSpec extends WordSpec with MustMatchers {
     "only shrink values if all required" in {
       val original = CheckJsObject(Set("one", "two", "three", "four", "five", "six"), None, Map(
         "one" -> CheckJsInteger(None, None, 1000000),
-        "two" -> CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz"),
+        "two" -> CheckJsString.unformatted("0123456789abcdefghijklmnopqrstuvwxyz"),
         "three" -> CheckJsBoolean(true),
         "four" -> CheckJsBoolean(false),
         "five" ->CheckJsInteger(None, None, 10000),
-        "six" -> CheckJsUnformattedString(None, "zyxwvutsrqponmlkjihgfedcba9876543210")
+        "six" -> CheckJsString.unformatted("zyxwvutsrqponmlkjihgfedcba9876543210")
       ))
       val originalJson = original.minified
 

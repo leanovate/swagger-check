@@ -27,6 +27,8 @@ case class CheckJsArray(
 }
 
 object CheckJsArray {
+  def empty = CheckJsArray(None, Seq.empty)
+
   /**
     * Get a fixed json array that will not shrink.
     */

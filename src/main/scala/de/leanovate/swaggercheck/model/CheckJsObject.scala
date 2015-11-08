@@ -73,6 +73,8 @@ case class CheckJsObject(
 }
 
 object CheckJsObject {
+  def empty: CheckJsObject = CheckJsObject(Set.empty, None, Map.empty)
+
   /**
     * Create a fixed json object that will not shrink.
     */

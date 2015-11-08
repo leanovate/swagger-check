@@ -5,6 +5,7 @@ import java.net.URLEncoder
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import de.leanovate.swaggercheck.model.CheckJsValue
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
 import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import org.scalacheck.Gen
@@ -40,7 +41,7 @@ object Operation {
                             pathParamGens: Seq[Gen[Option[(String, String)]]] = Seq.empty,
                             queryParamGens: Seq[Gen[Option[(String, String)]]] = Seq.empty,
                             headerGens: Seq[Gen[Option[(String, String)]]] = Seq.empty,
-                            bodyGen: Gen[Option[JsonNode]] = Gen.const(None)) {
+                            bodyGen: Gen[Option[CheckJsValue]] = Gen.const(None)) {
 
     def withConsumes(consumes: Seq[String]): RequestBuilder =
       if (consumes.isEmpty)
@@ -63,7 +64,7 @@ object Operation {
     def withHeader(headerGen: Gen[Option[(String, String)]]): RequestBuilder =
       copy(headerGens = headerGens :+ headerGen)
 
-    def withBody(body: Gen[JsonNode]): RequestBuilder =
+    def withBody(body: Gen[CheckJsValue]): RequestBuilder =
       copy(bodyGen = body.map(Some.apply))
 
     def build[R]()(implicit requestCreator: RequestCreator[R]): Gen[R] = {

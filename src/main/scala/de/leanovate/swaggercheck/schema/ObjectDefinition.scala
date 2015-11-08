@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
+import de.leanovate.swaggercheck.model.{CheckJsNull, CheckJsObject, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
@@ -13,59 +13,53 @@ case class ObjectDefinition(
                              ) extends SchemaObject {
   import SchemaObject._
 
-  override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {
+  override def generate(ctx: SwaggerChecks): Gen[CheckJsValue] = {
     if (properties.isEmpty) {
       additionalProperties match {
         case Some(additionalSchema) =>
           for {
             size <- Gen.choose(0, ctx.maxItems)
             properties <- Gen.listOfN(size, Gen.zip(Gen.identifier, additionalSchema.generate(ctx.childContext)))
-          } yield properties.foldLeft(nodeFactory.objectNode()) {
-            (result, prop) =>
-              result.set(prop._1, prop._2)
-              result
-          }
+          } yield CheckJsObject(Set.empty, None, properties.toMap)
         case None =>
           arbitraryObj(ctx)
       }
     } else {
       properties.map {
         props =>
-          val propertyGens: Traversable[Gen[(String, JsonNode)]] = {
+          val propertyGens: Traversable[Gen[(String, CheckJsValue)]] = {
             props.map {
               case (name, schema) if required.exists(_.contains(name)) =>
                 schema.generate(ctx.childContext).map(value => name -> value)
               case (name, schema) =>
                 Gen.oneOf(
-                  Gen.const(nodeFactory.nullNode()),
+                  Gen.const(CheckJsNull),
                   schema.generate(ctx.childContext)
                 ).map(value => name -> value)
             }
           }
-          Gen.sequence(propertyGens).map(_.foldLeft(nodeFactory.objectNode()) {
-            (result, element) =>
-              result.set(element._1, element._2)
-              result
-          })
+          Gen.sequence(propertyGens).map {
+            fields =>
+              CheckJsObject(required.getOrElse(Set.empty), None, fields.toMap)
+          }
       }.getOrElse(arbitraryObj(ctx))
     }
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult = {
-    if (node.isObject) {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+    case CheckJsObject(_, _, fields) =>
       properties.map {
         props =>
           props.foldLeft(VerifyResult.success) {
             case (result, (name, schema)) =>
-              val field = Option(node.get(name)).getOrElse(nodeFactory.nullNode())
+              val field = fields.getOrElse(name, CheckJsNull)
               if (!field.isNull || required.exists(_.contains(name)))
                 result.combine(schema.verify(ctx, path :+ name, field))
               else
                 VerifyResult.success
           }
       }.getOrElse(VerifyResult.success)
-    } else {
-      VerifyResult.error(s"${node.getNodeType} should be an object: ${path.mkString(".")}")
-    }
+    case _ =>
+      VerifyResult.error(s"$node should be an object: ${path.mkString(".")}")
   }
 }

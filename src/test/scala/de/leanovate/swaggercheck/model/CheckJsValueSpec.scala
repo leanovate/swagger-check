@@ -27,8 +27,9 @@ class CheckJsValueSpec extends WordSpec with MustMatchers {
     "deserialize strings to JsFormatterString" in {
       val result = CheckJsValue.parse( """"one piece of string"""")
 
-      result mustBe an[CheckJsFormattedString]
-      result.asInstanceOf[CheckJsFormattedString].value mustEqual "one piece of string"
+      result mustBe an[CheckJsString]
+      result.asInstanceOf[CheckJsString].formatted mustBe true
+      result.asInstanceOf[CheckJsString].value mustEqual "one piece of string"
     }
 
     "deserialize booleans to JsBoolean" in {
@@ -44,7 +45,7 @@ class CheckJsValueSpec extends WordSpec with MustMatchers {
         CheckJsInteger.fixed(1234),
         CheckJsNumber.fixed(1234.5),
         CheckJsBoolean(true),
-        CheckJsFormattedString("one piece of string")
+        CheckJsString.formatted("one piece of string")
       )
       result.asInstanceOf[CheckJsArray].minSize mustEqual Some(4)
     }
@@ -59,7 +60,7 @@ class CheckJsValueSpec extends WordSpec with MustMatchers {
       result.asInstanceOf[CheckJsObject].fields mustEqual Map(
         "one" -> CheckJsInteger.fixed(1234),
         "two" -> CheckJsBoolean(true),
-        "three" -> CheckJsFormattedString("one piece of string")
+        "three" -> CheckJsString.formatted("one piece of string")
       )
     }
   }

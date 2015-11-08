@@ -8,11 +8,11 @@ class CheckJsArraySpec extends WordSpec with MustMatchers {
     "shrink without min size" in {
       val original = CheckJsArray(None, Seq(
         CheckJsInteger(None, None, 1000000),
-        CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz"),
+        CheckJsString.unformatted("0123456789abcdefghijklmnopqrstuvwxyz"),
         CheckJsBoolean(true),
         CheckJsBoolean(false),
         CheckJsInteger(None, None, 10000),
-        CheckJsUnformattedString(None, "zyxwvutsrqponmlkjihgfedcba9876543210")
+        CheckJsString.unformatted("zyxwvutsrqponmlkjihgfedcba9876543210")
       ))
       val originalJson = original.minified
 
@@ -30,11 +30,11 @@ class CheckJsArraySpec extends WordSpec with MustMatchers {
     "shrink with min size" in {
       val original = CheckJsArray(Some(4), Seq(
         CheckJsInteger(None, None, 1000000),
-        CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz"),
+        CheckJsString.unformatted( "0123456789abcdefghijklmnopqrstuvwxyz"),
         CheckJsBoolean(true),
         CheckJsBoolean(false),
         CheckJsInteger(None, None, 10000),
-        CheckJsUnformattedString(None, "zyxwvutsrqponmlkjihgfedcba9876543210")
+        CheckJsString.unformatted("zyxwvutsrqponmlkjihgfedcba9876543210")
       ))
       val originalJson = original.minified
 
@@ -53,11 +53,11 @@ class CheckJsArraySpec extends WordSpec with MustMatchers {
     "not shrink beneath min size" in {
       val original = CheckJsArray(Some(6), Seq(
         CheckJsInteger(None, None, 12345678),
-        CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz"),
+        CheckJsString.unformatted("0123456789abcdefghijklmnopqrstuvwxyz"),
         CheckJsBoolean(true),
         CheckJsBoolean(false),
         CheckJsInteger(None, None, 87654321),
-        CheckJsUnformattedString(None, "zyxwvutsrqponmlkjihgfedcba9876543210")
+        CheckJsString.unformatted("zyxwvutsrqponmlkjihgfedcba9876543210")
       ))
       val originalJson = original.minified
 

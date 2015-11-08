@@ -1,21 +1,18 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
+import de.leanovate.swaggercheck.model.{CheckJsBoolean, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 object BooleanDefinition extends SchemaObject {
 
-  import SchemaObject._
+  override def generate(ctx: SwaggerChecks): Gen[CheckJsValue] =
+    Gen.oneOf(CheckJsBoolean(true), CheckJsBoolean(false))
 
-  override def generate(ctx: SwaggerChecks): Gen[JsonNode] =
-    Gen.oneOf(nodeFactory.booleanNode(true), nodeFactory.booleanNode(false))
-
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult = {
-    if (node.isBoolean) {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+    case CheckJsBoolean(_) =>
       VerifyResult.success
-    } else {
-      VerifyResult.error(s"${node.getNodeType} should be a boolean: ${path.mkString(".")}")
-    }
+    case _ =>
+      VerifyResult.error(s"$node should be a boolean: ${path.mkString(".")}")
   }
 }

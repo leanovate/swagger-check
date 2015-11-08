@@ -1,6 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.databind.JsonNode
+import de.leanovate.swaggercheck.model.{CheckJsString, CheckJsValue}
 import de.leanovate.swaggercheck.{Generators, SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
@@ -10,28 +11,24 @@ case class StringDefinition(
                              maxLength: Option[Int],
                              pattern: Option[String],
                              enum: Option[List[String]]
-                             ) extends SchemaObject {
+                           ) extends SchemaObject {
 
-  import SchemaObject._
-
-  override def generate(ctx: SwaggerChecks): Gen[JsonNode] = {
-    val generator: Gen[String] = (enum, pattern, format) match {
-      case (Some(one :: Nil), _, _) => Gen.const(one)
-      case (Some(first :: second :: rest), _, _) => Gen.oneOf(first, second, rest: _ *)
-      case (_, Some(regex), _) => Generators.regexMatch(regex)
+  override def generate(ctx: SwaggerChecks): Gen[CheckJsValue] = {
+    (enum, pattern, format) match {
+      case (Some(one :: Nil), _, _) => Gen.const(CheckJsString.formatted(one))
+      case (Some(first :: second :: rest), _, _) => Gen.oneOf(first, second, rest: _ *).map(CheckJsString.formatted)
+      case (_, Some(regex), _) => Generators.regexMatch(regex).map(CheckJsString.formatted)
       case (_, _, Some(formatName)) if ctx.stringFormats.contains(formatName) =>
-        ctx.stringFormats(formatName).generate
+        ctx.stringFormats(formatName).generate.map(CheckJsString.formatted)
       case _ => for {
         len <- Gen.choose(minLength.getOrElse(0), maxLength.getOrElse(255))
         chars <- Gen.listOfN(len, Gen.alphaNumChar)
-      } yield chars.mkString
+      } yield CheckJsString(formatted = false, minLength, chars.mkString)
     }
-    generator.map(nodeFactory.textNode)
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult = {
-    if (node.isTextual) {
-      val value = node.asText()
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+    case CheckJsString(_, _, value) =>
       if (minLength.exists(_ > value.length))
         VerifyResult.error(s"'$value' has to be at least ${minLength.mkString} chars long: ${path.mkString(".")}")
       else if (maxLength.exists(_ < value.length))
@@ -42,8 +39,7 @@ case class StringDefinition(
         VerifyResult.error(s"'$value' has to be one of ${enum.map(_.mkString(", ")).mkString}: ${path.mkString(".")}")
       else
         format.flatMap(ctx.stringFormats.get).map(_.verify(path.mkString("."), value)).getOrElse(VerifyResult.success)
-    } else {
-      VerifyResult.error(s"${node.getNodeType} should be a string: ${path.mkString(".")}")
-    }
+    case _ =>
+      VerifyResult.error(s"$node should be a string: ${path.mkString(".")}")
   }
 }

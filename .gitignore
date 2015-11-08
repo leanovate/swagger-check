@@ -12,3 +12,8 @@
 /example/project/project/
 /example/project/target/
 /example/target/
+.DS_Store
+.metadata/
+.classpath
+.project
+.settings/

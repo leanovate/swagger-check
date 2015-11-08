@@ -10,7 +10,12 @@ import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions
 
 trait CheckJsValue {
+
   import CheckJsValue._
+
+  def asText(default: String): String = default
+
+  def isNull : Boolean = false
 
   def shrink: Stream[CheckJsValue]
 
@@ -67,7 +72,7 @@ object CheckJsValue {
     val (optValue, next) = (jp.getCurrentToken.id(): @switch) match {
       case JsonTokenId.ID_NUMBER_INT => (Some(CheckJsInteger.fixed(jp.getBigIntegerValue)), current)
       case JsonTokenId.ID_NUMBER_FLOAT => (Some(CheckJsNumber.fixed(jp.getDecimalValue)), current)
-      case JsonTokenId.ID_STRING => (Some(CheckJsFormattedString(jp.getText)), current)
+      case JsonTokenId.ID_STRING => (Some(CheckJsString.formatted(jp.getText)), current)
       case JsonTokenId.ID_TRUE => (Some(CheckJsBoolean(true)), current)
       case JsonTokenId.ID_FALSE => (Some(CheckJsBoolean(false)), current)
       case JsonTokenId.ID_NULL => (Some(CheckJsNull), current)
@@ -161,4 +166,5 @@ object CheckJsValue {
 
     override val isEmpty: Boolean = false
   }
+
 }

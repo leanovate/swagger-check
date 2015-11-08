@@ -6,7 +6,7 @@ import org.scalatest.{MustMatchers, WordSpec}
 class CheckJsUnformattedStringSpec extends WordSpec with MustMatchers {
   "JsUnformattedString" should {
     "shrink without min length" in {
-      val original = CheckJsUnformattedString(None, "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsString.unformatted( "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 
@@ -20,7 +20,7 @@ class CheckJsUnformattedStringSpec extends WordSpec with MustMatchers {
     }
 
     "shrink with min length" in {
-      val original = CheckJsUnformattedString(Some(30), "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsString(formatted = false, Some(30), "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 
@@ -35,7 +35,7 @@ class CheckJsUnformattedStringSpec extends WordSpec with MustMatchers {
     }
 
     "not shrink beneath min length" in {
-      val original = CheckJsUnformattedString(Some(36), "0123456789abcdefghijklmnopqrstuvwxyz")
+      val original = CheckJsString(formatted = false, Some(36), "0123456789abcdefghijklmnopqrstuvwxyz")
 
       val shrink = Shrink.shrink(original)
 

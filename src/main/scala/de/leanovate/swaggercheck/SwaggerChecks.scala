@@ -2,8 +2,8 @@ package de.leanovate.swaggercheck
 
 import java.io.{File, FileInputStream, InputStream}
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
+import de.leanovate.swaggercheck.model.CheckJsValue
 import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
 import org.scalacheck.Gen
 
@@ -20,7 +20,7 @@ import org.scalacheck.Gen
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
                           stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
-                          integerFormats: Map[String, Format[BigDecimal]] = IntegerFormats.defaultFormats,
+                          integerFormats: Map[String, Format[BigInt]] = IntegerFormats.defaultFormats,
                           numberFormats: Map[String, Format[BigDecimal]] = NumberFormats.defaultFormats,
                           maxItems: Int = 10
                           ) {
@@ -94,7 +94,7 @@ case class SwaggerChecks(
   /**
    * Add a self-defined integer format.
    */
-  def withIntegerFormats(formats: (String, Format[BigDecimal])*) =
+  def withIntegerFormats(formats: (String, Format[BigInt])*) =
     copy(integerFormats = integerFormats ++ Map(formats: _*))
 
   /**
@@ -117,9 +117,7 @@ case class SwaggerChecks(
 
   private def verifierForSchema(expectedSchema: SchemaObject): Verifier[String] = new Verifier[String] {
     override def verify(value: String): VerifyResult = {
-      val tree = new ObjectMapper().readTree(value)
-
-      expectedSchema.verify(SwaggerChecks.this, Nil, tree)
+      expectedSchema.verify(SwaggerChecks.this, Nil, CheckJsValue.parse(value))
     }
   }
 

@@ -1,47 +1,35 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
+import de.leanovate.swaggercheck.model._
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 @JsonDeserialize(builder = classOf[SchemaObjectBuilder])
 trait SchemaObject {
-  def generate(context: SwaggerChecks): Gen[JsonNode]
+  def generate(context: SwaggerChecks): Gen[CheckJsValue]
 
-  def verify(context: SwaggerChecks, path: Seq[String], node: JsonNode): VerifyResult
+  def verify(context: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult
 }
 
 object SchemaObject {
-  val nodeFactory = JsonNodeFactory.instance
-
-  def arbitraryObj(ctx: SwaggerChecks): Gen[JsonNode] = for {
+  def arbitraryObj(ctx: SwaggerChecks): Gen[CheckJsValue] = for {
     size <- Gen.choose(0, ctx.maxItems)
     properties <- Gen.listOfN(size, arbitraryProperty)
-  } yield
-    properties.foldLeft(nodeFactory.objectNode()) {
-      (result, prop) =>
-        result.set(prop._1, prop._2)
-        result
-    }
+  } yield CheckJsObject(Set.empty, None, properties.toMap)
 
-  def arbitraryArray(ctx: SwaggerChecks): Gen[JsonNode] = for {
+  def arbitraryArray(ctx: SwaggerChecks): Gen[CheckJsValue] = for {
     size <- Gen.choose(0, ctx.maxItems)
     items <- Gen.listOfN(size, arbitraryValue)
-  } yield
-    items.foldLeft(nodeFactory.arrayNode()) {
-      (result, value) =>
-        result.add(value)
-    }
+  } yield CheckJsArray(None, items)
 
-  def arbitraryValue: Gen[JsonNode] = Gen.oneOf(
-    Gen.alphaStr.map(nodeFactory.textNode),
-    Gen.posNum[Int].map(nodeFactory.numberNode),
-    Gen.oneOf(nodeFactory.booleanNode(true), nodeFactory.booleanNode(false))
+  def arbitraryValue: Gen[CheckJsValue] = Gen.oneOf(
+    Gen.alphaStr.map(CheckJsString.unformatted),
+    Gen.posNum[Int].map(CheckJsInteger(None, None, _)),
+    Gen.oneOf(CheckJsBoolean(true), CheckJsBoolean(false))
   )
 
-  def arbitraryProperty: Gen[(String, JsonNode)] = for {
+  def arbitraryProperty: Gen[(String, CheckJsValue)] = for {
     key <- Gen.identifier
     value <- arbitraryValue
   } yield key -> value
