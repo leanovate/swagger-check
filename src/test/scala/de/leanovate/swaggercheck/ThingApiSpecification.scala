@@ -1,8 +1,8 @@
 package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.fixtures.model._
-import org.scalacheck.Prop.forAll
-import org.scalacheck.{Arbitrary, Properties}
+import org.scalacheck.Prop.{BooleanOperators, forAll}
+import org.scalacheck.{Arbitrary, Properties, Shrink}
 import play.api.libs.json.{JsSuccess, Json}
 
 object ThingApiSpecification extends Properties("Thing API") {
@@ -30,9 +30,18 @@ object ThingApiSpecification extends Properties("Thing API") {
     }
   }
 
-  property("Thing can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("Thing")) {
-    json =>
-      Json.parse(json.minified).validate[Thing].isSuccess
+  property("Thing can be correctly parsed") = {
+    val verifier = swaggerChecks.jsonVerifier("Thing")
+
+    forAll(swaggerChecks.jsonGenerator("Thing")) {
+      json =>
+        Json.parse(json.minified).validate[Thing].isSuccess :| "Json can be deserialized" &&
+          verifier.verify(json.minified).isSuccess :| "Json conforms to own schema" &&
+          Shrink.shrink(json).forall {
+            shrinked =>
+              verifier.verify(shrinked.minified).isSuccess
+          } :| "All shrinked variants conform to schema"
+    }
   }
 
   property("Thing list is correctly written") = {
@@ -77,18 +86,27 @@ object ThingApiSpecification extends Properties("Thing API") {
       Json.parse(json.minified).validate[ThingNode].isSuccess
   }
 
-  property("AnyThing can be read") = forAll(swaggerChecks.jsonGenerator("AnyThing")) {
-    json =>
-      val JsSuccess(anyThing,_) = Json.parse(json.minified).validate[AnyThing]
+  property("AnyThing can be read") = {
+    val verifier = swaggerChecks.jsonVerifier("AnyThing")
 
-      anyThing.isValid()
+    forAll(swaggerChecks.jsonGenerator("AnyThing")) {
+      json =>
+        val JsSuccess(anyThing, _) = Json.parse(json.minified).validate[AnyThing]
+
+        anyThing.isValid() :| "Json can be deserialized" &&
+          verifier.verify(json.minified).isSuccess :| "Json conforms to own schema" &&
+          Shrink.shrink(json).forall {
+            shrinked =>
+              verifier.verify(shrinked.minified).isSuccess
+          } :| "All shrinked variants conform to schema"
+    }
   }
 
   property("AnyThing can be written") = {
     val verifier = swaggerChecks.jsonVerifier("AnyThing")
 
     forAll(Arbitrary.arbitrary[AnyThing]) {
-      anyThing : AnyThing =>
+      anyThing: AnyThing =>
         val json = Json.stringify(Json.toJson(anyThing))
 
         verifier.verify(json)

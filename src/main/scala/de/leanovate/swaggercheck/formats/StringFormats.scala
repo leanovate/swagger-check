@@ -58,9 +58,9 @@ object StringFormats {
 
   object DateString extends Format[String] {
     override def generate: Gen[String] = {
-      Gen.choose[Int](Int.MinValue, Int.MaxValue).map {
+      Gen.choose[Int](-300000, 300000).map {
         diff: Int =>
-          val instant = LocalDate.now().plus(diff, ChronoUnit.DAYS)
+          val instant = LocalDate.ofEpochDay(diff)
           DateTimeFormatter.ISO_DATE.format(instant)
       }
     }
