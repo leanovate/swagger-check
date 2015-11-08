@@ -41,6 +41,18 @@ At the moment the best starting point might be some of tests:
 
 * [ThingApiSpecification](src/test/scala/de/leanovate/swaggercheck/ThingApiSpecification.scala)
 
+## Some implementation notes
+
+### Why is there just another implmenetation of JsValue? 
+(Aren't there enough of those already?)
+
+Good point, but: We would like to generate json based on a given schema. One major feature of ScalaCheck is that it is not only able to generate arbitrary samples, but also shrink them down to find a minimum set of arguments to create a failure.
+
+Obviously it is not feasible to just shrink a json like any other string (mostly likely one would just create strings that are not a valid json any more).
+Shrinking down a tree of json nodes (e.g. from jackson-databind or simliar implementations) is not feasible either, as one would create json which might no longer match the given schema. What we want is a tree of json nodes that can be shrinked with respect to a given schema. 
+
+... and that's why there is just another implementation of JsValue.
+
 ## License
 
 [MIT Licence](http://opensource.org/licenses/MIT)
