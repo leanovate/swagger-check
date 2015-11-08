@@ -23,8 +23,9 @@ case class AnyThing(
                      aFloat: Float,
                      aDouble: Double,
                      aBoolean: Boolean,
-                     anEnum: String
-                     ) {
+                     anEnum: String,
+                     aMap: Map[String, String]
+                   ) {
   def isValid(): Boolean = {
     Try {
       UUID.fromString(anUUID)
@@ -50,5 +51,6 @@ object AnyThing {
     aDouble <- Arbitrary.arbitrary[Double]
     aBoolean <- Arbitrary.arbitrary[Boolean]
     anEnum <- Gen.oneOf("V1", "V2", "V3")
-  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble, aBoolean, anEnum))
+    aMap <- Arbitrary.arbitrary[Map[String, String]]
+  } yield AnyThing(anUUID, anURL, anURI, anEmail, aDate, aDateTime, anInt32, anInt64, aFloat, aDouble, aBoolean, anEnum, aMap))
 }

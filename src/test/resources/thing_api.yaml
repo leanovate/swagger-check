@@ -126,6 +126,10 @@ definitions:
           - V1
           - V2
           - V3
+      aMap:
+        type: object
+        additionalProperties:
+          type: string
     required:
       - anUUID
       - anURL
@@ -139,6 +143,7 @@ definitions:
       - aDouble
       - aBoolean
       - anEnum
+      - aMap
   ThingNode:
     type: object
     required:
