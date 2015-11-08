@@ -11,7 +11,7 @@ object UberApiSpecification extends Properties("Uber API") {
 
   property("Error can be read") = forAll(swaggerChecks.jsonGenerator("Error")) {
     json =>
-      Json.parse(json).validate[UberError].isSuccess
+      Json.parse(json.minified).validate[UberError].isSuccess
   }
 
   property("Error can be written") = {
@@ -27,7 +27,7 @@ object UberApiSpecification extends Properties("Uber API") {
 
   property("Product can be read") = forAll(swaggerChecks.jsonGenerator("Product")) {
     json =>
-      Json.parse(json).validate[UberProduct].isSuccess
+      Json.parse(json.minified).validate[UberProduct].isSuccess
   }
 
   property("Product can be written") = {

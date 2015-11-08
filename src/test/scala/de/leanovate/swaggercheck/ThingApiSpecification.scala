@@ -32,7 +32,7 @@ object ThingApiSpecification extends Properties("Thing API") {
 
   property("Thing can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("Thing")) {
     json =>
-      Json.parse(json).validate[Thing].isSuccess
+      Json.parse(json.minified).validate[Thing].isSuccess
   }
 
   property("Thing list is correctly written") = {
@@ -48,7 +48,7 @@ object ThingApiSpecification extends Properties("Thing API") {
 
   property("Thing list can be correctly parsed") = forAll(swaggerChecks.jsonGenerator("ThingList")) {
     json =>
-      Json.parse(json).validate[ThingList].isSuccess
+      Json.parse(json.minified).validate[ThingList].isSuccess
   }
 
   property("SubBase can be written") = {
@@ -64,22 +64,22 @@ object ThingApiSpecification extends Properties("Thing API") {
 
   property("SubBase can be parsed") = forAll(swaggerChecks.jsonGenerator("SubBase")) {
     json =>
-      Json.parse(json).validate[SubBase].isSuccess
+      Json.parse(json.minified).validate[SubBase].isSuccess
   }
 
   property("OtherBase can be parsed") = forAll(swaggerChecks.jsonGenerator("OtherBase")) {
     json =>
-      Json.parse(json).validate[OtherBase].isSuccess
+      Json.parse(json.minified).validate[OtherBase].isSuccess
   }
 
   property("ThingNode can be parsed") = forAll(swaggerChecks.jsonGenerator("ThingNode")) {
     json =>
-      Json.parse(json).validate[ThingNode].isSuccess
+      Json.parse(json.minified).validate[ThingNode].isSuccess
   }
 
   property("AnyThing can be read") = forAll(swaggerChecks.jsonGenerator("AnyThing")) {
     json =>
-      val JsSuccess(anyThing,_) = Json.parse(json).validate[AnyThing]
+      val JsSuccess(anyThing,_) = Json.parse(json.minified).validate[AnyThing]
 
       anyThing.isValid()
   }

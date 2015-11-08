@@ -32,9 +32,9 @@ case class SwaggerChecks(
    * @param name name of the swagger definition
    * @return generator for json
    */
-  def jsonGenerator(name: String): Gen[String] =
+  def jsonGenerator(name: String): Gen[CheckJsValue] =
     swaggerAPI.definitions.get(name)
-      .map(_.generate(this).map(_.toString))
+      .map(_.generate(this))
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
   /**
