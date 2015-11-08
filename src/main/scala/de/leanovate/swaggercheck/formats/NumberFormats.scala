@@ -6,7 +6,7 @@ import org.scalacheck.{Arbitrary, Gen}
 object NumberFormats {
 
   object FloatNumber extends Format[BigDecimal] {
-    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(BigDecimal.decimal)
+    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(_.toDouble).map(BigDecimal.decimal)
 
     override def verify(path: String, value: BigDecimal): VerifyResult = {
       if (value.isDecimalDouble && value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
