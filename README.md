@@ -1,6 +1,7 @@
 # swagger-check
 
 Build status: [![Build Status](https://travis-ci.org/leanovate/swagger-check.svg?branch=master)](https://travis-ci.org/leanovate/swagger-check) [![codecov.io](https://codecov.io/github/leanovate/play-etcd-client/coverage.svg?branch=master)](https://codecov.io/github/leanovate/swagger-check?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.leanovate/swagger-check_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.leanovate/swagger-check_2.11)
 
 Toolbox for property based testing of an API specified with swagger
 
