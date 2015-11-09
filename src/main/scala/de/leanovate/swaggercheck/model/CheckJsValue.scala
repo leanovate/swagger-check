@@ -44,8 +44,6 @@ trait CheckJsValue {
     sw.flush()
     sw.getBuffer.toString
   }
-
-  override def toString = minified
 }
 
 object CheckJsValue {
