@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import dal.ThingRepository
@@ -14,5 +15,9 @@ class ThingsController @Inject()(thingRepository: ThingRepository)(implicit ec: 
       things =>
         Ok(Json.toJson(things))
     }
+  }
+
+  def getThing(id: UUID) = Action {
+    Ok("bla")
   }
 }

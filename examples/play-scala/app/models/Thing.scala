@@ -6,7 +6,8 @@ import play.api.libs.json.Json
 
 case class Thing(
                   id: UUID,
-                  name: String
+                  name: String,
+                  thingType: ThingType.Type
                 )
 
 object Thing {

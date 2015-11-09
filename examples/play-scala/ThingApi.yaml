@@ -91,6 +91,7 @@ definitions:
     required:
       - id
       - name
+      - thingType
     properties:
       id:
         type: string
@@ -100,6 +101,12 @@ definitions:
         type: string
         maxLength: 255
         description: Name of the thing
+      thingType:
+        type: string
+        enum:
+          - Primary
+          - Secondary
+          - Other
   Link:
     type: object
     description: A hateoas link
