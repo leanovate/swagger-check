@@ -5,6 +5,7 @@ import org.specs2.ScalaCheck
 import org.specs2.matcher.MustMatchers
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
+import support.{ThingApi, Arbitraries}
 
 class ThingsPageSpec extends Specification with ScalaCheck with MustMatchers with Arbitraries with ThingApi {
   "ThingsPage" should {
@@ -14,6 +15,7 @@ class ThingsPageSpec extends Specification with ScalaCheck with MustMatchers wit
 
       prop {
         thing: ThingsPage =>
+          println(thing)
           verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo VerifySuccess
       }
     }

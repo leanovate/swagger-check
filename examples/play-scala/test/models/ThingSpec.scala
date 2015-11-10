@@ -7,6 +7,7 @@ import org.specs2.ScalaCheck
 import org.specs2.matcher.MustMatchers
 import org.specs2.mutable.Specification
 import play.api.libs.json.{JsSuccess, Json}
+import support.{ThingApi, Arbitraries}
 
 class ThingSpec extends Specification with ScalaCheck with MustMatchers with Arbitraries with ThingApi {
   "Thing" should {

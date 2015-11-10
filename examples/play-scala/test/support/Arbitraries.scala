@@ -1,8 +1,9 @@
-package models
+package support
 
 import java.util.UUID
 
 import de.leanovate.swaggercheck.Generators
+import models._
 import org.scalacheck.{Arbitrary, Gen}
 
 trait Arbitraries {

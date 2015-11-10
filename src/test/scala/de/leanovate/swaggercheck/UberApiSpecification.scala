@@ -41,8 +41,8 @@ object UberApiSpecification extends Properties("Uber API") {
     }
   }
 
-  property("Request endpoints exists") = forAll(swaggerChecks.requestGenerator[SimpleRequest](None)) {
-    case SimpleRequest("GET", "/estimates/price", queryParameters, headers, _) =>
+  property("Request endpoints exists") = forAll(swaggerChecks.requestGenerator[SimpleRequest]()) {
+    case SimpleRequest("GET", "/v1/estimates/price", queryParameters, headers, _) =>
       val paramNames = queryParameters.map(_._1).toSet
       (headers.head == "Accept" -> "application/json") :| "Accept header" &&
         paramNames.contains("start_latitude") :| "paramNames contains start_latitude" &&
@@ -50,19 +50,19 @@ object UberApiSpecification extends Properties("Uber API") {
         paramNames.contains("end_latitude") :| "paramNames contains end_latitude" &&
         paramNames.contains("end_longitude") :| "paramNames contains end_longitude" &&
         (paramNames.size == 4) :| "paramNames size 4"
-    case SimpleRequest("GET", "/estimates/time", queryParameters, headers, _) =>
+    case SimpleRequest("GET", "/v1/estimates/time", queryParameters, headers, _) =>
       val paramNames = queryParameters.map(_._1).toSet
       (headers.head == "Accept" -> "application/json") :| "Accept header" &&
         paramNames.contains("start_latitude") :| "paramNames contains start_latitude" &&
         paramNames.contains("start_longitude") :| "paramNames contains start_longitude" &&
         (paramNames.size <= 4) :| "paramNames size 4"
-    case SimpleRequest("GET", "/me", queryParameters, headers, _) =>
+    case SimpleRequest("GET", "/v1/me", queryParameters, headers, _) =>
       (headers.head == "Accept" -> "application/json") :| "Accept header" &&
         queryParameters.isEmpty :| "query parameter is empty"
-    case SimpleRequest("GET", "/history", queryParameters, headers, _) =>
+    case SimpleRequest("GET", "/v1/history", queryParameters, headers, _) =>
       (headers.head == "Accept" -> "application/json") :| "Accept header" &&
         (queryParameters.size <= 2) :| "query parameter is empty"
-    case SimpleRequest("GET", "/products", queryParameters, headers, _) =>
+    case SimpleRequest("GET", "/v1/products", queryParameters, headers, _) =>
       val paramNames = queryParameters.map(_._1).toSet
       (headers.head == "Accept" -> "application/json") :| "Accept header" &&
         paramNames.contains("latitude") :| "paramNames contains latitude" &&
@@ -72,7 +72,7 @@ object UberApiSpecification extends Properties("Uber API") {
   }
 
   property("Responses can be verified") = {
-    val verifier = swaggerChecks.responseVerifier[SimpleResponse]("GET", "/products")
+    val verifier = swaggerChecks.responseVerifier[SimpleResponse]("GET", "/v1/products")
     val okRepsonseGen = Gen.listOf(Arbitrary.arbitrary[UberProduct])
       .map(products => SimpleResponse(200, Map.empty, Json.stringify(Json.toJson(products))))
     val errorResponseGen = for {

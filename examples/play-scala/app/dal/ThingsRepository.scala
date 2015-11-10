@@ -4,7 +4,7 @@ import models.{Thing, Person}
 
 import scala.concurrent.Future
 
-class ThingRepository {
+class ThingsRepository {
   def list() : Future[Seq[Person]] = ???
 
   def create(name: String, age: Int) : Future[Person]= ???

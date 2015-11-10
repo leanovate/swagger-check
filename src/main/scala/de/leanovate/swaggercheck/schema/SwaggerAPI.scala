@@ -16,7 +16,7 @@ case class SwaggerAPI(
                        basePath: Option[String],
                        paths: Map[String, Map[String, Operation]],
                        definitions: Map[String, SchemaObject]
-                       )
+                     )
 
 object SwaggerAPI {
   val jsonMapper = objectMapper(new MappingJsonFactory())
@@ -45,15 +45,18 @@ class SwaggerAPIBuilder @JsonCreator()(
                                         @JsonProperty("produces") produces: Option[Seq[String]],
                                         @JsonProperty("paths") paths: Option[Map[String, Map[String, Operation]]],
                                         @JsonProperty("definitions") definitions: Option[Map[String, SchemaObject]]
-                                        ) {
+                                      ) {
   def build(): SwaggerAPI = {
     val defaultConsumes = consumes.map(_.toSet).getOrElse(Set.empty)
     val defaultProduces = produces.map(_.toSet).getOrElse(Set.empty)
     SwaggerAPI(basePath,
-      paths.getOrElse(Map.empty).mapValues(_.map {
-        case (method, operation) =>
-          method.toUpperCase -> operation.withDefaults(defaultConsumes, defaultProduces)
-      }),
+      paths.getOrElse(Map.empty).map {
+        case (path, operations) =>
+          basePath.map(_ + path).getOrElse(path) -> operations.map {
+            case (method, operation) =>
+              method.toUpperCase -> operation.withDefaults(defaultConsumes, defaultProduces)
+          }
+      },
       definitions.getOrElse(Map.empty))
   }
 }
