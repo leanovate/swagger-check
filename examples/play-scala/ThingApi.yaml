@@ -48,6 +48,8 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Thing'
+      tags:
+        - Things
       responses:
         '201':
           description: Thing created
@@ -55,6 +57,26 @@ paths:
             'Location':
               type: string
               format: url
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /things/{id}:
+    get:
+      summary: Get a thing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Things
+      responses:
+        '200':
+          description: A thing
+          schema:
+            $ref: '#/definitions/Thing'
         default:
           description: Unexpected error
           schema:
@@ -99,7 +121,8 @@ definitions:
         description: Id of the thing
       name:
         type: string
-        maxLength: 255
+        maxLength: 100
+        minLength: 1
         description: Name of the thing
       thingType:
         type: string
@@ -118,11 +141,14 @@ definitions:
         format: uri
   Error:
     type: object
+    required:
+      - code
+      - message
     properties:
       code:
         type: integer
         format: int32
+        minimum: 100
+        maximum: 599
       message:
-        type: string
-      fields:
         type: string

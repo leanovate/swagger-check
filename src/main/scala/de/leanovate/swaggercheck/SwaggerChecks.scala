@@ -95,15 +95,15 @@ case class SwaggerChecks(
     * @tparam R request class
     * @tparam U response class
     */
-  def requestResponseGenerator[R, U](pathFilter: String => Boolean = _ => true)
-                                    (implicit requestBuilder: RequestCreator[R], responseExtractor: ResponseExtractor[U]): Gen[(R, Verifier[U])] = {
+  def operationVerifier[R, U](pathFilter: String => Boolean = _ => true)
+                             (implicit requestBuilder: RequestCreator[R], responseExtractor: ResponseExtractor[U]): Gen[OperationVerifier[R, U]] = {
     val operations = swaggerAPI.paths.filterKeys(pathFilter)
 
     for {
       (path, methods) <- Gen.oneOf(operations.toSeq)
       (method, operation) <- Gen.oneOf(methods.toSeq)
       request <- operation.generateRequest(this, method, path)
-    } yield (request, verifierForOperation[U](operation))
+    } yield OperationVerifier[R, U](request, verifierForOperation[U](operation))
   }
 
   /**

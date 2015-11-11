@@ -11,7 +11,7 @@ trait Arbitraries {
 
   implicit val arbitraryThing = Arbitrary[Thing](for {
     id <- Arbitrary.arbitrary[UUID]
-    name <- Arbitrary.arbitrary[String]
+    name <- Gen.choose(1, 100).flatMap(Gen.listOfN(_, Gen.alphaNumChar).map(_.mkString))
     thingType <- Gen.oneOf(ThingType.Primary, ThingType.Secondary, ThingType.Other)
   } yield Thing(id, name, thingType))
 
@@ -30,4 +30,9 @@ trait Arbitraries {
     things <- Gen.listOfN(size, Arbitrary.arbitrary[Thing])
     _links <- Arbitrary.arbitrary[ThingsPageLinks]
   } yield ThingsPage(things, _links))
+
+  implicit val arbitraryError = Arbitrary[Error](for {
+    code <- Gen.choose(100, 599)
+    message <- Arbitrary.arbitrary[String]
+  } yield Error(code, message))
 }
