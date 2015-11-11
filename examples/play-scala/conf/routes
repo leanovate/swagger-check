@@ -2,11 +2,12 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /v1/things                     controllers.ThingsController.getPage(offset :Int ?= 0, limit: Int ?= 20)
-GET     /v1/things/:id                 controllers.ThingsController.getThing(id: java.util.UUID)
+GET         /v1/things            controllers.ThingsController.getPage(offset :Int ?= 0, limit: Int ?= 20)
+POST        /v1/things            controllers.ThingsController.createThing
+GET         /v1/things/:id        controllers.ThingsController.getThing(id: java.util.UUID)
 
-GET     /                           controllers.PersonController.index
-POST    /person                     controllers.PersonController.addPerson
-GET     /persons                    controllers.PersonController.getPersons
+GET         /                     controllers.PersonController.index
+POST        /person               controllers.PersonController.addPerson
+GET         /persons              controllers.PersonController.getPersons
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)

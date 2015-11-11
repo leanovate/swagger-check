@@ -15,7 +15,6 @@ class ThingsPageSpec extends Specification with ScalaCheck with MustMatchers wit
 
       prop {
         thing: ThingsPage =>
-          println(thing)
           verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo VerifySuccess
       }
     }

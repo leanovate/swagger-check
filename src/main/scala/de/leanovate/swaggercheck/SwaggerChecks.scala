@@ -86,6 +86,27 @@ case class SwaggerChecks(
   }
 
   /**
+    * Combines `requestGenerator` and `responseVerifier`.
+    *
+    * Convenient way to generate arbitrary requests together with a verifier of their expected responses.
+    *
+    * @param pathFilter Optional filter for paths (exact match)
+    *
+    * @tparam R request class
+    * @tparam U response class
+    */
+  def requestResponseGenerator[R, U](pathFilter: String => Boolean = _ => true)
+                                    (implicit requestBuilder: RequestCreator[R], responseExtractor: ResponseExtractor[U]): Gen[(R, Verifier[U])] = {
+    val operations = swaggerAPI.paths.filterKeys(pathFilter)
+
+    for {
+      (path, methods) <- Gen.oneOf(operations.toSeq)
+      (method, operation) <- Gen.oneOf(methods.toSeq)
+      request <- operation.generateRequest(this, method, path)
+    } yield (request, verifierForOperation[U](operation))
+  }
+
+  /**
     * Add a self-defined string format.
     */
   def withStringFormats(formats: (String, Format[String])*) =

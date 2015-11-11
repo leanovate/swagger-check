@@ -17,6 +17,10 @@ class ThingsController @Inject()(thingRepository: ThingsRepository)(implicit ec:
     }
   }
 
+  def createThing = Action {
+    Created
+  }
+
   def getThing(id: UUID) = Action {
     Ok("bla")
   }
