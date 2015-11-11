@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.fixtures.uber.{UberError, UberProduct}
-import de.leanovate.swaggercheck.simple.{SimpleResponse, SimpleRequest}
+import de.leanovate.swaggercheck.simple._
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Gen, Properties}
 import play.api.libs.json.Json
@@ -81,8 +81,18 @@ object UberApiSpecification extends Properties("Uber API") {
     } yield SimpleResponse(status, Map.empty, Json.stringify(Json.toJson(error)))
 
     forAll(Gen.oneOf(okRepsonseGen, errorResponseGen)) {
-      response : SimpleResponse =>
+      response: SimpleResponse =>
         verifier.verify(response)
     }
+  }
+
+  property("Operation verifier") = forAll(swaggerChecks.operationVerifier[SimpleRequest, SimpleResponse](_ == "/v1/me")) {
+    operationVerifier: SimpleOperationVerifier =>
+      val profileJson = swaggerChecks.jsonGenerator("Profile")
+      val response = SimpleResponse(200, Map.empty, profileJson.sample.get.minified)
+
+      (operationVerifier.request.path == "/v1/me") :| "Path" &&
+        (operationVerifier.request.method == "GET") :| "Method" &&
+        operationVerifier.responseVerifier.verify(response).isSuccess :| "Response verifier"
   }
 }
