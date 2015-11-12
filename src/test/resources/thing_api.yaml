@@ -37,6 +37,47 @@ paths:
           description: links
           schema:
             $ref: '#/definitions/ThingList'
+    post:
+      summary: Create a thing
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AnyThing'
+      responses:
+        201:
+          description: links
+          headers:
+            location:
+              type: string
+              format: url
+  /things/{id}:
+    get:
+      summary: Get a thing
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uuid
+        - name: x-flow-id
+          in: header
+          required: true
+          type: string
+          format: uuid
+        - name: x-optional
+          in: header
+          type: string
+      responses:
+        200:
+          description: links
+          schema:
+            $ref: '#/definitions/Thing'
 definitions:
   ServiceDocument:
     type: object
