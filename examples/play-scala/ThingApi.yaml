@@ -1,0 +1,154 @@
+swagger: '2.0'
+info:
+  title: Thing API
+  description: Manage collections of things
+  version: 1.0.0
+host: thing.anywhere.org
+schemes:
+  - http
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /things:
+    get:
+      summary: Get things
+      description: |
+        Get a list of all the things.
+      parameters:
+        - name: offset
+          in: query
+          description: Page offset
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          description: Limit number of things per page
+          required: false
+          type: integer
+          format: int32
+      tags:
+        - Things
+      responses:
+        '200':
+          description: A page of things
+          schema:
+            $ref: '#/definitions/ThingsPage'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a thing
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Thing'
+      tags:
+        - Things
+      responses:
+        '201':
+          description: Thing created
+          headers:
+            'Location':
+              type: string
+              format: url
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /things/{id}:
+    get:
+      summary: Get a thing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uuid
+      tags:
+        - Things
+      responses:
+        '200':
+          description: A thing
+          schema:
+            $ref: '#/definitions/Thing'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  ThingsPage:
+    type: object
+    required:
+      - things
+      - _links
+    properties:
+      things:
+        type: array
+        description: Things on this page
+        items:
+          $ref: '#/definitions/Thing'
+      _links:
+        type: object
+        required:
+          - self
+        properties:
+          self:
+            $ref: '#/definitions/Link'
+            description: Link to current page (self)
+          first:
+            $ref: '#/definitions/Link'
+            description: Link to first page
+          last:
+            $ref: '#/definitions/Link'
+            description: Link to last page
+  Thing:
+    type: object
+    description: Just a thing
+    required:
+      - id
+      - name
+      - thingType
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Id of the thing
+      name:
+        type: string
+        maxLength: 100
+        minLength: 1
+        description: Name of the thing
+      thingType:
+        type: string
+        enum:
+          - Primary
+          - Secondary
+          - Other
+  Link:
+    type: object
+    description: A hateoas link
+    required:
+      - href
+    properties:
+      href:
+        type: string
+        format: uri
+  Error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+        minimum: 100
+        maximum: 599
+      message:
+        type: string

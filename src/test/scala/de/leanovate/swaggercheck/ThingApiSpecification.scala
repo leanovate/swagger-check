@@ -1,6 +1,7 @@
 package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.fixtures.model._
+import de.leanovate.swaggercheck.simple._
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Properties, Shrink}
 import play.api.libs.json.{JsSuccess, Json}
@@ -111,5 +112,14 @@ object ThingApiSpecification extends Properties("Thing API") {
 
         verifier.verify(json)
     }
+  }
+
+  property("Operation can be verified") = forAll(swaggerChecks.operationVerifier[SimpleRequest, SimpleResponse]()) {
+    operationVerifier: SimpleOperationVerifier =>
+      val negativeResponse = SimpleResponse(400, Map.empty, "")
+
+      (operationVerifier.request.path.startsWith("/")) :| "Path startsWith /" &&
+        (operationVerifier.request.method == "GET" || operationVerifier.request.method == "POST") :| "Method" &&
+        !operationVerifier.responseVerifier.verify(negativeResponse).isSuccess :| "Response verifier"
   }
 }

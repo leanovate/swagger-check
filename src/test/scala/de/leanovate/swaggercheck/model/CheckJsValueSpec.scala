@@ -1,5 +1,6 @@
 package de.leanovate.swaggercheck.model
 
+import org.scalacheck.util.Pretty
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CheckJsValueSpec extends WordSpec with MustMatchers {
@@ -62,6 +63,17 @@ class CheckJsValueSpec extends WordSpec with MustMatchers {
         "two" -> CheckJsBoolean(true),
         "three" -> CheckJsString.formatted("one piece of string")
       )
+    }
+
+    "convertable to Pretty" in {
+      val pretty = CheckJsValue.prettyJsValue(
+        CheckJsObject.empty.copy(fields = Map("the" -> CheckJsString.formatted("value"))))
+
+      pretty(Pretty.defaultParams) mustBe """{"the":"value"}"""
+      pretty(Pretty.Params(1)) mustBe
+        """{
+          |  "the" : "value"
+          |}""".stripMargin
     }
   }
 }
