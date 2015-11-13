@@ -6,7 +6,7 @@ case class JsonPath(path: String) {
   else
     copy(path = "$path.$name")
 
-  def index(idx: Int) = copy(path = s"$path.[$idx]")
+  def index(idx: Int) = copy(path = s"$path[$idx]")
 
   override def toString = path
 }

@@ -40,4 +40,22 @@ trait NodeAdapter[T] {
     * @return map of all field or `None` if `node` is not an object
     */
   def asObject(node: T): Option[Map[String, T]]
+
+  /**
+    * Extract the string value of a node.
+    *
+    * @param node the json node to extract
+    * @return string value of  `None` if `node` is not a string
+    */
+  def asString(node: T): Option[String]
+
+  /**
+    * Create a json null node
+    */
+  def createNull: T
+
+  /**
+    * Check if a node is null.
+    */
+  def isNull(node: T): Boolean
 }

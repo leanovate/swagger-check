@@ -2,8 +2,8 @@ package de.leanovate.swaggercheck.schema.model
 
 import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
 
-case object BooleanDefinition extends SchemaObject {
-  override def validate[T](model: SchemaModel, path: JsonPath, node: T)
+case object BooleanDefinition extends Definition {
+  override def validate[T](model: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     nodeAdapter.asBoolean(node) match {
       case Some(_) =>

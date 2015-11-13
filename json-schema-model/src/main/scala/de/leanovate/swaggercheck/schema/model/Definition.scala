@@ -5,15 +5,15 @@ import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
 /**
   * Element of a json schema model.
   */
-trait SchemaObject {
+trait Definition {
   /**
     * Validate a json node versus this schema object.
     *
-    * @param model the overall model
+    * @param schema the overall model
     * @param path the current json path elements
     * @param node the node to validate
     * @param nodeAdapter adapter for the various json node implementations one might find
     * @return validation result
     */
-  def validate[T](model: SchemaModel, path: JsonPath, node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult
+  def validate[T](schema: Schema, path: JsonPath, node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult
 }

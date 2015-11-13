@@ -1,10 +1,14 @@
 
-import sbt.Command
 import sbt.Keys._
+import sbt._
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
 
 object Common {
+  val scalaCheckVersion = "1.12.5"
+
+  val jacksonVersion = "2.5.4"
+
   val settings = Seq(
 
     organization := "de.leanovate.swaggercheck",
@@ -16,6 +20,11 @@ object Common {
     fork in run := true,
 
     publishMavenStyle := true,
+
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+      "org.mockito" % "mockito-core" % "1.10.19" % "test"
+    ),
 
     pomExtra := {
       <url>https://github.com/leanovate/swagger-check</url>

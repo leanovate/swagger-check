@@ -30,7 +30,7 @@ object ValidationResult {
    *
    * @param failure error message
    */
-  def error(failure: String): ValidationResult = VerifyError(Seq(failure))
+  def error(failure: String): ValidationResult = ValidationError(Seq(failure))
 }
 
 case object ValidateSuccess extends ValidationResult {
@@ -39,11 +39,11 @@ case object ValidateSuccess extends ValidationResult {
   override def combine(result: ValidationResult): ValidationResult = result
 }
 
-case class VerifyError(failures: Seq[String]) extends ValidationResult {
+case class ValidationError(failures: Seq[String]) extends ValidationResult {
   override def isSuccess: Boolean = false
 
   override def combine(result: ValidationResult): ValidationResult = result match {
     case ValidateSuccess => this
-    case VerifyError(otherFailures) => VerifyError(failures ++ otherFailures)
+    case ValidationError(otherFailures) => ValidationError(failures ++ otherFailures)
   }
 }

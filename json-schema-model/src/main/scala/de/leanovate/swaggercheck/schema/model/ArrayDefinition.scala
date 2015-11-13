@@ -5,9 +5,9 @@ import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
 case class ArrayDefinition(
                             minItems: Option[Int],
                             maxItems: Option[Int],
-                            items: Option[SchemaObject]
-                          ) extends SchemaObject {
-  override def validate[T](model: SchemaModel, path: JsonPath, node: T)
+                            items: Option[Definition]
+                          ) extends Definition {
+  override def validate[T](schema: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     nodeAdapter.asArray(node) match {
       case Some(elements) =>
@@ -20,7 +20,7 @@ case class ArrayDefinition(
             itemsSchema =>
               elements.zipWithIndex.foldLeft(ValidationResult.success) {
                 case (result, (element, index)) =>
-                  result.combine(itemsSchema.validate(model, path.index(index), element))
+                  result.combine(itemsSchema.validate(schema, path.index(index), element))
               }
           }.getOrElse(ValidationResult.success)
       case _ =>
