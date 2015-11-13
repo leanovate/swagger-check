@@ -15,5 +15,29 @@ trait NodeAdapter[T] {
     * @param node the json node to extract
     * @return boolean value of  `None` if `node` is not a boolean
     */
-  def asBoolean(node: T) : Option[Boolean]
+  def asBoolean(node: T): Option[Boolean]
+
+  /**
+    * Extract the integer value of a node.
+    *
+    * @param node the json node to extract
+    * @return integer value of  `None` if `node` is not an integer (floating points do not count as integer)
+    */
+  def asInteger(node: T): Option[BigInt]
+
+  /**
+    * Extract the number value of a node.
+    *
+    * @param node the json node to extract
+    * @return number value of  `None` if `node` is not a number
+    */
+  def asNumber(node: T): Option[BigDecimal]
+
+  /**
+    * Extract the field of an object node
+    *
+    * @param node the json node to extract
+    * @return map of all field or `None` if `node` is not an object
+    */
+  def asObject(node: T): Option[Map[String, T]]
 }

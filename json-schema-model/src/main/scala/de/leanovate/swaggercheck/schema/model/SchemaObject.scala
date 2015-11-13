@@ -15,5 +15,5 @@ trait SchemaObject {
     * @param nodeAdapter adapter for the various json node implementations one might find
     * @return validation result
     */
-  def validate[T](model: SchemaModel, path: Seq[String], node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult
+  def validate[T](model: SchemaModel, path: JsonPath, node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult
 }
