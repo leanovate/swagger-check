@@ -6,7 +6,7 @@ import org.scalatest.{MustMatchers, WordSpec}
 
 class ArrayDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
   "ArrayDefinition" should {
-    "accept and array if no item definition is set" in {
+    "accept any array if no item definition is set" in {
       val path = JsonPath("jsonpath")
       val node = TestNode(array = Some(Seq(TestNode(), TestNode())))
       val schema = mock[Schema]

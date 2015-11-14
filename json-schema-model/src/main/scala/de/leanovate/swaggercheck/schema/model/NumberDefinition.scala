@@ -7,7 +7,7 @@ case class NumberDefinition(
                              minimum: Option[BigDecimal],
                              maximum: Option[BigDecimal]
                            ) extends Definition {
-  override def validate[T](model: Schema, path: JsonPath, node: T)
+  override def validate[T](schema: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     nodeAdapter.asNumber(node) match {
       case Some(value) =>
@@ -16,7 +16,7 @@ case class NumberDefinition(
         else if (maximum.exists(_ < value))
           ValidationResult.error(s"'$value' has to be less than ${maximum.mkString} in path $path")
         else
-          format.flatMap(model.findNumberFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
+          format.flatMap(schema.findNumberFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
       case _ =>
         ValidationResult.error(s"$node should be a number in path $path")
     }

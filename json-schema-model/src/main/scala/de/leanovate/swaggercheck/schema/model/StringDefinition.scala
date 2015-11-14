@@ -9,7 +9,7 @@ case class StringDefinition (
                          pattern: Option[String],
                          enum: Option[List[String]]
                        ) extends Definition {
-  override def validate[T](model: Schema, path: JsonPath, node: T)
+  override def validate[T](schema: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     nodeAdapter.asString(node) match {
       case Some(value) =>
@@ -22,10 +22,9 @@ case class StringDefinition (
         else if (enum.exists(e => e.nonEmpty && !e.contains(value)))
           ValidationResult.error(s"'$value' has to be one of ${enum.map(_.mkString(", ")).mkString} in path $path")
         else
-          format.flatMap(model.findStringFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
+          format.flatMap(schema.findStringFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
       case _ =>
-        ValidationResult.error(s"$node should be a string in patch $path")
-
+        ValidationResult.error(s"$node should be a string in path $path")
     }
   }
 }

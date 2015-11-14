@@ -8,7 +8,7 @@ case class IntegerDefinition(
                               minimum: Option[BigInt],
                               maximum: Option[BigInt]
                             ) extends Definition {
-  override def validate[T](model: Schema, path: JsonPath, node: T)
+  override def validate[T](schema: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     nodeAdapter.asInteger(node) match {
       case Some(value) =>
@@ -17,7 +17,7 @@ case class IntegerDefinition(
         else if (maximum.exists(_ < value))
           ValidationResult.error(s"'$value' has to be less than ${maximum.mkString} in path $path")
         else
-          format.flatMap(model.findIntegerFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
+          format.flatMap(schema.findIntegerFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
       case _ =>
         ValidationResult.error(s"$node should be an integer in path $path")
 
