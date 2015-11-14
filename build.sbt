@@ -9,9 +9,9 @@ lazy val jsonSchemaModel = project.in(file("json-schema-model"))
 
 lazy val jsonSchemaGen = project.in(file("json-schema-gen")).dependsOn(jsonSchemaModel)
 
-lazy val jsonSchemaPlay = project.in(file("json-schema-play"))
+lazy val jsonSchemaPlay = project.in(file("json-schema-play")).dependsOn(jsonSchemaModel)
 
-lazy val jsonSchemaJackson = project.in(file("json-schema-jackson"))
+lazy val jsonSchemaJackson = project.in(file("json-schema-jackson")).dependsOn(jsonSchemaModel)
 
 lazy val swaggerCheckCore = project.in(file("swagger-check-core")).dependsOn(jsonSchemaGen)
 
