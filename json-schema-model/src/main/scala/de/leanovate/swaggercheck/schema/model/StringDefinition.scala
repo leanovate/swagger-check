@@ -7,7 +7,7 @@ case class StringDefinition (
                          minLength: Option[Int],
                          maxLength: Option[Int],
                          pattern: Option[String],
-                         enum: Option[List[String]]
+                         enum: Option[Set[String]]
                        ) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {

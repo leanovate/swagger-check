@@ -9,7 +9,7 @@ case class ReferenceDefinition(
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
     schema.findByRef(ref)
       .map(_.validate(schema, path, node))
-      .getOrElse(ValidationResult.error(s"Referenced model does not exists: $ref"))
+      .getOrElse(ValidationResult.error(s"Referenced definition does not exists: $ref"))
 
   }
 }

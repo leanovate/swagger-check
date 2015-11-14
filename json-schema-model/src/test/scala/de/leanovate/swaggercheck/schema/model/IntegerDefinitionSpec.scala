@@ -7,7 +7,7 @@ import org.scalatest.{MustMatchers, WordSpec}
 
 class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
   "IntegerDefinition" should {
-    "accept any integer if no format or range is definied" in {
+    "accept any integer if no format or range is defined" in {
       val path = JsonPath("jsonpath")
       val node = TestNode(integer = Some(BigInt(Long.MaxValue) + 12345))
       val schema = mock[Schema]
@@ -17,7 +17,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
       definition.validate(schema, path, node) mustBe ValidateSuccess
     }
 
-    "accept values that match the definied format" in {
+    "accept values that match the defined format" in {
       val path = JsonPath("jsonpath")
       val node = TestNode(integer = Some(BigInt(12345)))
       val schema = mock[Schema]
