@@ -88,7 +88,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val node = TestNode(string = Some("enum2"))
       val schema = mock[Schema]
 
-      val definition = StringDefinition(None, None, None, None, Some(Set("enum1", "enum2", "enum3")))
+      val definition = StringDefinition(None, None, None, None, Some("enum1" :: "enum2":: "enum3" :: Nil))
 
       definition.validate(schema, path, node) mustBe ValidateSuccess
     }
@@ -98,7 +98,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val node = TestNode(string = Some("totally unimportant"))
       val schema = mock[Schema]
 
-      val definition = StringDefinition(None, None, None, None, Some(Set("enum1", "enum2", "enum3")))
+      val definition = StringDefinition(None, None, None, None, Some("enum1" :: "enum2":: "enum3" :: Nil))
 
       val ValidationError(result) = definition.validate(schema, path, node)
 

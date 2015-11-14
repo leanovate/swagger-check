@@ -9,6 +9,8 @@ object Common {
 
   val jacksonVersion = "2.5.4"
 
+  val playVersion = "2.4.3"
+
   val settings = Seq(
 
     organization := "de.leanovate.swaggercheck",
