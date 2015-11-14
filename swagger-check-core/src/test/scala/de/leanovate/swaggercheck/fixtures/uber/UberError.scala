@@ -1,8 +1,6 @@
 package de.leanovate.swaggercheck.fixtures.uber
 
-import de.leanovate.swaggercheck.Generators
-import de.leanovate.swaggercheck.fixtures.model.Link
-import org.scalacheck.{Gen, Arbitrary}
+import org.scalacheck.{Arbitrary, Gen}
 import play.api.libs.json.Json
 
 case class UberError(

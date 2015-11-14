@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import de.leanovate.swaggercheck.model.{CheckJsString, CheckJsValue}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifySuccess}
 import org.mockito.Matchers._
 import org.mockito.Mockito._

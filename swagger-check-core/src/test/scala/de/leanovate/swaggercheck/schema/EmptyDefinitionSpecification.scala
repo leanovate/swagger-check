@@ -1,10 +1,9 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.model.{CheckJsNull, CheckJsValue}
-import org.scalacheck.{Gen, Properties}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsNull, CheckJsValue}
 import org.scalacheck.Prop.forAll
+import org.scalacheck.{Gen, Properties}
 
 object EmptyDefinitionSpecification extends Properties("EmptyDefinition") {
   val swaggerChecks = SwaggerChecks(SwaggerAPI(None, Map.empty, Map.empty))

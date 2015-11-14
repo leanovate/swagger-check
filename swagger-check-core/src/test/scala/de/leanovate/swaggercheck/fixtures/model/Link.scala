@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.fixtures.model
 
-import de.leanovate.swaggercheck.Generators
+import de.leanovate.swaggercheck.generators.Generators
 import org.scalacheck.Arbitrary
 import play.api.libs.json.Json
 

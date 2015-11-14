@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
-import de.leanovate.swaggercheck.Generators
+import de.leanovate.swaggercheck.generators.Generators
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.libs.json.Json
 

@@ -6,7 +6,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-import de.leanovate.swaggercheck.{Generators, VerifyResult}
+import de.leanovate.swaggercheck.generators.Generators
+import de.leanovate.swaggercheck.{VerifyResult}
 import org.scalacheck.Gen
 
 import scala.util.Try

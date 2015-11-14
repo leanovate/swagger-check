@@ -1,8 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.model._
+import de.leanovate.swaggercheck.shrinkable._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
 

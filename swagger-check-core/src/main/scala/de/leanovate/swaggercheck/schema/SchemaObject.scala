@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import de.leanovate.swaggercheck.model._
+import de.leanovate.swaggercheck.shrinkable._
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 

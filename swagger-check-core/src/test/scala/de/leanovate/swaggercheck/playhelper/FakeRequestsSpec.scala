@@ -1,8 +1,8 @@
 package de.leanovate.swaggercheck.playhelper
 
-import de.leanovate.swaggercheck.model.CheckJsObject
-import org.scalatest.{MustMatchers, WordSpec}
 import de.leanovate.swaggercheck.playhelper
+import de.leanovate.swaggercheck.shrinkable.CheckJsObject
+import org.scalatest.{MustMatchers, WordSpec}
 
 class FakeRequestsSpec extends WordSpec with MustMatchers {
   "FakeRequests" should {

@@ -2,7 +2,7 @@ package de.leanovate.swaggercheck.fixtures.model
 
 import java.util.UUID
 
-import de.leanovate.swaggercheck.Generators
+import de.leanovate.swaggercheck.generators.Generators
 import org.scalacheck.{Arbitrary, Gen}
 import play.api.libs.json.Json
 

@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.simple
 
 import de.leanovate.swaggercheck.RequestCreator
-import de.leanovate.swaggercheck.model.CheckJsValue
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 
 /**
   * Simple request object implementation.

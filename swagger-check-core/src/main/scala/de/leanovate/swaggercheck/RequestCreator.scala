@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck
 
-import de.leanovate.swaggercheck.model.CheckJsValue
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 
 /**
   * Creator for request object for the webframework of your choice.

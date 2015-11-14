@@ -1,8 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.model.{CheckJsString, CheckJsInteger, CheckJsArray, CheckJsBoolean}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsArray, CheckJsBoolean, CheckJsInteger, CheckJsString}
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 

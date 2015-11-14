@@ -1,10 +1,8 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.model.{ CheckJsValue, CheckJsNumber }
-import de.leanovate.swaggercheck.{ SwaggerChecks, VerifyResult }
-import org.scalacheck.{ Arbitrary, Gen }
-import de.leanovate.swaggercheck.model.CheckJsInteger
+import de.leanovate.swaggercheck.shrinkable.{CheckJsInteger, CheckJsNumber, CheckJsValue}
+import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
+import org.scalacheck.{Arbitrary, Gen}
 
 case class NumberDefinition(
     format: Option[String],

@@ -2,7 +2,7 @@ package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import de.leanovate.swaggercheck.model.{CheckJsString, CheckJsValue}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 
 @JsonDeserialize(builder = classOf[OperationResponseBuilder])

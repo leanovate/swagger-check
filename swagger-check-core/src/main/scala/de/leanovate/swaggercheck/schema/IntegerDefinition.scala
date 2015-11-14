@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import de.leanovate.swaggercheck.model.{CheckJsInteger, CheckJsValue}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsInteger, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.{Arbitrary, Gen}
 

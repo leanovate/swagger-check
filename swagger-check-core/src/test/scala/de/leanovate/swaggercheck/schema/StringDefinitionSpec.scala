@@ -1,8 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.model._
+import de.leanovate.swaggercheck.shrinkable._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 
@@ -40,7 +39,6 @@ class StringDefinitionSpec extends WordSpec with MustMatchers with MockitoSugar 
 
       stringDefinition.verify(mockContext, Seq.empty, CheckJsString.unformatted("E2")).isSuccess mustBe true
       stringDefinition.verify(mockContext, Seq.empty, CheckJsString.unformatted("E4")).isSuccess mustBe false
-
     }
   }
 }

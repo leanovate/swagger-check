@@ -1,11 +1,7 @@
 package de.leanovate.swaggercheck.playhelper
 
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import de.leanovate.swaggercheck.RequestCreator
-import de.leanovate.swaggercheck.model.CheckJsValue
-import play.api.libs.json.{Json, JsValue}
-import play.api.libs.json.jackson.PlayJsonModule
-import play.api.mvc.AnyContent
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import play.api.test.FakeRequest
 
 object FakeRequests {

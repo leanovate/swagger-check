@@ -2,7 +2,7 @@ package de.leanovate.swaggercheck
 
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import de.leanovate.swaggercheck.ThingApiSpecification._
+import de.leanovate.swaggercheck.generators.Generators
 import de.leanovate.swaggercheck.schema.SwaggerAPI
 
 object Main {

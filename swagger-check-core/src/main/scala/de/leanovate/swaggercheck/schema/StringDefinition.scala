@@ -1,8 +1,8 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.model.{CheckJsString, CheckJsValue}
-import de.leanovate.swaggercheck.{Generators, SwaggerChecks, VerifyResult}
+import de.leanovate.swaggercheck.generators.Generators
+import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
+import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 case class StringDefinition(

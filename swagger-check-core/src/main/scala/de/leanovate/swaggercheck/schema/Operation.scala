@@ -3,10 +3,9 @@ package de.leanovate.swaggercheck.schema
 import java.net.URLEncoder
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import de.leanovate.swaggercheck.model.CheckJsValue
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import org.scalacheck.Gen
 

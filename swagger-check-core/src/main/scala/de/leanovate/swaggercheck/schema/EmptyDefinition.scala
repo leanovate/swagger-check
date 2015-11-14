@@ -1,7 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import com.fasterxml.jackson.databind.JsonNode
-import de.leanovate.swaggercheck.model.{CheckJsNull, CheckJsValue}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsNull, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 

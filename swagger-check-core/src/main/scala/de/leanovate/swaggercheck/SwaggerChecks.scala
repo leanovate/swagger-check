@@ -3,8 +3,8 @@ package de.leanovate.swaggercheck
 import java.io.{File, FileInputStream, InputStream}
 
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.model.CheckJsValue
 import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Gen
 
 /**
