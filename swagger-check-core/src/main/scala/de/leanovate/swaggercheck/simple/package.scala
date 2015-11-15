@@ -5,5 +5,5 @@ package object simple {
 
   implicit val responseExtrator: ResponseExtractor[SimpleResponse] = SimpleResponse.extractor
 
-  type SimpleOperationVerifier = OperationVerifier[SimpleRequest, SimpleResponse]
+  type SimpleOperationVerifier = OperationValidator[SimpleRequest, SimpleResponse]
 }

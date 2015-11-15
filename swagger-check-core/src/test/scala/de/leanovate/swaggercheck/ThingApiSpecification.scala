@@ -5,6 +5,7 @@ import de.leanovate.swaggercheck.simple._
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Properties, Shrink}
 import play.api.libs.json.{JsSuccess, Json}
+import de.leanovate.swaggercheck.schema.gen.ValidationResultToProp._
 
 object ThingApiSpecification extends Properties("Thing API") {
   val swaggerChecks = SwaggerChecks(getClass.getClassLoader.getResourceAsStream("thing_api.yaml"))

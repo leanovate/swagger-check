@@ -1,13 +1,13 @@
 package de.leanovate.swaggercheck.formats
 
 import java.net.{URI, URL}
-import java.time.{LocalDate, Instant}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.time.{Instant, LocalDate}
 import java.util.UUID
 
 import de.leanovate.swaggercheck.generators.Generators
-import de.leanovate.swaggercheck.{VerifyResult}
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import org.scalacheck.Gen
 
 import scala.util.Try
@@ -17,32 +17,32 @@ object StringFormats {
   object URLString extends Format[String] {
     override def generate: Gen[String] = Generators.url
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (Try(new URL(value)).isSuccess)
-        VerifyResult.success
+        ValidationResult.success
       else
-        VerifyResult.error(s"'$value' is not an url: $path")
+        ValidationResult.error(s"'$value' is not an url: $path")
   }
 
   object URIString extends Format[String] {
     override def generate: Gen[String] = Generators.uri
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (Try(new URI(value)).isSuccess)
-        VerifyResult.success
+        ValidationResult.success
       else
-        VerifyResult.error(s"'$value' is not an uri: $path")
+        ValidationResult.error(s"'$value' is not an uri: $path")
   }
 
   object UUIDString extends Format[String] {
     override def generate: Gen[String] =
       Gen.uuid.map(_.toString)
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (Try(UUID.fromString(value)).isSuccess)
-        VerifyResult.success
+        ValidationResult.success
       else
-        VerifyResult.error(s"'$value' is not an uuid: $path")
+        ValidationResult.error(s"'$value' is not an uuid: $path")
   }
 
   object EmailString extends Format[String] {
@@ -50,11 +50,11 @@ object StringFormats {
 
     override def generate: Gen[String] = Generators.email
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (emailPattern.pattern.matcher(value).matches()) {
-        VerifyResult.success
+        ValidationResult.success
       } else {
-        VerifyResult.error(s"'$value' is not an email: $path")
+        ValidationResult.error(s"'$value' is not an email: $path")
       }  }
 
   object DateString extends Format[String] {
@@ -66,11 +66,11 @@ object StringFormats {
       }
     }
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (Try(DateTimeFormatter.ISO_DATE.parse(value)).isSuccess)
-        VerifyResult.success
+        ValidationResult.success
       else
-        VerifyResult.error(s"'$value' is not a date: $path")
+        ValidationResult.error(s"'$value' is not a date: $path")
   }
 
   object DateTimeString extends Format[String] {
@@ -82,11 +82,11 @@ object StringFormats {
       }
     }
 
-    override def verify(path: String, value: String): VerifyResult =
+    override def verify(path: String, value: String): ValidationResult =
       if (Try(DateTimeFormatter.ISO_DATE_TIME.parse(value)).isSuccess)
-        VerifyResult.success
+        ValidationResult.success
       else
-        VerifyResult.error(s"'$value' is not a date-time: $path")
+        ValidationResult.error(s"'$value' is not a date-time: $path")
   }
 
   val defaultFormats = Map(

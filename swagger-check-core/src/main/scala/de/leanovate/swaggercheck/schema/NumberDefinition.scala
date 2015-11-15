@@ -1,7 +1,8 @@
 package de.leanovate.swaggercheck.schema
 
+import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.shrinkable.{CheckJsInteger, CheckJsNumber, CheckJsValue}
-import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.{Arbitrary, Gen}
 
 case class NumberDefinition(
@@ -18,21 +19,21 @@ case class NumberDefinition(
     generator.map(value => CheckJsNumber(minimum, maximum, value))
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult = node match {
     case CheckJsNumber(_, _, value) =>
       verifyValue(ctx, path, value)
     case CheckJsInteger(_, _, value) =>
       verifyValue(ctx, path, BigDecimal(value))
     case _ =>
-      VerifyResult.error(s"${node} should be a long: $path")
+      ValidationResult.error(s"${node} should be a long: $path")
   }
 
-  private def verifyValue(ctx: SwaggerChecks, path: Seq[String], value: BigDecimal): VerifyResult = {
+  private def verifyValue(ctx: SwaggerChecks, path: Seq[String], value: BigDecimal): ValidationResult = {
     if (minimum.exists(_ > value))
-      VerifyResult.error(s"'$value' has to be greater than ${minimum.mkString}: ${path.mkString(".")}")
+      ValidationResult.error(s"'$value' has to be greater than ${minimum.mkString}: ${path.mkString(".")}")
     else if (maximum.exists(_ < value))
-      VerifyResult.error(s"'$value' has to be less than ${maximum.mkString}: ${path.mkString(".")}")
+      ValidationResult.error(s"'$value' has to be less than ${maximum.mkString}: ${path.mkString(".")}")
     else
-      format.flatMap(ctx.numberFormats.get).map(_.verify(path.mkString("."), value)).getOrElse(VerifyResult.success)
+      format.flatMap(ctx.numberFormats.get).map(_.verify(path.mkString("."), value)).getOrElse(ValidationResult.success)
   }
 }

@@ -1,7 +1,8 @@
 package de.leanovate.swaggercheck.schema
 
+import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.shrinkable.{CheckJsArray, CheckJsValue}
-import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 case class ArrayDefinition(
@@ -22,21 +23,21 @@ case class ArrayDefinition(
       } yield CheckJsArray(minItems, elements)
   }.getOrElse(arbitraryArray(ctx))
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult = node match {
     case CheckJsArray(_, elements) =>
       if (minItems.exists(_ > elements.size))
-        VerifyResult.error(s"$node should have at least ${minItems.mkString} items: ${path.mkString(".")}")
+        ValidationResult.error(s"$node should have at least ${minItems.mkString} items: ${path.mkString(".")}")
       else if (maxItems.exists(_ < elements.size))
-        VerifyResult.error(s"$node should have at least ${maxItems.mkString} items: ${path.mkString(".")}")
+        ValidationResult.error(s"$node should have at least ${maxItems.mkString} items: ${path.mkString(".")}")
       else
         items.map {
           itemsSchema =>
-            elements.zipWithIndex.foldLeft(VerifyResult.success) {
+            elements.zipWithIndex.foldLeft(ValidationResult.success) {
               case (result, (element, index)) =>
                 result.combine(itemsSchema.verify(ctx, (path.mkString(".") + s"[$index]") :: Nil, element))
             }
-        }.getOrElse(VerifyResult.success)
+        }.getOrElse(ValidationResult.success)
     case _ =>
-      VerifyResult.error(s"$node should be an array: ${path.mkString(".")}")
+      ValidationResult.error(s"$node should be an array: ${path.mkString(".")}")
   }
 }

@@ -1,8 +1,9 @@
 package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
-import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 case class ReferenceDefinition(
@@ -17,7 +18,7 @@ case class ReferenceDefinition(
       .getOrElse(throw new RuntimeException(s"Referenced model does not exists: $simpleRef"))
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult = {
     ctx.swaggerAPI.definitions.get(simpleRef)
       .map(_.verify(ctx, path, node))
       .getOrElse(throw new RuntimeException(s"Referenced model does not exists: $simpleRef"))

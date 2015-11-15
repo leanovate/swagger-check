@@ -10,5 +10,5 @@ package object playhelper {
 
   implicit val responseExtractor: ResponseExtractor[Future[Result]] = FutureResults.responseExtractor
 
-  type PlayOperationVerifier = OperationVerifier[FakeRequest[String], Future[Result]]
+  type PlayOperationVerifier = OperationValidator[FakeRequest[String], Future[Result]]
 }

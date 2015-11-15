@@ -3,6 +3,7 @@ package de.leanovate.swaggercheck
 import java.io.{File, FileInputStream, InputStream}
 
 import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Gen
@@ -45,7 +46,7 @@ case class SwaggerChecks(
     * @param name name of the swagger definition to check
     * @return a string verifier
     */
-  def jsonVerifier(name: String): Verifier[String] =
+  def jsonVerifier(name: String): Validator[String] =
     swaggerAPI.definitions.get(name)
       .map(verifierForSchema)
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
@@ -78,7 +79,7 @@ case class SwaggerChecks(
     * @return
     */
   def responseVerifier[R](method: String, path: String)
-                         (implicit responseExtractor: ResponseExtractor[R]): Verifier[R] = {
+                         (implicit responseExtractor: ResponseExtractor[R]): Validator[R] = {
     swaggerAPI.paths.get(path).flatMap {
       methods =>
         methods.get(method.toUpperCase).map(verifierForOperation[R])
@@ -96,14 +97,14 @@ case class SwaggerChecks(
     * @tparam U response class
     */
   def operationVerifier[R, U](pathFilter: String => Boolean = _ => true)
-                             (implicit requestBuilder: RequestCreator[R], responseExtractor: ResponseExtractor[U]): Gen[OperationVerifier[R, U]] = {
+                             (implicit requestBuilder: RequestCreator[R], responseExtractor: ResponseExtractor[U]): Gen[OperationValidator[R, U]] = {
     val operations = swaggerAPI.paths.filterKeys(pathFilter)
 
     for {
       (path, methods) <- Gen.oneOf(operations.toSeq)
       (method, operation) <- Gen.oneOf(methods.toSeq)
       request <- operation.generateRequest(this, method, path)
-    } yield OperationVerifier[R, U](request, verifierForOperation[U](operation))
+    } yield OperationValidator[R, U](request, verifierForOperation[U](operation))
   }
 
   /**
@@ -136,25 +137,25 @@ case class SwaggerChecks(
     */
   def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
 
-  private def verifierForSchema(expectedSchema: SchemaObject): Verifier[String] = new Verifier[String] {
-    override def verify(value: String): VerifyResult = {
+  private def verifierForSchema(expectedSchema: SchemaObject): Validator[String] = new Validator[String] {
+    override def verify(value: String): ValidationResult = {
       expectedSchema.verify(SwaggerChecks.this, Nil, CheckJsValue.parse(value))
     }
   }
 
   private def verifierForOperation[R](operation: Operation)
-                                     (implicit responseExtractor: ResponseExtractor[R]) = new Verifier[R] {
-    override def verify(value: R): VerifyResult = {
+                                     (implicit responseExtractor: ResponseExtractor[R]) = new Validator[R] {
+    override def verify(value: R): ValidationResult = {
       val status = responseExtractor.status(value)
 
       operation.responses.get(status.toString).orElse(operation.responses.get("default"))
         .map(_.verify(SwaggerChecks.this, responseExtractor.headers(value), responseExtractor.body(value)))
-        .getOrElse(VerifyResult.error(s"Invalid status=$status"))
+        .getOrElse(ValidationResult.error(s"Invalid status=$status"))
     }
   }
 
-  private def failingVerifier[T](failure: String) = new Verifier[T] {
-    override def verify(value: T): VerifyResult = VerifyResult.error(failure)
+  private def failingVerifier[T](failure: String) = new Validator[T] {
+    override def verify(value: T): ValidationResult = ValidationResult.error(failure)
   }
 }
 

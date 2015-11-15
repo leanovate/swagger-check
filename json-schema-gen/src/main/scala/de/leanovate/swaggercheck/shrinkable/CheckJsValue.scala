@@ -2,6 +2,7 @@ package de.leanovate.swaggercheck.shrinkable
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.core.{JsonTokenId, JsonParser, JsonFactory, JsonGenerator}
+import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
 import org.scalacheck.Shrink
 import org.scalacheck.util.Pretty
 
@@ -59,6 +60,43 @@ object CheckJsValue {
         jsValue.minified
       else
         jsValue.prettyfied
+  }
+
+  implicit val adapter = new NodeAdapter[CheckJsValue] {
+    override def asArray(node: CheckJsValue): Option[Seq[CheckJsValue]] = node match {
+      case CheckJsArray(_, elements) => Some(elements)
+      case _ => None
+    }
+
+    override def asNumber(node: CheckJsValue): Option[BigDecimal] = node match {
+      case CheckJsNumber(_, _, value) => Some(value)
+      case CheckJsInteger(_, _, value) => Some(BigDecimal(value))
+      case _ => None
+    }
+
+    override def asString(node: CheckJsValue): Option[String] = node match {
+      case CheckJsString(_, _, value) => Some(value)
+      case _ => None
+    }
+
+    override def asBoolean(node: CheckJsValue): Option[Boolean] = node match {
+      case CheckJsBoolean(value) => Some(value)
+      case _ => None
+    }
+
+    override def asInteger(node: CheckJsValue): Option[BigInt] = node match {
+      case CheckJsInteger(_, _, value) => Some(value)
+      case _ => None
+    }
+
+    override def createNull: CheckJsValue = CheckJsNull
+
+    override def isNull(node: CheckJsValue): Boolean = node == CheckJsNull
+
+    override def asObject(node: CheckJsValue): Option[Map[String, CheckJsValue]] = node match {
+      case CheckJsObject(_, _, fields) => Some(fields)
+      case _ => None
+    }
   }
 
   @tailrec

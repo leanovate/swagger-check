@@ -1,15 +1,16 @@
 package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.shrinkable._
-import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 @JsonDeserialize(builder = classOf[SchemaObjectBuilder])
 trait SchemaObject {
   def generate(context: SwaggerChecks): Gen[CheckJsValue]
 
-  def verify(context: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult
+  def verify(context: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult
 }
 
 object SchemaObject {

@@ -1,7 +1,8 @@
 package de.leanovate.swaggercheck.schema
 
+import de.leanovate.swaggercheck.SwaggerChecks
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import de.leanovate.swaggercheck.shrinkable.{CheckJsNull, CheckJsObject, CheckJsValue}
-import de.leanovate.swaggercheck.{SwaggerChecks, VerifyResult}
 import org.scalacheck.Gen
 
 import scala.collection.JavaConversions._
@@ -46,20 +47,20 @@ case class ObjectDefinition(
     }
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): VerifyResult = node match {
+  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult = node match {
     case CheckJsObject(_, _, fields) =>
       properties.map {
         props =>
-          props.foldLeft(VerifyResult.success) {
+          props.foldLeft(ValidationResult.success) {
             case (result, (name, schema)) =>
               val field = fields.getOrElse(name, CheckJsNull)
               if (!field.isNull || required.exists(_.contains(name)))
                 result.combine(schema.verify(ctx, path :+ name, field))
               else
-                VerifyResult.success
+                ValidationResult.success
           }
-      }.getOrElse(VerifyResult.success)
+      }.getOrElse(ValidationResult.success)
     case _ =>
-      VerifyResult.error(s"$node should be an object: ${path.mkString(".")}")
+      ValidationResult.error(s"$node should be an object: ${path.mkString(".")}")
   }
 }

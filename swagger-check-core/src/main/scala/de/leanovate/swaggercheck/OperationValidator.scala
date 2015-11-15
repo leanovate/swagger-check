@@ -8,7 +8,7 @@ package de.leanovate.swaggercheck
   * @tparam R type of the request
   * @tparam U type of the response
   */
-case class OperationVerifier[R, U](
+case class OperationValidator[R, U](
                                     request: R,
-                                    responseVerifier: Verifier[U]
+                                    responseVerifier: Validator[U]
                                   )
