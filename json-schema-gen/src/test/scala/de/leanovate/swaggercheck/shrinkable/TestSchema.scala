@@ -5,7 +5,7 @@ import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
 import de.leanovate.swaggercheck.schema.model.Definition
 
 case class TestSchema(maxItems: Int = 20) extends GeneratableSchema {
-  override def withMaxItems(newMaxItems: Int): GeneratableSchema = TestSchema(newMaxItems)
+  override def withMaxItems(newMaxItems: Int): TestSchema= TestSchema(newMaxItems)
 
   override def findGeneratableStringFormat(format: String): Option[GeneratableFormat[String]] = None
 

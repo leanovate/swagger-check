@@ -15,8 +15,12 @@ object GeneratableDefinition {
     case definition: AllOfDefinition => GeneratableAllOf(definition)
     case definition: ArrayDefinition => GeneratableArray(definition)
     case BooleanDefinition => GeneratableBoolean
+    case EmptyDefinition => GeneratableEmpty
     case definition: IntegerDefinition => GeneratableInteger(definition)
     case definition: NumberDefinition => GeneratableNumber(definition)
     case definition: ObjectDefinition => GeneratableObject(definition)
+    case definition: OneOfDefinition => GeneratableOneOf(definition)
+    case definition: StringDefinition => GeneratableString(definition)
+    case definition: ReferenceDefinition => GeneratableReference(definition)
   }
 }

@@ -3,9 +3,11 @@ package de.leanovate.swaggercheck
 import java.io.{File, FileInputStream, InputStream}
 
 import de.leanovate.swaggercheck.formats.{IntegerFormats, NumberFormats, StringFormats}
+import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
+import de.leanovate.swaggercheck.schema.gen.GeneratableSchema
 import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
-import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
-import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
+import de.leanovate.swaggercheck.schema.model.{Definition, JsonPath, ValidationResult}
+import de.leanovate.swaggercheck.schema.{Operation, SwaggerAPI}
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Gen
 
@@ -25,7 +27,7 @@ case class SwaggerChecks(
                           integerFormats: Map[String, GeneratableFormat[BigInt]] = IntegerFormats.defaultFormats,
                           numberFormats: Map[String, GeneratableFormat[BigDecimal]] = NumberFormats.defaultFormats,
                           maxItems: Int = 10
-                        ) {
+                        ) extends GeneratableSchema {
   /**
     * Create a generator for random json based on a swagger definition.
     *
@@ -136,11 +138,11 @@ case class SwaggerChecks(
     *
     * Mostly used internally to ensure that size of arrays decay with depth.
     */
-  def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
+  override def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
 
-  private def verifierForSchema(expectedSchema: SchemaObject): Validator[String] = new Validator[String] {
+  private def verifierForSchema(expectedSchema: Definition): Validator[String] = new Validator[String] {
     override def verify(value: String): ValidationResult = {
-      expectedSchema.verify(SwaggerChecks.this, JsonPath(), CheckJsValue.parse(value))
+      expectedSchema.validate(SwaggerChecks.this, JsonPath(), CheckJsValue.parse(value))
     }
   }
 
@@ -157,6 +159,21 @@ case class SwaggerChecks(
 
   private def failingVerifier[T](failure: String) = new Validator[T] {
     override def verify(value: T): ValidationResult = ValidationResult.error(failure)
+  }
+
+  override def findGeneratableIntegerFormat(format: String): Option[GeneratableFormat[BigInt]] =
+    integerFormats.get(format)
+
+  override def findGeneratableStringFormat(format: String): Option[GeneratableFormat[String]] =
+    stringFormats.get(format)
+
+  override def findGeneratableNumberFormat(format: String): Option[GeneratableFormat[BigDecimal]] =
+    numberFormats.get(format)
+
+  override def findByRef(ref: String): Option[Definition] = {
+    val simpleRef = if (ref.startsWith("#/definitions/")) ref.substring(14) else ref
+
+    swaggerAPI.definitions.get(simpleRef)
   }
 }
 

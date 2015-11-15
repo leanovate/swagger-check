@@ -31,15 +31,18 @@ object Definition {
              maximum: Option[BigDecimal],
              minLength: Option[Int],
              maxLength: Option[Int],
+             oneOf: Option[Seq[Definition]],
              pattern: Option[String],
              properties: Option[Map[String, Definition]],
              additionalProperties: Option[Definition],
              required: Option[Set[String]],
              ref: Option[String]
            ): Definition = {
-    allOf match {
-      case Some(schemas) =>
-        AllOfDefinition(schemas)
+    (allOf, oneOf) match {
+      case (Some(definitions), _) =>
+        AllOfDefinition(definitions)
+      case (_, Some(definitions)) =>
+        OneOfDefinition(definitions)
       case _ =>
         schemaType match {
           case Some("object") => ObjectDefinition(required, properties, additionalProperties)

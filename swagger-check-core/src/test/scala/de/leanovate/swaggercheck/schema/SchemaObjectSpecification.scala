@@ -8,17 +8,17 @@ import org.scalacheck.Properties
 object SchemaObjectSpecification extends Properties("SchemaObject") {
   val swaggerChecks = SwaggerChecks(SwaggerAPI(None, Map.empty, Map.empty))
 
-  property("arbitraryObject") = forAll(SchemaObject.arbitraryObj(swaggerChecks)) {
+  property("arbitraryObject") = forAll(swaggerChecks.arbitraryObj) {
     node: CheckJsValue =>
       node.isInstanceOf[CheckJsObject]
   }
 
-  property("arbitraryArray") = forAll(SchemaObject.arbitraryArray(swaggerChecks)) {
+  property("arbitraryArray") = forAll(swaggerChecks.arbitraryArray) {
     node: CheckJsValue =>
       node.isInstanceOf[CheckJsArray]
   }
 
-  property("arbitraryValue") = forAll(SchemaObject.arbitraryValue) {
+  property("arbitraryValue") = forAll(swaggerChecks.arbitraryValue) {
     node: CheckJsValue =>
       node.isInstanceOf[CheckJsString] || node.isInstanceOf[CheckJsInteger] || node.isInstanceOf[CheckJsBoolean]
   }

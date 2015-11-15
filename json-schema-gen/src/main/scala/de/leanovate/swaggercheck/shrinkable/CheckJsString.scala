@@ -1,6 +1,7 @@
 package de.leanovate.swaggercheck.shrinkable
 
 import com.fasterxml.jackson.core.JsonGenerator
+import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
 import org.scalacheck.Shrink
 
 /**

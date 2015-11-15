@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.{DeserializationFeature, MappingJsonFactory, ObjectMapper}
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import de.leanovate.swaggercheck.schema.jackson.JsonSchemaModule
+import de.leanovate.swaggercheck.schema.model.Definition
 
 import scala.io.Source
 
@@ -15,7 +17,7 @@ import scala.io.Source
 case class SwaggerAPI(
                        basePath: Option[String],
                        paths: Map[String, Map[String, Operation]],
-                       definitions: Map[String, SchemaObject]
+                       definitions: Map[String, Definition]
                      )
 
 object SwaggerAPI {
@@ -34,6 +36,7 @@ object SwaggerAPI {
   def objectMapper(jsonFactory: JsonFactory): ObjectMapper = {
     val mapper = new ObjectMapper(jsonFactory)
     mapper.registerModule(DefaultScalaModule)
+    mapper.registerModule(JsonSchemaModule)
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     mapper
   }
@@ -44,7 +47,7 @@ class SwaggerAPIBuilder @JsonCreator()(
                                         @JsonProperty("consumes") consumes: Option[Seq[String]],
                                         @JsonProperty("produces") produces: Option[Seq[String]],
                                         @JsonProperty("paths") paths: Option[Map[String, Map[String, Operation]]],
-                                        @JsonProperty("definitions") definitions: Option[Map[String, SchemaObject]]
+                                        @JsonProperty("definitions") definitions: Option[Map[String, Definition]]
                                       ) {
   def build(): SwaggerAPI = {
     val defaultConsumes = consumes.map(_.toSet).getOrElse(Set.empty)

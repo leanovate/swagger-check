@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.SwaggerChecks
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
+import de.leanovate.swaggercheck.schema.jackson.DefinitionBuilder
+import de.leanovate.swaggercheck.schema.model.Definition
 import org.scalacheck.Gen
+import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
 
 @JsonDeserialize(builder = classOf[OperationParameterBuilder])
 case class OperationParameter(
                                name: Option[String],
                                in: String,
                                required: Boolean,
-                               schema: SchemaObject
+                               schema: Definition
                                ) {
   def applyTo(context: SwaggerChecks, builder: RequestBuilder): RequestBuilder = (name, in) match {
     case (Some(paramName), "path") =>
@@ -36,14 +39,14 @@ class OperationParameterBuilder @JsonCreator()(
                                                 @JsonProperty("required") required: Option[Boolean],
                                                 @JsonProperty("type") schemaType: Option[String],
                                                 @JsonProperty("format") format: Option[String],
-                                                @JsonProperty("schema") schema: Option[SchemaObject]
+                                                @JsonProperty("schema") schema: Option[Definition]
                                                 ) {
   def build(): OperationParameter = {
     OperationParameter(
       name,
       in,
       required.getOrElse(false),
-      schema.getOrElse(new SchemaObjectBuilder(schemaType = schemaType, format = format).build()))
+      schema.getOrElse(new DefinitionBuilder(schemaType = schemaType, format = format).build()))
 
   }
 }
