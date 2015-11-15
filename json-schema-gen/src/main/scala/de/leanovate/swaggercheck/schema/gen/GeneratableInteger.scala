@@ -18,6 +18,10 @@ case class GeneratableInteger(
         .flatMap(schema.findGeneratableIntegerFormat)
         .map(_.generate)
         .getOrElse(Arbitrary.arbitrary[BigInt])
+        .suchThat {
+          value: BigInt =>
+            !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
+        }
     generator.map(value => CheckJsInteger(definition.minimum, definition.maximum, value))
   }
 }

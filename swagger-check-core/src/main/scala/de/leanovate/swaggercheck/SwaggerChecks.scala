@@ -2,10 +2,9 @@ package de.leanovate.swaggercheck
 
 import java.io.{File, FileInputStream, InputStream}
 
-import de.leanovate.swaggercheck.formats.{IntegerFormats, NumberFormats, StringFormats}
 import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
 import de.leanovate.swaggercheck.schema.gen.GeneratableSchema
-import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
+import de.leanovate.swaggercheck.schema.gen.formats.{GeneratableFormat, IntegerFormats, NumberFormats, StringFormats}
 import de.leanovate.swaggercheck.schema.model.{Definition, JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.schema.{Operation, SwaggerAPI}
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue

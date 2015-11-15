@@ -18,6 +18,10 @@ case class GeneratableNumber(
         .flatMap(schema.findGeneratableNumberFormat)
         .map(_.generate)
         .getOrElse(Arbitrary.arbitrary[BigDecimal])
+        .suchThat {
+          value: BigDecimal =>
+            !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
+        }
     generator.map(value => CheckJsNumber(definition.minimum, definition.maximum, value))
   }
 }

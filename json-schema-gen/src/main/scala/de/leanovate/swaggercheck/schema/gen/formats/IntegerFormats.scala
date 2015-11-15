@@ -1,6 +1,5 @@
-package de.leanovate.swaggercheck.formats
+package de.leanovate.swaggercheck.schema.gen.formats
 
-import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
 import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import org.scalacheck.Gen
 

@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.formats
+package de.leanovate.swaggercheck.schema.gen.formats
 
 import de.leanovate.swaggercheck.schema.model.JsonPath
 import org.scalatest.{MustMatchers, WordSpec}

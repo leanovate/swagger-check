@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.formats
+package de.leanovate.swaggercheck.schema.gen.formats
 
 import java.net.{URI, URL}
 import java.time.format.DateTimeFormatter
@@ -7,7 +7,6 @@ import java.time.{Instant, LocalDate}
 import java.util.UUID
 
 import de.leanovate.swaggercheck.generators.Generators
-import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
 import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import org.scalacheck.Gen
 
