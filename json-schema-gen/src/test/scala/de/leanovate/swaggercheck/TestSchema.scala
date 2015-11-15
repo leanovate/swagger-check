@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.shrinkable
+package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.schema.gen.GeneratableSchema
 import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat

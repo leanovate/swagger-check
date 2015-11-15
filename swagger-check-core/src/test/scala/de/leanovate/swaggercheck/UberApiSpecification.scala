@@ -1,11 +1,12 @@
 package de.leanovate.swaggercheck
 
 import de.leanovate.swaggercheck.fixtures.uber.{UberError, UberProduct}
+import de.leanovate.swaggercheck.schema.ValidationResultToProp
 import de.leanovate.swaggercheck.simple._
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Gen, Properties}
 import play.api.libs.json.Json
-import de.leanovate.swaggercheck.schema.gen.ValidationResultToProp._
+import ValidationResultToProp._
 
 object UberApiSpecification extends Properties("Uber API") {
   val swaggerChecks = SwaggerChecks(getClass.getClassLoader.getResourceAsStream("uber_api.yaml"))

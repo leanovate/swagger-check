@@ -1,11 +1,11 @@
 package models
 
-import de.leanovate.swaggercheck.VerifySuccess
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import org.specs2.ScalaCheck
 import org.specs2.matcher.MustMatchers
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
-import support.{ThingApi, Arbitraries}
+import support.{Arbitraries, ThingApi}
 
 class ThingsPageSpec extends Specification with ScalaCheck with MustMatchers with Arbitraries with ThingApi {
   "ThingsPage" should {
@@ -15,7 +15,7 @@ class ThingsPageSpec extends Specification with ScalaCheck with MustMatchers wit
 
       prop {
         thing: ThingsPage =>
-          verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo VerifySuccess
+          verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo ValidationResult.success
       }
     }
   }

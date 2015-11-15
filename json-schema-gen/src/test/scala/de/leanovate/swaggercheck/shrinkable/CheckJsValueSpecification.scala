@@ -1,5 +1,6 @@
 package de.leanovate.swaggercheck.shrinkable
 
+import de.leanovate.swaggercheck.TestSchema
 import org.scalacheck.Prop._
 import org.scalacheck.Properties
 

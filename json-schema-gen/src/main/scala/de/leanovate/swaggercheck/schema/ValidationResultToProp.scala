@@ -1,4 +1,4 @@
-package de.leanovate.swaggercheck.schema.gen
+package de.leanovate.swaggercheck.schema
 
 import de.leanovate.swaggercheck.schema.model.{ValidateSuccess, ValidationError, ValidationResult}
 import org.scalacheck.Prop
@@ -14,5 +14,4 @@ object ValidationResultToProp {
     case ValidateSuccess => Prop.proved
     case ValidationError(failures) => Prop(Result(status = Prop.False, labels = failures.toSet))
   }
-
 }

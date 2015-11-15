@@ -1,6 +1,6 @@
 package models
 
-import de.leanovate.swaggercheck.VerifySuccess
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import org.specs2.ScalaCheck
 import org.specs2.matcher.MustMatchers
 import org.specs2.mutable.Specification
@@ -14,7 +14,7 @@ class ErrorSpec extends Specification with ScalaCheck with MustMatchers with Arb
 
       prop {
         error: Error =>
-          verifier.verify(Json.stringify(Json.toJson(error))) must be equalTo VerifySuccess
+          verifier.verify(Json.stringify(Json.toJson(error))) must be equalTo ValidationResult.success
       }
     }
   }

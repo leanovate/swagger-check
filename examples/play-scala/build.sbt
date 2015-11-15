@@ -9,7 +9,7 @@ scalaVersion := "2.11.7"
 resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
 
 libraryDependencies ++= Seq(
-  "de.leanovate" %% "swagger-check" % "0.15" % Test,
+  "de.leanovate.swaggercheck" %% "swagger-check-core" % "0.99-SNAPSHOT" % Test,
   "org.specs2" %% "specs2-scalacheck" % "3.6" % Test,
   specs2 % Test
 )
