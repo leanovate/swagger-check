@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable.{CheckJsNull, CheckJsObject, CheckJsValue}
 import org.scalacheck.Gen
 
@@ -47,7 +47,7 @@ case class ObjectDefinition(
     }
   }
 
-  override def verify(ctx: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult = node match {
+  override def verify(ctx: SwaggerChecks, path: JsonPath, node: CheckJsValue): ValidationResult = node match {
     case CheckJsObject(_, _, fields) =>
       properties.map {
         props =>
@@ -55,12 +55,12 @@ case class ObjectDefinition(
             case (result, (name, schema)) =>
               val field = fields.getOrElse(name, CheckJsNull)
               if (!field.isNull || required.exists(_.contains(name)))
-                result.combine(schema.verify(ctx, path :+ name, field))
+                result.combine(schema.verify(ctx, path.field(name), field))
               else
                 ValidationResult.success
           }
       }.getOrElse(ValidationResult.success)
     case _ =>
-      ValidationResult.error(s"$node should be an object: ${path.mkString(".")}")
+      ValidationResult.error(s"$node should be an object: ${path}")
   }
 }

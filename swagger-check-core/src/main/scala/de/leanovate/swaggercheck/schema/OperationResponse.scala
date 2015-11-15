@@ -3,7 +3,7 @@ package de.leanovate.swaggercheck.schema
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
 
 @JsonDeserialize(builder = classOf[OperationResponseBuilder])
@@ -14,14 +14,14 @@ case class OperationResponse(
   def verify(context: SwaggerChecks, requestHeader: Map[String, String], requestBody: String): ValidationResult = {
     val bodyVerify = schema.map {
       expected =>
-        expected.verify(context, Nil, CheckJsValue.parse(requestBody))
+        expected.verify(context, JsonPath(), CheckJsValue.parse(requestBody))
     }.getOrElse(ValidationResult.success)
 
     headers.foldLeft(bodyVerify) {
       case (result, (name, schema)) =>
         result.combine(
           requestHeader.get(name.toLowerCase)
-            .map(value => schema.verify(context, Nil, CheckJsString.formatted(value)))
+            .map(value => schema.verify(context, JsonPath(), CheckJsString.formatted(value)))
             .getOrElse(ValidationResult.success))
     }
   }

@@ -2,8 +2,9 @@ package de.leanovate.swaggercheck
 
 import java.io.{File, FileInputStream, InputStream}
 
-import de.leanovate.swaggercheck.formats.{Format, IntegerFormats, NumberFormats, StringFormats}
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.formats.{IntegerFormats, NumberFormats, StringFormats}
+import de.leanovate.swaggercheck.schema.gen.formats.GeneratableFormat
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.schema.{Operation, SchemaObject, SwaggerAPI}
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Gen
@@ -20,9 +21,9 @@ import org.scalacheck.Gen
   */
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
-                          stringFormats: Map[String, Format[String]] = StringFormats.defaultFormats,
-                          integerFormats: Map[String, Format[BigInt]] = IntegerFormats.defaultFormats,
-                          numberFormats: Map[String, Format[BigDecimal]] = NumberFormats.defaultFormats,
+                          stringFormats: Map[String, GeneratableFormat[String]] = StringFormats.defaultFormats,
+                          integerFormats: Map[String, GeneratableFormat[BigInt]] = IntegerFormats.defaultFormats,
+                          numberFormats: Map[String, GeneratableFormat[BigDecimal]] = NumberFormats.defaultFormats,
                           maxItems: Int = 10
                         ) {
   /**
@@ -110,19 +111,19 @@ case class SwaggerChecks(
   /**
     * Add a self-defined string format.
     */
-  def withStringFormats(formats: (String, Format[String])*) =
+  def withStringFormats(formats: (String, GeneratableFormat[String])*) =
     copy(stringFormats = stringFormats ++ Map(formats: _*))
 
   /**
     * Add a self-defined integer format.
     */
-  def withIntegerFormats(formats: (String, Format[BigInt])*) =
+  def withIntegerFormats(formats: (String, GeneratableFormat[BigInt])*) =
     copy(integerFormats = integerFormats ++ Map(formats: _*))
 
   /**
     * Add a self-defined number format.
     */
-  def withNumberFormats(formats: (String, Format[BigDecimal])*) =
+  def withNumberFormats(formats: (String, GeneratableFormat[BigDecimal])*) =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
 
   /**
@@ -139,7 +140,7 @@ case class SwaggerChecks(
 
   private def verifierForSchema(expectedSchema: SchemaObject): Validator[String] = new Validator[String] {
     override def verify(value: String): ValidationResult = {
-      expectedSchema.verify(SwaggerChecks.this, Nil, CheckJsValue.parse(value))
+      expectedSchema.verify(SwaggerChecks.this, JsonPath(), CheckJsValue.parse(value))
     }
   }
 

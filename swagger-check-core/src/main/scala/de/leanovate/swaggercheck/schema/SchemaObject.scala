@@ -2,7 +2,7 @@ package de.leanovate.swaggercheck.schema
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable._
 import org.scalacheck.Gen
 
@@ -10,7 +10,7 @@ import org.scalacheck.Gen
 trait SchemaObject {
   def generate(context: SwaggerChecks): Gen[CheckJsValue]
 
-  def verify(context: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult
+  def verify(context: SwaggerChecks, path: JsonPath, node: CheckJsValue): ValidationResult
 }
 
 object SchemaObject {

@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.schema
 
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
 import org.mockito.Matchers._
 import org.mockito.Mockito._
@@ -19,7 +19,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
 
       response.verify(swaggerChecks, Map.empty, "{}").isSuccess mustBe true
 
-      verify(bodySchema).verify(swaggerChecks, Nil, CheckJsValue.parse("{}"))
+      verify(bodySchema).verify(swaggerChecks, JsonPath(), CheckJsValue.parse("{}"))
     }
 
     "verify response headers" in {
@@ -35,7 +35,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
 
       response.verify(swaggerChecks, Map("some header" -> "something"), "{}").isSuccess mustBe true
 
-      verify(headerSchema).verify(swaggerChecks, Nil, CheckJsString.formatted("something"))
+      verify(headerSchema).verify(swaggerChecks, JsonPath(), CheckJsString.formatted("something"))
     }
   }
 }

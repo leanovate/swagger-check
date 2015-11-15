@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable.{CheckJsObject, CheckJsValue}
 import de.leanovate.swaggercheck.{SwaggerChecks}
 import org.scalacheck.Gen
@@ -16,7 +16,7 @@ case class AllOfDefinition(schemas: Seq[SchemaObject]) extends SchemaObject {
       case (result, _) => result
     })
 
-  override def verify(context: SwaggerChecks, path: Seq[String], node: CheckJsValue): ValidationResult =
+  override def verify(context: SwaggerChecks, path: JsonPath, node: CheckJsValue): ValidationResult =
     schemas.foldLeft(ValidationResult.success) {
       (result, schema) =>
         result.combine(schema.verify(context, path, node))
