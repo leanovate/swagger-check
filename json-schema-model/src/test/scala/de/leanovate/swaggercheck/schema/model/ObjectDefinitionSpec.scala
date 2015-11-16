@@ -13,7 +13,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "succeed if non-required fields are missing" in {
@@ -25,7 +25,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(None, Some(Map("field3" -> field3Definition, "field4" -> field4Definition)), None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verifyZeroInteractions(field3Definition, field4Definition)
     }
@@ -42,7 +42,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(Some(Set("field3", "field4")), Some(Map("field3" -> field3Definition, "field4" -> field4Definition)), None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result mustBe Seq("error1", "error2")
     }
@@ -65,7 +65,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val definition = ObjectDefinition(Some(Set("field3", "field4")),
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)), None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verify(field2Definition).validate(schema, path.field("field2"), field2)
       verify(field3Definition).validate(schema, path.field("field3"), field3)
@@ -94,7 +94,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)),
         Some(additionalDefinition))
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result mustBe Seq("error")
     }
@@ -121,7 +121,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)),
         Some(additionalDefinition))
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verify(additionalDefinition).validate(schema, path.field("field1"), field1)
       verify(field2Definition).validate(schema, path.field("field2"), field2)
@@ -136,7 +136,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(None, None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("should be an object in path jsonpath")

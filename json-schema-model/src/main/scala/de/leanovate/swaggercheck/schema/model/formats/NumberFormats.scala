@@ -1,13 +1,10 @@
-package de.leanovate.swaggercheck.schema.gen.formats
+package de.leanovate.swaggercheck.schema.model.formats
 
 import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
-import org.scalacheck.{Arbitrary, Gen}
 
 object NumberFormats {
 
-  object FloatNumber extends GeneratableFormat[BigDecimal] {
-    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(_.toDouble).map(BigDecimal.decimal)
-
+  object FloatNumber extends ValueFormat[BigDecimal] {
     override def validate(path: JsonPath, value: BigDecimal): ValidationResult = {
       if (value.isDecimalDouble && value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
         // We have to be somewhat lenient here, most implementation do not produce valid float decimals
@@ -19,9 +16,7 @@ object NumberFormats {
     }
   }
 
-  object DoubleNumber extends GeneratableFormat[BigDecimal] {
-    override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Double].map(BigDecimal.decimal)
-
+  object DoubleNumber extends ValueFormat[BigDecimal] {
     override def validate(path: JsonPath, value: BigDecimal): ValidationResult =
       if (value.isDecimalDouble)
         ValidationResult.success

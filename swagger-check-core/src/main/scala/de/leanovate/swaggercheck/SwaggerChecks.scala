@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream, InputStream}
 
 import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
 import de.leanovate.swaggercheck.schema.gen.GeneratableSchema
-import de.leanovate.swaggercheck.schema.gen.formats.{GeneratableFormat, IntegerFormats, NumberFormats, StringFormats}
+import de.leanovate.swaggercheck.schema.gen.formats.{GeneratableFormat, GeneratableIntegerFormats, GeneratableNumberFormats, GeneratableStringFormats}
 import de.leanovate.swaggercheck.schema.model.{Definition, JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.schema.{Operation, SwaggerAPI}
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
@@ -22,9 +22,9 @@ import org.scalacheck.Gen
   */
 case class SwaggerChecks(
                           swaggerAPI: SwaggerAPI,
-                          stringFormats: Map[String, GeneratableFormat[String]] = StringFormats.defaultFormats,
-                          integerFormats: Map[String, GeneratableFormat[BigInt]] = IntegerFormats.defaultFormats,
-                          numberFormats: Map[String, GeneratableFormat[BigDecimal]] = NumberFormats.defaultFormats,
+                          stringFormats: Map[String, GeneratableFormat[String]] = GeneratableStringFormats.defaultFormats,
+                          integerFormats: Map[String, GeneratableFormat[BigInt]] = GeneratableIntegerFormats.defaultFormats,
+                          numberFormats: Map[String, GeneratableFormat[BigDecimal]] = GeneratableNumberFormats.defaultFormats,
                           maxItems: Int = 10
                         ) extends GeneratableSchema {
   /**

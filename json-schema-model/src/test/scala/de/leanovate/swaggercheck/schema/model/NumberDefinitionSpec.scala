@@ -14,7 +14,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "accept values that match the defined format" in {
@@ -28,7 +28,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(Some("theformat"), None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verify(schema).findNumberFormat("theformat")
       verify(format).validate(path, BigDecimal(12345.67))
@@ -41,7 +41,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(None, Some(BigDecimal(123456.7)), None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be greater than 123456.7 in path jsonpath")
@@ -54,7 +54,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(None, None, Some(BigDecimal(12345.6)))
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be less than 12345.6 in path jsonpath")
@@ -67,7 +67,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(None, None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("should be a number in path jsonpath")

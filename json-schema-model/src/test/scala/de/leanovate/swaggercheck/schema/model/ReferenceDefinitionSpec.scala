@@ -17,7 +17,7 @@ class ReferenceDefinitionSpec extends WordSpec with MockitoSugar with MustMatche
 
       val definition = ReferenceDefinition("reference")
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head mustBe "error1"
@@ -32,7 +32,7 @@ class ReferenceDefinitionSpec extends WordSpec with MockitoSugar with MustMatche
 
       val definition = ReferenceDefinition("reference")
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head mustBe "Referenced definition does not exists: reference"

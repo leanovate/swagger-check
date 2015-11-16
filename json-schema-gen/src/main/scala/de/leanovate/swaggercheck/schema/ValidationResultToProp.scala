@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema
 
-import de.leanovate.swaggercheck.schema.model.{ValidateSuccess, ValidationError, ValidationResult}
+import de.leanovate.swaggercheck.schema.model.{ValidationSuccess, ValidationFailure, ValidationResult}
 import org.scalacheck.Prop
 import org.scalacheck.Prop.Result
 
@@ -11,7 +11,7 @@ object ValidationResultToProp {
     * Convert to a scala-check `Prop`.
     */
   implicit def verifyProp(verifyResult: ValidationResult): Prop = verifyResult match {
-    case ValidateSuccess => Prop.proved
-    case ValidationError(failures) => Prop(Result(status = Prop.False, labels = failures.toSet))
+    case ValidationSuccess => Prop.proved
+    case ValidationFailure(failures) => Prop(Result(status = Prop.False, labels = failures.toSet))
   }
 }

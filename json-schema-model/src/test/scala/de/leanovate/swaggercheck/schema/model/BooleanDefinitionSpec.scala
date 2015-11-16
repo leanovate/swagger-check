@@ -12,7 +12,7 @@ class BooleanDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = BooleanDefinition
 
-      definition.validate(schema, path, node)  mustBe ValidateSuccess
+      definition.validate(schema, path, node)  mustBe ValidationSuccess
     }
 
     "fail validation on everything that is not a boolean" in {
@@ -22,7 +22,7 @@ class BooleanDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = BooleanDefinition
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("should be a boolean in path jsonpath")

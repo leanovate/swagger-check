@@ -14,7 +14,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "accept values that match the defined format" in {
@@ -28,7 +28,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(Some("theformat"), None, None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verify(schema).findStringFormat("theformat")
       verify(format).validate(path, "some string")
@@ -41,7 +41,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, Some(11), None, None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be at least 11 chars long in path jsonpath")
@@ -54,7 +54,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, Some(9), None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be at most 9 chars long in path jsonpath")
@@ -67,7 +67,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, Some("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}"), None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "fail if string does not match pattern" in {
@@ -77,7 +77,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, Some("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}"), None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has match '[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}' in path jsonpath")
@@ -90,7 +90,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, Some("enum1" :: "enum2":: "enum3" :: Nil))
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "fail if string is not contained in enum" in {
@@ -100,7 +100,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, Some("enum1" :: "enum2":: "enum3" :: Nil))
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be one of enum1, enum2, enum3 in path jsonpath")
@@ -113,7 +113,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("should be a string in path jsonpath")

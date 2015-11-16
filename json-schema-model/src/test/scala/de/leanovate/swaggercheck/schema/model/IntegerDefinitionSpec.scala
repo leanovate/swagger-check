@@ -14,7 +14,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
     }
 
     "accept values that match the defined format" in {
@@ -28,7 +28,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(Some("theformat"), None, None)
 
-      definition.validate(schema, path, node) mustBe ValidateSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess
 
       verify(schema).findIntegerFormat("theformat")
       verify(format).validate(path, BigInt(12345))
@@ -41,7 +41,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(None, Some(BigInt(123456)), None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be greater than 123456 in path jsonpath")
@@ -54,7 +54,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(None, None, Some(BigInt(12345)))
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("has to be less than 12345 in path jsonpath")
@@ -67,7 +67,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(None, None, None)
 
-      val ValidationError(result) = definition.validate(schema, path, node)
+      val ValidationFailure(result) = definition.validate(schema, path, node)
 
       result must have size 1
       result.head must endWith("should be an integer in path jsonpath")

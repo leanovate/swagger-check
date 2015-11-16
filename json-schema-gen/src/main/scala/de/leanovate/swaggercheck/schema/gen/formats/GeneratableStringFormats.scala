@@ -1,37 +1,28 @@
 package de.leanovate.swaggercheck.schema.gen.formats
 
-import java.net.{URI, URL}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate}
-import java.util.UUID
 
 import de.leanovate.swaggercheck.generators.Generators
+import de.leanovate.swaggercheck.schema.model.formats.StringFormats
 import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 import org.scalacheck.Gen
 
-import scala.util.Try
-
-object StringFormats {
+object GeneratableStringFormats {
 
   object URLString extends GeneratableFormat[String] {
     override def generate: Gen[String] = Generators.url
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (Try(new URL(value)).isSuccess)
-        ValidationResult.success
-      else
-        ValidationResult.error(s"'$value' is not an url: $path")
+      StringFormats.URLString.validate(path, value)
   }
 
   object URIString extends GeneratableFormat[String] {
     override def generate: Gen[String] = Generators.uri
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (Try(new URI(value)).isSuccess)
-        ValidationResult.success
-      else
-        ValidationResult.error(s"'$value' is not an uri: $path")
+      StringFormats.URIString.validate(path, value)
   }
 
   object UUIDString extends GeneratableFormat[String] {
@@ -39,10 +30,7 @@ object StringFormats {
       Gen.uuid.map(_.toString)
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (Try(UUID.fromString(value)).isSuccess)
-        ValidationResult.success
-      else
-        ValidationResult.error(s"'$value' is not an uuid: $path")
+      StringFormats.UUIDString.validate(path, value)
   }
 
   object EmailString extends GeneratableFormat[String] {
@@ -51,11 +39,8 @@ object StringFormats {
     override def generate: Gen[String] = Generators.email
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (emailPattern.pattern.matcher(value).matches()) {
-        ValidationResult.success
-      } else {
-        ValidationResult.error(s"'$value' is not an email: $path")
-      }  }
+      StringFormats.EmailString.validate(path, value)
+  }
 
   object DateString extends GeneratableFormat[String] {
     override def generate: Gen[String] = {
@@ -67,10 +52,7 @@ object StringFormats {
     }
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (Try(DateTimeFormatter.ISO_DATE.parse(value)).isSuccess)
-        ValidationResult.success
-      else
-        ValidationResult.error(s"'$value' is not a date: $path")
+      StringFormats.DateString.validate(path, value)
   }
 
   object DateTimeString extends GeneratableFormat[String] {
@@ -83,10 +65,7 @@ object StringFormats {
     }
 
     override def validate(path: JsonPath, value: String): ValidationResult =
-      if (Try(DateTimeFormatter.ISO_DATE_TIME.parse(value)).isSuccess)
-        ValidationResult.success
-      else
-        ValidationResult.error(s"'$value' is not a date-time: $path")
+      StringFormats.DateTimeString.validate(path, value)
   }
 
   val defaultFormats = Map(
