@@ -1,35 +1,43 @@
 package de.leanovate.swaggercheck.schema.gen
 
-import de.leanovate.swaggercheck.TestSchema
-import de.leanovate.swaggercheck.schema.ValidationResultToProp._
 import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
-import de.leanovate.swaggercheck.schema.model.{JsonPath, StringDefinition}
-import de.leanovate.swaggercheck.shrinkable.CheckJsValue
-import org.scalacheck.Prop._
+import de.leanovate.swaggercheck.schema.model.StringDefinition
 import org.scalacheck.Properties
 
-object GeneratableStringSpecification extends Properties("GeneratableString") {
-  val schema = TestSchema()
-
+object GeneratableStringSpecification extends Properties("GeneratableString") with DefinitionChecks {
   property("any generate are valid") = {
     val definition = StringDefinition(None, None, None, None, None)
 
-    forAll(definition.generate(schema)) {
-      json: CheckJsValue =>
-        val value = CheckJsValue.parse(json.minified)
-
-        definition.validate(schema, JsonPath(), value)
-    }
+    checkDefinition(definition)
   }
 
-  property("generate with form are valid") = {
+  property("generate with format are valid") = {
     val definition = StringDefinition(Some("uuid"), None, None, None, None)
 
-    forAll(definition.generate(schema)) {
-      json: CheckJsValue =>
-        val value = CheckJsValue.parse(json.minified)
+    checkDefinition(definition)
+  }
 
-        definition.validate(schema, JsonPath(), value)
-    }
+  property("generate with minLength are valid") = {
+    val definition = StringDefinition(None, Some(10), None, None, None)
+
+    checkDefinition(definition)
+  }
+
+  property("generate with maxLength are valid") = {
+    val definition = StringDefinition(None, None, Some(100), None, None)
+
+    checkDefinition(definition)
+  }
+
+  property("generate with pattern are valid") = {
+    val definition = StringDefinition(None, None, None, Some("[a-zA-Z0-9\\.]+@[a-z]+\\.[a-z]+"), None)
+
+    checkDefinition(definition)
+  }
+
+  property("generate with enum are valid") = {
+    val definition = StringDefinition(None, None, None, None, Some("foo" :: "bar" :: "grah" :: Nil))
+
+    checkDefinition(definition)
   }
 }

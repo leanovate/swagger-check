@@ -13,14 +13,13 @@ case class GeneratableArray(
                           (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = definition.validate(model, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = {
-    definition.items.map {
-      itemDefinition =>
-        val min = definition.minItems.getOrElse(0)
-        val max = Math.min(min + schema.maxItems, definition.maxItems.getOrElse(min + schema.maxItems))
-        for {
-          size <- Gen.choose(min, max)
-          elements <- Gen.listOfN(size, itemDefinition.generate(schema.childContext))
-        } yield CheckJsArray(definition.minItems, elements)
-    }.getOrElse(schema.arbitraryArray)
+    val itemGenerator = definition.items.map(_.generate(schema.childContext)).getOrElse(schema.arbitraryValue)
+
+    val min = definition.minItems.getOrElse(0)
+    val max = Math.min(min + schema.maxItems, definition.maxItems.getOrElse(min + schema.maxItems))
+    for {
+      size <- Gen.choose(min, max)
+      elements <- Gen.listOfN(size, itemGenerator)
+    } yield CheckJsArray(definition.minItems, elements)
   }
 }
