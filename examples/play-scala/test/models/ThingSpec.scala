@@ -1,13 +1,13 @@
 package models
 
-import de.leanovate.swaggercheck.VerifySuccess
-import de.leanovate.swaggercheck.model.CheckJsValue
+import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Arbitrary
 import org.specs2.ScalaCheck
 import org.specs2.matcher.MustMatchers
 import org.specs2.mutable.Specification
 import play.api.libs.json.{JsSuccess, Json}
-import support.{ThingApi, Arbitraries}
+import support.{Arbitraries, ThingApi}
 
 class ThingSpec extends Specification with ScalaCheck with MustMatchers with Arbitraries with ThingApi {
   "Thing" should {
@@ -27,7 +27,7 @@ class ThingSpec extends Specification with ScalaCheck with MustMatchers with Arb
 
       prop {
         thing: Thing =>
-          verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo VerifySuccess
+          verifier.verify(Json.stringify(Json.toJson(thing))) must be equalTo ValidationResult.success
       }
     }
   }

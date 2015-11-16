@@ -31,18 +31,32 @@ As an additional party gimmic there is also ein generator to generate matches to
 Add the following to your `build.sbt`
 
 ```
-libraryDependencies += "de.leanovate" %% "swagger-check" % "0.15" % "test"
+libraryDependencies += "de.leanovate.swaggercheck" %% "swagger-check-core" % "0.99" % "test"
 ```
 
 ## Examples
 
-Sorry, this is all still in the flow.
-
-At the moment the best starting point might be some of tests:
-
-* [ThingApiSpecification](src/test/scala/de/leanovate/swaggercheck/ThingApiSpecification.scala)
+You can find an example Play2 project in the [examples](examples/) folder.
 
 ## Some implementation notes
+
+### Project structure
+
+The project is now separated in modules to (eventually) support a multiple frameworks without ending in a dependency hell.
+
+* json-schema-model
+  * A generic model for validation of a json schema.
+  * There are no dependencies to any framework, but you have to provide a `NodeAdapter` for each json implementation
+* json-schema-jackson
+  * Contains the adapters for jackson
+  * Also contains a jackson module to actually parse a `json-schema-model` from a json file
+* json-schema-play
+  * Contains the adapter for the play framework
+* json-schema-gen
+  * Extends the `json-schema-model` with ScalaCheck generators
+  * Requires `jackson-core` for json parsing and generation
+* swagger-check-core
+  * Uses the above to create a tool box for creating ScalaCheck tests based on a swagger definition
 
 ### Why is there just another implmenetation of JsValue? 
 (Aren't there enough of those already?)

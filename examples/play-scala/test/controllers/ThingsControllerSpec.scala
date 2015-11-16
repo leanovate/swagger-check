@@ -3,8 +3,8 @@ package controllers
 import java.util.UUID
 
 import dal.ThingsRepository
-import de.leanovate.swaggercheck.VerifySuccess
 import de.leanovate.swaggercheck.playhelper._
+import de.leanovate.swaggercheck.schema.model.ValidationResult
 import models.Thing
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
@@ -29,7 +29,7 @@ class ThingsControllerSpec extends PlaySpecification with ScalaCheck with ThingA
 
           status(result) must between(200, 300)
 
-          requestVerifier.responseVerifier.verify(result) must be equalTo VerifySuccess
+          requestVerifier.responseVerifier.verify(result) must be equalTo ValidationResult.success
       }.setContext(new WithApplication(testApp()) {})
     }
   }

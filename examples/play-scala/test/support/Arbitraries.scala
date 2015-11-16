@@ -2,7 +2,7 @@ package support
 
 import java.util.UUID
 
-import de.leanovate.swaggercheck.Generators
+import de.leanovate.swaggercheck.generators.Generators
 import models._
 import org.scalacheck.{Arbitrary, Gen}
 

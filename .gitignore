@@ -3,7 +3,7 @@
 /project/*-shim.sbt
 /project/project/
 /project/target/
-/target/
+target/
 .idea/
 /example/.idea/
 /example/RUNNING_PID
