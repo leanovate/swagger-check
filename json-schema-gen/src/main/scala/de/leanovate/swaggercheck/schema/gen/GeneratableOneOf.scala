@@ -14,7 +14,7 @@ case class GeneratableOneOf(
     definition.validate(schema, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = for {
-    index <- Gen.choose(0, definition.definitions.length)
+    index <- Gen.choose(0, definition.definitions.length - 1)
     value <- definition.definitions(index).generate(schema)
   } yield value
 }
