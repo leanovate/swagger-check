@@ -3,6 +3,7 @@ import sbt.Keys._
 import sbt._
 import sbtrelease.ReleasePlugin.autoImport._
 import sbtrelease.ReleaseStateTransformations._
+import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Common {
   val scalaCheckVersion = "1.12.5"
@@ -14,6 +15,8 @@ object Common {
   val settings = Seq(
 
     organization := "de.leanovate.swaggercheck",
+
+    sonatypeProfileName := "de.leanovate",
 
     scalaVersion := "2.11.7",
 
