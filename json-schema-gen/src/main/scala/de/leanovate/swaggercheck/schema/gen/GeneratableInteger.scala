@@ -18,7 +18,7 @@ case class GeneratableInteger(
         .flatMap(schema.findGeneratableIntegerFormat)
         .map(_.generate)
         .getOrElse(Arbitrary.arbitrary[BigInt])
-        .suchThat {
+        .retryUntil {
           value: BigInt =>
             !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
         }

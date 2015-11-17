@@ -8,7 +8,8 @@
     "properties": {
       "id": {
         "description": "The unique identifier for a product",
-        "type": "number"
+        "type": "integer",
+        "format": "int64"
       },
       "name": {
         "type": "string"
@@ -29,9 +30,9 @@
       "dimensions": {
         "type": "object",
         "properties": {
-          "length": {"type": "number"},
-          "width": {"type": "number"},
-          "height": {"type": "number"}
+          "length": {"type": "number", "format": "double"},
+          "width": {"type": "number", "format": "double"},
+          "height": {"type": "number", "format": "double"}
         },
         "required": ["length", "width", "height"]
       },
@@ -48,8 +49,8 @@
       "description": "A geographical coordinate",
       "type": "object",
       "properties": {
-        "latitude": { "type": "number" },
-        "longitude": { "type": "number" }
+        "latitude": { "type": "number", "format": "double" },
+        "longitude": { "type": "number", "format": "double" }
       }
     }
   }

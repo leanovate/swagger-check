@@ -1,4 +1,3 @@
-import sbt.Keys._
 
 name := "swagger-check"
 
@@ -9,7 +8,7 @@ lazy val jsonSchemaModel = project.in(file("json-schema-model"))
 
 lazy val jsonSchemaGen = project.in(file("json-schema-gen")).dependsOn(jsonSchemaModel)
 
-lazy val jsonSchemaPlay = project.in(file("json-schema-play")).dependsOn(jsonSchemaModel)
+lazy val jsonSchemaPlay = project.in(file("json-schema-play")).dependsOn(jsonSchemaModel, jsonSchemaGen % Test)
 
 lazy val jsonSchemaJackson = project.in(file("json-schema-jackson")).dependsOn(jsonSchemaModel)
 

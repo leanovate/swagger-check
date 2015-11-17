@@ -20,7 +20,7 @@ case class GeneratableNumber(
         .flatMap(schema.findGeneratableNumberFormat)
         .map(_.generate)
         .getOrElse(Arbitrary.arbitrary[BigDecimal])
-        .suchThat {
+        .retryUntil {
           value: BigDecimal =>
             Try(BigDecimal(value.toString())).isSuccess &&
               !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
