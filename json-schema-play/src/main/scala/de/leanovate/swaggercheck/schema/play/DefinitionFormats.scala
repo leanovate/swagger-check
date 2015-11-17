@@ -9,6 +9,8 @@ object DefinitionFormats {
     ((JsPath \ "type").readNullable[String] and
       (JsPath \ "allOf").lazyReadNullable(Reads.seq[Definition](definitionReads)) and
       (JsPath \ "enum").readNullable[List[String]] and
+      (JsPath \ "exclusiveMinimum").readNullable[Boolean] and
+      (JsPath \ "exclusiveMaximum").readNullable[Boolean] and
       (JsPath \ "format").readNullable[String] and
       (JsPath \ "items").lazyReadNullable(definitionReads) and
       (JsPath \ "minItems").readNullable[Int] and
@@ -22,13 +24,16 @@ object DefinitionFormats {
       (JsPath \ "properties").lazyReadNullable(Reads.map[Definition](definitionReads)) and
       (JsPath \ "additionalProperties").lazyReadNullable(definitionReads) and
       (JsPath \ "required").readNullable[Set[String]] and
-      (JsPath \ "$ref").readNullable[String]
+      (JsPath \ "$ref").readNullable[String] and
+      (JsPath \ "uniqueItems").readNullable[Boolean]
       ) (Definition.build _)
 
   implicit lazy val schemaReads: Reads[DefaultSchema] =
     ((JsPath \ "type").readNullable[String] and
       (JsPath \ "allOf").readNullable[Seq[Definition]] and
       (JsPath \ "enum").readNullable[List[String]] and
+      (JsPath \ "exclusiveMinimum").readNullable[Boolean] and
+      (JsPath \ "exclusiveMaximum").readNullable[Boolean] and
       (JsPath \ "format").readNullable[String] and
       (JsPath \ "items").readNullable[Definition] and
       (JsPath \ "minItems").readNullable[Int] and
@@ -43,6 +48,7 @@ object DefinitionFormats {
       (JsPath \ "additionalProperties").lazyReadNullable(definitionReads) and
       (JsPath \ "required").readNullable[Set[String]] and
       (JsPath \ "$ref").readNullable[String] and
+      (JsPath \ "uniqueItems").readNullable[Boolean] and
       (JsPath \ "definitions").readNullable[Map[String, Definition]]
       ) (DefaultSchema.build _)
 }

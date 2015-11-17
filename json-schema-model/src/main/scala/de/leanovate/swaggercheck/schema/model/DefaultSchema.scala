@@ -49,6 +49,8 @@ object DefaultSchema {
              schemaType: Option[String],
              allOf: Option[Seq[Definition]],
              enum: Option[List[String]],
+             exclusiveMinimum: Option[Boolean],
+             exclusiveMaximum: Option[Boolean],
              format: Option[String],
              items: Option[Definition],
              minItems: Option[Int],
@@ -63,11 +65,13 @@ object DefaultSchema {
              additionalProperties: Option[Definition],
              required: Option[Set[String]],
              ref: Option[String],
+             uniqueItems: Option[Boolean],
              definitions: Option[Map[String, Definition]]
            ): DefaultSchema = {
     DefaultSchema(
-      Definition.build(schemaType, allOf, enum, format, items, minItems, maxItems, minimum, maximum,
-        minLength, maxLength, oneOf, pattern, properties, additionalProperties, required, ref),
+      Definition.build(schemaType, allOf, enum, exclusiveMinimum, exclusiveMaximum, format, items, minItems, maxItems,
+        minimum, maximum, minLength, maxLength, oneOf, pattern, properties, additionalProperties, required, ref,
+        uniqueItems),
       definitions.getOrElse(Map.empty)
     )
   }

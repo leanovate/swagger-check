@@ -23,6 +23,8 @@ object Definition {
              schemaType: Option[String],
              allOf: Option[Seq[Definition]],
              enum: Option[List[String]],
+             exclusiveMinimum: Option[Boolean],
+             exclusiveMaximum: Option[Boolean],
              format: Option[String],
              items: Option[Definition],
              minItems: Option[Int],
@@ -36,7 +38,8 @@ object Definition {
              properties: Option[Map[String, Definition]],
              additionalProperties: Option[Definition],
              required: Option[Set[String]],
-             ref: Option[String]
+             ref: Option[String],
+             uniqueItems: Option[Boolean]
            ): Definition = {
     (allOf, oneOf) match {
       case (Some(definitions), _) =>

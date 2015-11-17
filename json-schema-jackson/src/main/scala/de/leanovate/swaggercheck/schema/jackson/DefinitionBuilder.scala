@@ -13,6 +13,8 @@ class DefinitionBuilder @JsonCreator()(
                                         @JsonProperty("type") schemaType: Option[String] = None,
                                         @JsonProperty("allOf") allOf: Option[Seq[Definition]] = None,
                                         @JsonProperty("enum") enum: Option[List[String]] = None,
+                                        @JsonProperty("exclusiveMinimum") exclusiveMinimum: Option[Boolean] = None,
+                                        @JsonProperty("exclusiveMaximum") exclusiveMaximum: Option[Boolean] = None,
                                         @JsonProperty("format") format: Option[String] = None,
                                         @JsonProperty("items") items: Option[Definition] = None,
                                         @JsonProperty("minItems") minItems: Option[Int] = None,
@@ -26,13 +28,16 @@ class DefinitionBuilder @JsonCreator()(
                                         @JsonProperty("properties") properties: Option[Map[String, Definition]] = None,
                                         @JsonProperty("additionalProperties") additionalProperties: Option[Definition] = None,
                                         @JsonProperty("required") required: Option[Set[String]] = None,
-                                        @JsonProperty("$ref") ref: Option[String] = None) {
+                                        @JsonProperty("$ref") ref: Option[String] = None,
+                                        @JsonProperty("uniqueItems") uniqueItems: Option[Boolean] = None) {
 
   def build(): Definition = {
     Definition.build(
       schemaType,
       allOf,
       enum,
+      exclusiveMinimum,
+      exclusiveMaximum,
       format,
       items,
       minItems,
@@ -46,7 +51,8 @@ class DefinitionBuilder @JsonCreator()(
       properties,
       additionalProperties,
       required,
-      ref
+      ref,
+      uniqueItems
     )
   }
 }
