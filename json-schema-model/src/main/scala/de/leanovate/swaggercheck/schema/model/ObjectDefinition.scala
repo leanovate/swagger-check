@@ -19,7 +19,7 @@ case class ObjectDefinition(
                 if (!nodeAdapter.isNull(field) || required.exists(_.contains(name)))
                   result.combine(defintion.validate(schema, path.field(name), field))
                 else
-                  ValidationResult.success
+                  result
             }
         }.getOrElse(ValidationResult.success)
         val additionalPropertiesResult = additionalProperties.map {
