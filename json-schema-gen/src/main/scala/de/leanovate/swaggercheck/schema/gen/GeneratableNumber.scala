@@ -5,6 +5,8 @@ import de.leanovate.swaggercheck.schema.model.{JsonPath, NumberDefinition, Schem
 import de.leanovate.swaggercheck.shrinkable.{CheckJsNumber, CheckJsValue}
 import org.scalacheck.{Arbitrary, Gen}
 
+import scala.util.Try
+
 case class GeneratableNumber(
                               definition: NumberDefinition
                             ) extends GeneratableDefinition {
@@ -20,7 +22,8 @@ case class GeneratableNumber(
         .getOrElse(Arbitrary.arbitrary[BigDecimal])
         .suchThat {
           value: BigDecimal =>
-            !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
+            Try(BigDecimal(value.toString())).isSuccess &&
+              !definition.minimum.exists(_ > value) && !definition.maximum.exists(_ < value)
         }
     generator.map(value => CheckJsNumber(definition.minimum, definition.maximum, value))
   }
