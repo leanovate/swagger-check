@@ -1,3 +1,5 @@
+import sbt._
+import sbt.Keys._
 
 name := "swagger-check"
 

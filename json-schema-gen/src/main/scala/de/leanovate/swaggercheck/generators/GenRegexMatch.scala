@@ -9,8 +9,8 @@ import scala.util.parsing.combinator.Parsers
 import scala.util.parsing.input.CharSequenceReader
 
 /**
- * Regex parser to generate a generator of matches.
- */
+  * Regex parser to generate a generator of matches.
+  */
 class GenRegexMatch extends Parsers {
 
   import GenRegexMatch._
@@ -47,7 +47,7 @@ class GenRegexMatch extends Parsers {
   val anyChar = elem("Any char", _ => true)
   val digit = elem("Digit", _.isDigit)
 
-  def regex: Composition = phrase(opt(elem('^')) ~> sequence <~ opt(elem('$')))
+  def regex: Composition = phrase(topLevelSequence)
 
   def repetitions: Transformer = (
     zeroOrOne ^^^ { term: Gen[List[Char]] => Gen.oneOf(term, Gen.const(Nil)) }
@@ -58,6 +58,12 @@ class GenRegexMatch extends Parsers {
       case min ~ _ ~ max => term: Gen[List[Char]] => Gen.choose(min, max).flatMap(Gen.listOfN(_, term).map(_.flatten))
     }
     )
+
+  def topLevelGroup: Composition = opt(startSubexpr) ~> topLevelSequence <~ opt(endSubexpr)
+
+  def topLevelSequence: Composition =
+    startSubexpr ~> elem('^') ~> sequence <~ opt(elem('$')) <~ endSubexpr |
+      opt(elem('^')) ~> sequence <~ opt(elem('$'))
 
   def sequence: Composition = alt.* ^^ combine
 
@@ -76,11 +82,11 @@ class GenRegexMatch extends Parsers {
   def group: Composition = startSubexpr ~> sequence <~ endSubexpr
 
   def simpleTerm: Composition = (
-    escaped ^^ {set => Gen.oneOf(set.toSeq) }
-    | literal
-    | wildcardMatch
-    | negCharOptions
-    | charOptions
+    escaped ^^ { set => Gen.oneOf(set.toSeq) }
+      | literal
+      | wildcardMatch
+      | negCharOptions
+      | charOptions
     ) map (_ map (List(_)))
 
   def literal: Atom = literalChar ^^ Gen.const
@@ -127,22 +133,21 @@ object GenRegexMatch {
   def rangeChar(from: Char, to: Char): TraversableOnce[Char] =
     Range(from.toInt, to.toInt).map(_.toChar)
 
-  val anySet : Set[Char] = rangeChar(32: Char, 126: Char).toSet
+  val anySet: Set[Char] = rangeChar(32: Char, 126: Char).toSet
 
-  val digitSet : Set[Char] = anySet.filter(_.isDigit)
+  val digitSet: Set[Char] = anySet.filter(_.isDigit)
 
-  val nonDigitSet : Set[Char] = anySet.filter(!_.isDigit)
+  val nonDigitSet: Set[Char] = anySet.filter(!_.isDigit)
 
-  val alphaSet : Set[Char] = anySet.filter(_.isLetter)
+  val alphaSet: Set[Char] = anySet.filter(_.isLetter)
 
-  val alphaNumSet : Set[Char] = anySet.filter(ch => ch.isLetterOrDigit || ch == '_')
+  val alphaNumSet: Set[Char] = anySet.filter(ch => ch.isLetterOrDigit || ch == '_')
 
-  val nonAlphaNumSet : Set[Char] = anySet.filter(ch => !ch.isLetterOrDigit && ch != '_')
+  val nonAlphaNumSet: Set[Char] = anySet.filter(ch => !ch.isLetterOrDigit && ch != '_')
 
-  val whiteSpaceSet : Set[Char] = Set(' ', '\t')
+  val whiteSpaceSet: Set[Char] = Set(' ', '\t')
 
-  val nonWhiteSpaceSet : Set[Char] = anySet - (' ', '\t')
+  val nonWhiteSpaceSet: Set[Char] = anySet -(' ', '\t')
 
   val genWildcard = Gen choose(32: Char, 126: Char)
-
 }
