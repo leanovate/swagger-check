@@ -18,6 +18,10 @@ object GenRegexMatchSpecification extends Properties("GenRegexMatch") {
 
   property("Strange 1") = checkRegex("[1-v5P-d sv-wO-jdLaEIG-a4-duK4-fj-rt-yh1-s;M8EV-rE-w,:\\&\\&]+[oR2];?")
 
+  property("Unicode 1") = checkRegex("(^[a-zA-ZàÀâÂäÄáÁéÅåÉèÈêÊëËìÌîÎïÏòÒôÔöÖøØùÙûÛüÜçÇñœŒæÆíóúÍÓÚĄąĆćĘęŁłŃńŚśŻżŹź]'?[- a-zA-ZàÀâÂäÄáÁéÅåÉèÈêÊëËìÌîÎïÏòÒôÔöÖøØùÙûÛüÜçÇñœŒæÆßíóúÍÓÚĄąĆćĘęŁłŃńŚśŻżŹź]+$)")
+  
+  property("Unicode 2") = checkRegex("(^[a-zA-ZàÀâÂäÄáÁåÅéÉèÈêÊëËìÌîÎïÏòÒôÔöÖøØùÙûÛüÜçÇñœŒæÆíóúÍÓÚĄąĆćĘęŁłŃńŚśŻżŹź]'?[-,;()' 0-9a-zA-ZàÀâÂäÄáÁéÅåÉèÈêÊëËìÌîÎïÏòÒôÔöÖøØùÙûÛüÜçÇñœŒæÆßíóúÍÓÚĄąĆćĘęŁłŃńŚśŻżŹź]+$)")
+
   property("Any regex") = forAllNoShrink(Generators.regex) {
     regex =>
       checkRegex(regex)
