@@ -62,7 +62,7 @@ object DefaultSchema {
              oneOf: Option[Seq[Definition]],
              pattern: Option[String],
              properties: Option[Map[String, Definition]],
-             additionalProperties: Option[Definition],
+             additionalProperties: Option[Either[Boolean, Definition]],
              required: Option[Set[String]],
              ref: Option[String],
              uniqueItems: Option[Boolean],

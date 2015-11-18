@@ -25,7 +25,8 @@ case class SwaggerChecks(
                           stringFormats: Map[String, GeneratableFormat[String]] = GeneratableStringFormats.defaultFormats,
                           integerFormats: Map[String, GeneratableFormat[BigInt]] = GeneratableIntegerFormats.defaultFormats,
                           numberFormats: Map[String, GeneratableFormat[BigDecimal]] = GeneratableNumberFormats.defaultFormats,
-                          maxItems: Int = 10
+                          maxItems: Int = 10,
+                          randomAdditionalFields : Boolean = false
                         ) extends GeneratableSchema {
   /**
     * Create a generator for random json based on a swagger definition.
@@ -131,6 +132,8 @@ case class SwaggerChecks(
     * Modify max items.
     */
   def withMaxItems(newMaxItems: Int): SwaggerChecks = copy(maxItems = newMaxItems)
+
+  def withRandomAdditionalFields() = copy(randomAdditionalFields = true)
 
   /**
     * Create a child context with reduced maxItems.

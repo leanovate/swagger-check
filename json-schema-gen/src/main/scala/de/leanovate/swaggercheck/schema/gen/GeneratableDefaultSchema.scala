@@ -10,12 +10,15 @@ import scala.language.implicitConversions
 
 case class GeneratableDefaultSchema(
                                      schema: DefaultSchema,
+                                     randomAdditionalFields: Boolean = false,
                                      maxItems: Int = 10,
                                      stringFormats: Map[String, GeneratableFormat[String]] = GeneratableStringFormats.defaultFormats,
                                      integerFormats: Map[String, GeneratableFormat[BigInt]] = GeneratableIntegerFormats.defaultFormats,
                                      numberFormats: Map[String, GeneratableFormat[BigDecimal]] = GeneratableNumberFormats.defaultFormats
                                    ) extends GeneratableSchema {
   def generate: Gen[CheckJsValue] = schema.root.generate(this)
+
+  def withRandomAdditionalFields() = copy(randomAdditionalFields = true)
 
   override def withMaxItems(newMaxItems: Int): GeneratableSchema = copy(maxItems = maxItems / 2)
 

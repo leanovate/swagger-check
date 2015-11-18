@@ -6,7 +6,7 @@ import de.leanovate.swaggercheck.schema.model.{StringDefinition, ObjectDefinitio
 import org.scalatest.{MustMatchers, WordSpec}
 
 class SchemaModuleSpec extends WordSpec with MustMatchers {
-  val mapper = new ObjectMapper().registerModule(JsonSchemaModule).registerModule(DefaultScalaModule)
+  val mapper = new ObjectMapper().registerModule(DefaultScalaModule).registerModule(JsonSchemaModule)
 
   "SchemaModule" should {
     "deserialize object_definition" in {
@@ -14,7 +14,7 @@ class SchemaModuleSpec extends WordSpec with MustMatchers {
 
       required mustBe Some(Set("field1"))
       properties mustBe Some(Map("field1" -> StringDefinition(None, None, None, None, None)))
-      additionalProperties mustBe None
+      additionalProperties mustBe Left(true)
     }
   }
 }

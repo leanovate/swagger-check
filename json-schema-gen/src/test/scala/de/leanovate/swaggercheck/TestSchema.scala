@@ -4,12 +4,15 @@ import de.leanovate.swaggercheck.schema.gen.GeneratableSchema
 import de.leanovate.swaggercheck.schema.gen.formats.{GeneratableFormat, GeneratableIntegerFormats, GeneratableNumberFormats, GeneratableStringFormats}
 import de.leanovate.swaggercheck.schema.model.Definition
 
-case class TestSchema(maxItems: Int = 20) extends GeneratableSchema {
+case class TestSchema(
+                       randomAdditionalFields:Boolean = false,
+                       maxItems: Int = 20
+                     ) extends GeneratableSchema {
   val integerFormats = GeneratableIntegerFormats.defaultFormats
   val numberFormats = GeneratableNumberFormats.defaultFormats
   val stringFormats = GeneratableStringFormats.defaultFormats
 
-  override def withMaxItems(newMaxItems: Int): TestSchema = TestSchema(newMaxItems)
+  override def withMaxItems(newMaxItems: Int): TestSchema = copy(maxItems = newMaxItems)
 
   override def findGeneratableStringFormat(format: String): Option[GeneratableFormat[String]] =
     stringFormats.get(format)

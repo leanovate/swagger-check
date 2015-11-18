@@ -5,7 +5,7 @@ import org.scalacheck.Properties
 
 object GeneratableObjectSpecification extends Properties("GeneratableObject") with DefinitionChecks {
   property("any generates are valid") = {
-    val definition = ObjectDefinition(None, None, None)
+    val definition = ObjectDefinition(None, None, Left(true))
 
     checkDefinition(definition)
   }
@@ -15,7 +15,7 @@ object GeneratableObjectSpecification extends Properties("GeneratableObject") wi
       "field1" -> StringDefinition(None, None, None, None, None),
       "field2" -> IntegerDefinition(None, None, None),
       "field3" -> BooleanDefinition
-    )), None)
+    )), Left(true))
 
     checkDefinition(definition)
   }
@@ -25,7 +25,7 @@ object GeneratableObjectSpecification extends Properties("GeneratableObject") wi
       "field1" -> StringDefinition(None, None, None, None, None),
       "field2" -> IntegerDefinition(None, None, None),
       "field3" -> BooleanDefinition
-    )), Some(StringDefinition(None, None, None, None, None)))
+    )), Right(StringDefinition(None, None, None, None, None)))
 
     checkDefinition(definition)
   }

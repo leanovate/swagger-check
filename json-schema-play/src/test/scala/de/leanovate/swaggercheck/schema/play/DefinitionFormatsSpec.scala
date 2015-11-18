@@ -15,7 +15,7 @@ class DefinitionFormatsSpec extends WordSpec with MustMatchers {
 
       required mustBe Some(Set("field1"))
       properties mustBe Some(Map("field1" -> StringDefinition(None, None, None, None, None)))
-      additionalProperties mustBe None
+      additionalProperties mustBe Left(true)
     }
 
   }

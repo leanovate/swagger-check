@@ -8,6 +8,11 @@ import org.scalacheck.Gen
 
 trait GeneratableSchema extends Schema {
   /**
+    * Generate additional random fields (if allowed by schema).
+    */
+  def randomAdditionalFields: Boolean
+
+  /**
     * Modify max items.
     */
   def maxItems: Int

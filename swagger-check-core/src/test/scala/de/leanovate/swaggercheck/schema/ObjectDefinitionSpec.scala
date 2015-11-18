@@ -10,7 +10,7 @@ class ObjectDefinitionSpec extends WordSpec with MustMatchers with MockitoSugar 
   "ObjectDefinition" should {
     "fail verify for non object nodes" in {
       val mockContext = mock[SwaggerChecks]
-      val objectDefinition = ObjectDefinition(None, None, None)
+      val objectDefinition = ObjectDefinition(None, None, Left(true))
 
       objectDefinition.validate[CheckJsValue](mockContext, JsonPath(), CheckJsBoolean(false)).isSuccess mustBe false
       objectDefinition.validate[CheckJsValue](mockContext, JsonPath(), CheckJsArray.empty).isSuccess mustBe false

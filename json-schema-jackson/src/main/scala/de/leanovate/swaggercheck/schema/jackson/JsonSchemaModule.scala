@@ -14,5 +14,4 @@ object JsonSchemaModule extends Module {
 
     context.setMixInAnnotations(classOf[Definition], classOf[DefinitionMixin])
   }
-
 }

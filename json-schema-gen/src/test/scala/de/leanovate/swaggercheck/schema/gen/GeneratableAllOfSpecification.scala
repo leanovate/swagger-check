@@ -10,11 +10,11 @@ object GeneratableAllOfSpecification extends Properties("GeneratableAllOf") with
         "field1" -> StringDefinition(None, None, None, None, None),
         "field2" -> IntegerDefinition(None, None, None),
         "field3" -> BooleanDefinition
-      )), None),
+      )), Left(true)),
       ObjectDefinition(Some(Set("field4")), Some(Map(
         "field4" -> StringDefinition(None, None, None, None, None),
         "field5" -> IntegerDefinition(None, None, None)
-      )), None)
+      )), Left(true))
     ))
 
     checkDefinition(definition)

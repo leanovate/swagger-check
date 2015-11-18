@@ -6,6 +6,11 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 object Implicits {
+  lazy val additionalPropertiesDefinition: Reads[Option[Either[Boolean, Definition]]] =
+    (JsPath \ "additionalProperties").lazyReadNullable(definitionReads).map(_.map(Right(_)))
+  lazy val additionalPropertiesBoolean: Reads[Option[Either[Boolean, Definition]]] =
+    (JsPath \ "additionalProperties").readNullable[Boolean].map(_.map(Left(_)))
+
   implicit lazy val definitionReads: Reads[Definition] =
     ((JsPath \ "type").readNullable[String] and
       (JsPath \ "allOf").lazyReadNullable(Reads.seq[Definition](definitionReads)) and
@@ -23,7 +28,7 @@ object Implicits {
       (JsPath \ "oneOf").lazyReadNullable(Reads.seq[Definition](definitionReads)) and
       (JsPath \ "pattern").readNullable[String] and
       (JsPath \ "properties").lazyReadNullable(Reads.map[Definition](definitionReads)) and
-      (JsPath \ "additionalProperties").lazyReadNullable(definitionReads) and
+      (additionalPropertiesBoolean | additionalPropertiesDefinition) and
       (JsPath \ "required").readNullable[Set[String]] and
       (JsPath \ "$ref").readNullable[String] and
       (JsPath \ "uniqueItems").readNullable[Boolean]
@@ -46,7 +51,7 @@ object Implicits {
       (JsPath \ "oneOf").readNullable[Seq[Definition]] and
       (JsPath \ "pattern").readNullable[String] and
       (JsPath \ "properties").readNullable[Map[String, Definition]] and
-      (JsPath \ "additionalProperties").lazyReadNullable(definitionReads) and
+      (additionalPropertiesBoolean | additionalPropertiesDefinition) and
       (JsPath \ "required").readNullable[Set[String]] and
       (JsPath \ "$ref").readNullable[String] and
       (JsPath \ "uniqueItems").readNullable[Boolean] and

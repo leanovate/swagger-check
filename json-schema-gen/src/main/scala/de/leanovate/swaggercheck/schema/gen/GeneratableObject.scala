@@ -16,7 +16,7 @@ case class GeneratableObject(
     definition.validate(schema, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = {
-    if (definition.properties.isEmpty && definition.additionalProperties.isEmpty)
+    if (definition.properties.isEmpty && definition.additionalProperties.left.exists(_ == true))
       schema.arbitraryObj
     else {
       val propertyGens: Traversable[Gen[(String, CheckJsValue)]] = definition.properties.map(_.map {
@@ -30,10 +30,15 @@ case class GeneratableObject(
       }).getOrElse(Seq.empty)
 
       val additionalPropertyGen: Gen[Seq[(String, CheckJsValue)]] = definition.additionalProperties match {
-        case Some(additionalDefinition) if schema.maxItems > 0 =>
+        case Right(additionalDefinition) if schema.maxItems > 0 =>
           for {
             size <- Gen.choose(0, schema.maxItems)
             properties <- Gen.listOfN(size, Gen.zip(Gen.identifier, additionalDefinition.generate(schema.childContext)))
+          } yield properties
+        case Left(true) if schema.randomAdditionalFields =>
+          for {
+            size <- Gen.choose(0, schema.maxItems)
+            properties <- Gen.listOfN(size, schema.arbitraryProperty)
           } yield properties
         case _ =>
           Gen.const(Seq.empty)

@@ -36,7 +36,7 @@ object Definition {
              oneOf: Option[Seq[Definition]],
              pattern: Option[String],
              properties: Option[Map[String, Definition]],
-             additionalProperties: Option[Definition],
+             additionalProperties: Option[Either[Boolean, Definition]],
              required: Option[Set[String]],
              ref: Option[String],
              uniqueItems: Option[Boolean]
@@ -48,7 +48,7 @@ object Definition {
         OneOfDefinition(definitions)
       case _ =>
         schemaType match {
-          case Some("object") => ObjectDefinition(required, properties, additionalProperties)
+          case Some("object") => ObjectDefinition(required, properties, additionalProperties.getOrElse(Left(true)))
           case Some("array") => ArrayDefinition(minItems, maxItems, items)
           case Some("string") => StringDefinition(format, minLength, maxLength, pattern, enum)
           case Some("integer") => IntegerDefinition(format, minimum.map(_.longValue()), maximum.map(_.longValue()))
