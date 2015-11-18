@@ -3,7 +3,7 @@ package de.leanovate.swaggercheck.schema.play
 import de.leanovate.swaggercheck.schema.model.{Definition, ObjectDefinition, StringDefinition}
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.{JsSuccess, Json}
-import de.leanovate.swaggercheck.schema.play.DefinitionFormats._
+import de.leanovate.swaggercheck.schema.play.Implicits._
 
 class DefinitionFormatsSpec extends WordSpec with MustMatchers {
   "DefinitionFormats" should {

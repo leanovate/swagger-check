@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.schema.play
 
 import de.leanovate.swaggercheck.schema.model.DefaultSchema
-import de.leanovate.swaggercheck.schema.play.DefinitionFormats._
+import de.leanovate.swaggercheck.schema.play.Implicits._
 import de.leanovate.swaggercheck.schema.play.model.ProductModel
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json

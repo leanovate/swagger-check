@@ -6,7 +6,7 @@ import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import play.api.libs.json.Json
-import de.leanovate.swaggercheck.schema.play.DefinitionFormats._
+import de.leanovate.swaggercheck.schema.play.Implicits._
 import de.leanovate.swaggercheck.schema.gen.GeneratableDefaultSchema._
 
 object ValidatingReadsSpecification extends Properties("ValidatingReads") {

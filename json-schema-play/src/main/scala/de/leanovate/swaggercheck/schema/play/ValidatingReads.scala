@@ -1,7 +1,7 @@
 package de.leanovate.swaggercheck.schema.play
 
 import de.leanovate.swaggercheck.schema.model._
-import de.leanovate.swaggercheck.schema.play.JsValueNodeAdapter._
+import de.leanovate.swaggercheck.schema.play.Implicits._
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{JsError, JsResult, JsValue, Reads}
 
