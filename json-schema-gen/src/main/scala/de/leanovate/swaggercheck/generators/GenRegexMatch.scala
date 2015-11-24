@@ -47,7 +47,7 @@ class GenRegexMatch extends Parsers {
   val anyChar = elem("Any char", _ => true)
   val digit = elem("Digit", _.isDigit)
 
-  def regex: Composition = phrase(topLevelSequence)
+  def regex: Composition = phrase(topLevelGroup)
 
   def repetitions: Transformer = (
     zeroOrOne ^^^ { term: Gen[List[Char]] => Gen.oneOf(term, Gen.const(Nil)) }
@@ -59,7 +59,10 @@ class GenRegexMatch extends Parsers {
     }
     )
 
-  def topLevelGroup: Composition = opt(startSubexpr) ~> topLevelSequence <~ opt(endSubexpr)
+  def topLevelGroup: Composition = rep1sep(topLevelSequence, alternation) ^^ {
+    case a :: b :: rest => Gen oneOf(a, b, rest: _*)
+    case List(unique) => unique
+  }
 
   def topLevelSequence: Composition =
     startSubexpr ~> elem('^') ~> sequence <~ opt(elem('$')) <~ endSubexpr |
