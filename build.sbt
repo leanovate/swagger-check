@@ -4,7 +4,7 @@ import sbt.Keys._
 name := "swagger-check"
 
 lazy val root = project.in(file(".")).settings(publishArtifact := false)
-  .aggregate(jsonSchemaModel, jsonSchemaGen, jsonSchemaPlay, jsonSchemaJackson, swaggerCheckCore)
+  .aggregate(jsonSchemaModel, jsonSchemaGen, jsonSchemaPlay, jsonSchemaJackson, swaggerCheckCore, swaggerCheckBlackbox)
 
 lazy val jsonSchemaModel = project.in(file("json-schema-model"))
 
@@ -15,5 +15,7 @@ lazy val jsonSchemaPlay = project.in(file("json-schema-play")).dependsOn(jsonSch
 lazy val jsonSchemaJackson = project.in(file("json-schema-jackson")).dependsOn(jsonSchemaModel)
 
 lazy val swaggerCheckCore = project.in(file("swagger-check-core")).dependsOn(jsonSchemaGen, jsonSchemaJackson)
+
+lazy val swaggerCheckBlackbox = project.in(file("swagger-check-blackbox")).dependsOn(swaggerCheckCore)
 
 Common.settings
