@@ -141,5 +141,20 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       result must have size 1
       result.head must endWith("should be an object in path jsonpath")
     }
+
+    "fail if additional properties are not allowed" in {
+      val schema = mock[Schema]
+      val objectDefinition = ObjectDefinition(None, Some(Map(
+        "field1" -> BooleanDefinition
+      )), Left(false))
+
+      objectDefinition.validate(schema, JsonPath(), TestNode(obj = Some(Map(
+        "field1" -> TestNode(boolean = Some(true))
+      )))).isSuccess mustBe true
+      objectDefinition.validate(schema, JsonPath(), TestNode(obj = Some(Map(
+        "field1" -> TestNode(boolean = Some(true)),
+        "field2" -> TestNode(boolean = Some(false))
+      )))).isSuccess mustBe false
+    }
   }
 }
