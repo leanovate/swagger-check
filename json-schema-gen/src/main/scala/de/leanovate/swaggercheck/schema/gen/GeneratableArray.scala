@@ -10,7 +10,7 @@ case class GeneratableArray(
                              definition: ArrayDefinition
                            ) extends GeneratableDefinition {
   override def validate[T](model: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = definition.validate(model, path, node)
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = definition.validate(model, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = {
     val min = definition.minItems.getOrElse(0)

@@ -9,8 +9,8 @@ import de.leanovate.swaggercheck.schema.adapter.NodeAdapter
   */
 case class AllOfDefinition(definitions: Seq[Definition]) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
-    definitions.foldLeft(ValidationResult.success) {
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = {
+    definitions.foldLeft(ValidationResult.success(node)) {
       (result, definition) =>
         result.combine(definition.validate(schema, path, node))
     }

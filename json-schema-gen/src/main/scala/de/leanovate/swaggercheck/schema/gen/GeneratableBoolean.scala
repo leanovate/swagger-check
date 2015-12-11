@@ -7,7 +7,7 @@ import org.scalacheck.Gen
 
 case object GeneratableBoolean extends GeneratableDefinition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult =
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] =
     BooleanDefinition.validate(schema, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] =

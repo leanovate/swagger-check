@@ -8,12 +8,12 @@ case class ObjectDefinition(
                              additionalProperties: Either[Boolean, Definition]
                            ) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = {
     nodeAdapter.asObject(node) match {
       case Some(fields) =>
         val propertiesResult = properties.map {
           props =>
-            props.foldLeft(ValidationResult.success) {
+            props.foldLeft(ValidationResult.success(node)) {
               case (result, (name, defintion)) =>
                 val field = fields.getOrElse(name, nodeAdapter.createNull)
                 if (!nodeAdapter.isNull(field) || required.exists(_.contains(name)))
@@ -21,19 +21,19 @@ case class ObjectDefinition(
                 else
                   result
             }
-        }.getOrElse(ValidationResult.success)
-        val additionalPropertiesResult = additionalProperties match {
-          case Left(true) => ValidationResult.success
+        }.getOrElse(ValidationResult.success(node))
+        val additionalPropertiesResult: ValidationResult[T] = additionalProperties match {
+          case Left(true) => ValidationResult.success(node)
           case Left(false) => properties match {
             case Some(props) => fields.keySet.find(!props.contains(_))
-              .map(name => ValidationResult.error(s"Unknown field $name in path $path"))
-              .getOrElse(ValidationResult.success)
+              .map(name => ValidationResult.error[T](s"Unknown field $name in path $path"))
+              .getOrElse(ValidationResult.success(node))
             case None if fields.nonEmpty => ValidationResult.error(s"Object should not have any field in path $path")
-            case None => ValidationResult.success
+            case None => ValidationResult.success(node)
           }
           case Right(definition) =>
             val explicitFields = properties.map(_.keySet).getOrElse(Set.empty)
-            fields.foldLeft(ValidationResult.success) {
+            fields.foldLeft(ValidationResult.success(node)) {
               case (result, (name, field)) if explicitFields.contains(name) => result
               case (result, (name, field)) =>
                 result.combine(definition.validate(schema, path.field(name), field))

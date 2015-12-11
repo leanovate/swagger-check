@@ -14,7 +14,7 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = NumberDefinition(None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "accept values that match the defined format" in {
@@ -24,11 +24,11 @@ class NumberDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val format = mock[ValueFormat[BigDecimal]]
 
       when(schema.findNumberFormat("theformat")).thenReturn(Some(format))
-      when(format.validate(path, BigDecimal(12345.67))).thenReturn(ValidationResult.success)
+      when(format.validate(path, BigDecimal(12345.67))).thenReturn(ValidationResult.success(BigDecimal(12345.67)))
 
       val definition = NumberDefinition(Some("theformat"), None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(schema).findNumberFormat("theformat")
       verify(format).validate(path, BigDecimal(12345.67))

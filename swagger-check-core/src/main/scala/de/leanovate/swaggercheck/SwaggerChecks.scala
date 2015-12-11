@@ -143,24 +143,24 @@ case class SwaggerChecks(
   override def childContext: SwaggerChecks = withMaxItems(maxItems / 2)
 
   private def verifierForSchema(expectedSchema: Definition): Validator[String] = new Validator[String] {
-    override def verify(value: String): ValidationResult = {
-      expectedSchema.validate(SwaggerChecks.this, JsonPath(), CheckJsValue.parse(value))
+    override def verify(value: String): ValidationResult[Unit] = {
+      expectedSchema.validate(SwaggerChecks.this, JsonPath(), CheckJsValue.parse(value)).map(_ => Unit)
     }
   }
 
   private def verifierForOperation[R](operation: Operation)
                                      (implicit responseExtractor: ResponseExtractor[R]) = new Validator[R] {
-    override def verify(value: R): ValidationResult = {
+    override def verify(value: R): ValidationResult[Unit] = {
       val status = responseExtractor.status(value)
 
       operation.responses.get(status.toString).orElse(operation.responses.get("default"))
         .map(_.verify(SwaggerChecks.this, responseExtractor.headers(value), responseExtractor.body(value)))
-        .getOrElse(ValidationResult.error(s"Invalid status=$status"))
+        .getOrElse(ValidationResult.error[Unit](s"Invalid status=$status"))
     }
   }
 
   private def failingVerifier[T](failure: String) = new Validator[T] {
-    override def verify(value: T): ValidationResult = ValidationResult.error(failure)
+    override def verify(value: T): ValidationResult[Unit] = ValidationResult.error(failure)
   }
 
   override def findGeneratableIntegerFormat(format: String): Option[GeneratableFormat[BigInt]] =

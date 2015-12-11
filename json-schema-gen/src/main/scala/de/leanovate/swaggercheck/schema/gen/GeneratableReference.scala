@@ -10,7 +10,7 @@ case class GeneratableReference(
                                  definition: ReferenceDefinition
                                ) extends GeneratableDefinition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult =
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] =
     definition.validate(schema, path, node)
 
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = {

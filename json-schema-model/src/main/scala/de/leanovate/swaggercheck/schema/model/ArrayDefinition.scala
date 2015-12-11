@@ -8,7 +8,7 @@ case class ArrayDefinition(
                             items: Option[Definition]
                           ) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = {
     nodeAdapter.asArray(node) match {
       case Some(elements) =>
         if (minItems.exists(_ > elements.size))
@@ -18,11 +18,11 @@ case class ArrayDefinition(
         else {
           items.map {
             itemsSchema =>
-              elements.zipWithIndex.foldLeft(ValidationResult.success) {
+              elements.zipWithIndex.foldLeft(ValidationResult.success(node)) {
                 case (result, (element, index)) =>
                   result.combine(itemsSchema.validate(schema, path.index(index), element))
               }
-          }.getOrElse(ValidationResult.success)
+          }.getOrElse(ValidationResult.success(node))
         }
       case _ =>
         ValidationResult.error(s"$node should be an array in path $path")

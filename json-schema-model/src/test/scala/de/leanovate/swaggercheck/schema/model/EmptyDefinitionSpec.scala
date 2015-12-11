@@ -12,7 +12,7 @@ class EmptyDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
 
       val definition = EmptyDefinition
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
   }
 }

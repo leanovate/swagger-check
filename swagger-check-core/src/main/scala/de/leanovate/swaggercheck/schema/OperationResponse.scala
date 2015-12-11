@@ -10,19 +10,19 @@ import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
 case class OperationResponse(
                               schema: Option[Definition],
                               headers: Seq[(String, Definition)]
-                              ) {
-  def verify(context: SwaggerChecks, requestHeader: Map[String, String], requestBody: String): ValidationResult = {
-    val bodyVerify = schema.map {
+                            ) {
+  def verify(context: SwaggerChecks, requestHeader: Map[String, String], requestBody: String): ValidationResult[Unit] = {
+    val bodyVerify: ValidationResult[Unit] = schema.map {
       expected =>
-        expected.validate(context, JsonPath(), CheckJsValue.parse(requestBody))
-    }.getOrElse(ValidationResult.success)
+        expected.validate(context, JsonPath(), CheckJsValue.parse(requestBody)).map[Unit](_ => Unit)
+    }.getOrElse(ValidationResult.success[Unit](Unit))
 
     headers.foldLeft(bodyVerify) {
       case (result, (name, schema)) =>
         result.combine(
           requestHeader.get(name.toLowerCase)
-            .map(value => schema.validate[CheckJsValue](context, JsonPath(), CheckJsString.formatted(value)))
-            .getOrElse(ValidationResult.success))
+            .map(value => schema.validate[CheckJsValue](context, JsonPath(), CheckJsString.formatted(value)).map[Unit](_ => Unit))
+            .getOrElse(ValidationResult.success(Unit)))
     }
   }
 }
@@ -30,6 +30,6 @@ case class OperationResponse(
 class OperationResponseBuilder @JsonCreator()(
                                                @JsonProperty("schema") schema: Option[Definition],
                                                @JsonProperty("headers") headers: Option[Map[String, Definition]]
-                                               ) {
+                                             ) {
   def build(): OperationResponse = OperationResponse(schema, headers.map(_.toSeq).getOrElse(Seq.empty))
 }

@@ -14,7 +14,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "accept values that match the defined format" in {
@@ -24,11 +24,11 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val format = mock[ValueFormat[String]]
 
       when(schema.findStringFormat("theformat")).thenReturn(Some(format))
-      when(format.validate(path, "some string")).thenReturn(ValidationResult.success)
+      when(format.validate(path, "some string")).thenReturn(ValidationResult.success("some string"))
 
       val definition = StringDefinition(Some("theformat"), None, None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(schema).findStringFormat("theformat")
       verify(format).validate(path, "some string")
@@ -67,7 +67,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, Some("[0-9a-f]{8}(\\-[0-9a-f]{4}){3}\\-[0-9a-f]{12}"), None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "fail if string does not match pattern" in {
@@ -90,7 +90,7 @@ class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = StringDefinition(None, None, None, None, Some("enum1" :: "enum2":: "enum3" :: Nil))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "fail if string is not contained in enum" in {

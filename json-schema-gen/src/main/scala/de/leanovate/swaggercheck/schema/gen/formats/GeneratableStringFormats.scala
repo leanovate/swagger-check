@@ -14,14 +14,14 @@ object GeneratableStringFormats {
   object URLString extends GeneratableFormat[String] {
     override def generate: Gen[String] = Generators.url
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.URLString.validate(path, value)
   }
 
   object URIString extends GeneratableFormat[String] {
     override def generate: Gen[String] = Generators.uri
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.URIString.validate(path, value)
   }
 
@@ -29,7 +29,7 @@ object GeneratableStringFormats {
     override def generate: Gen[String] =
       Gen.uuid.map(_.toString)
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.UUIDString.validate(path, value)
   }
 
@@ -38,7 +38,7 @@ object GeneratableStringFormats {
 
     override def generate: Gen[String] = Generators.email
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.EmailString.validate(path, value)
   }
 
@@ -51,7 +51,7 @@ object GeneratableStringFormats {
       }
     }
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.DateString.validate(path, value)
   }
 
@@ -64,7 +64,7 @@ object GeneratableStringFormats {
       }
     }
 
-    override def validate(path: JsonPath, value: String): ValidationResult =
+    override def validate(path: JsonPath, value: String): ValidationResult[String] =
       StringFormats.DateTimeString.validate(path, value)
   }
 

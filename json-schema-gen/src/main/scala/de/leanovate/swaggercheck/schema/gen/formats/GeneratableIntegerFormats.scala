@@ -9,14 +9,14 @@ object GeneratableIntegerFormats {
   object Int32 extends GeneratableFormat[BigInt] {
     override def generate: Gen[BigInt] = Gen.choose(Int.MinValue, Int.MaxValue).map(BigInt.apply)
 
-    override def validate(path: JsonPath, value: BigInt): ValidationResult =
+    override def validate(path: JsonPath, value: BigInt): ValidationResult[BigInt] =
       IntegerFormats.Int32.validate(path, value)
   }
 
   object Int64 extends GeneratableFormat[BigInt] {
     override def generate: Gen[BigInt] = Gen.choose(Long.MinValue, Long.MaxValue).map(BigInt.apply)
 
-    override def validate(path: JsonPath, value: BigInt): ValidationResult =
+    override def validate(path: JsonPath, value: BigInt): ValidationResult[BigInt] =
       IntegerFormats.Int64.validate(path, value)
   }
 

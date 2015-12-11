@@ -6,7 +6,7 @@ case class ReferenceDefinition(
                                 ref: String
                               ) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = {
     schema.findByRef(ref)
       .map(_.validate(schema, path, node))
       .getOrElse(ValidationResult.error(s"Referenced definition does not exists: $ref"))

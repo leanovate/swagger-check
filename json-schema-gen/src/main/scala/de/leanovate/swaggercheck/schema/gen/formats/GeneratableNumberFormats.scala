@@ -9,14 +9,14 @@ object GeneratableNumberFormats {
   object FloatNumber extends GeneratableFormat[BigDecimal] {
     override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Float].map(_.toDouble).map(BigDecimal.decimal)
 
-    override def validate(path: JsonPath, value: BigDecimal): ValidationResult =
+    override def validate(path: JsonPath, value: BigDecimal): ValidationResult[BigDecimal] =
       NumberFormats.FloatNumber.validate(path, value)
   }
 
   object DoubleNumber extends GeneratableFormat[BigDecimal] {
     override def generate: Gen[BigDecimal] = Arbitrary.arbitrary[Double].map(BigDecimal.decimal)
 
-    override def validate(path: JsonPath, value: BigDecimal): ValidationResult =
+    override def validate(path: JsonPath, value: BigDecimal): ValidationResult[BigDecimal] =
       NumberFormats.DoubleNumber.validate(path, value)
   }
 

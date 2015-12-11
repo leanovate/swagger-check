@@ -15,7 +15,7 @@ class ArrayDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
 
       val result = definition.validate(schema, path, node)
 
-      result mustBe ValidationSuccess
+      result mustBe ValidationSuccess(node)
     }
 
     "succeed if item definition succeeds on all elements" in {
@@ -26,12 +26,12 @@ class ArrayDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
       val schema = mock[Schema]
       val itemDefinition = mock[Definition]
 
-      when(itemDefinition.validate(schema, path.index(0), item1)).thenReturn(ValidationSuccess)
-      when(itemDefinition.validate(schema, path.index(1), item2)).thenReturn(ValidationSuccess)
+      when(itemDefinition.validate(schema, path.index(0), item1)).thenReturn(ValidationSuccess(node))
+      when(itemDefinition.validate(schema, path.index(1), item2)).thenReturn(ValidationSuccess(node))
 
       val definition = ArrayDefinition(None, None, Some(itemDefinition))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(itemDefinition).validate(schema, path.index(0), item1)
       verify(itemDefinition).validate(schema, path.index(1), item2)
@@ -45,8 +45,8 @@ class ArrayDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
       val schema = mock[Schema]
       val itemDefinition = mock[Definition]
 
-      when(itemDefinition.validate(schema, path.index(0), item1)).thenReturn(ValidationResult.error("error"))
-      when(itemDefinition.validate(schema, path.index(1), item2)).thenReturn(ValidationSuccess)
+      when(itemDefinition.validate(schema, path.index(0), item1)).thenReturn(ValidationResult.error[TestNode]("error"))
+      when(itemDefinition.validate(schema, path.index(1), item2)).thenReturn(ValidationSuccess(node))
 
       val definition = ArrayDefinition(None, None, Some(itemDefinition))
 

@@ -40,7 +40,7 @@ case class DefaultSchema(
   def withNumberFormats(formats: (String, ValueFormat[BigDecimal])*) =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
 
-  def validate[T](node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult =
+  def validate[T](node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] =
     root.validate(this, JsonPath(), node)
 }
 

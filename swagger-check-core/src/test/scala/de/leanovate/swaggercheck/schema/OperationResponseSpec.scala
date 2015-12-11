@@ -2,8 +2,9 @@ package de.leanovate.swaggercheck.schema
 
 import de.leanovate.swaggercheck.SwaggerChecks
 import de.leanovate.swaggercheck.schema.model.{Definition, JsonPath, ValidationResult}
-import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
+import de.leanovate.swaggercheck.shrinkable.{CheckJsObject, CheckJsString, CheckJsValue}
 import org.mockito.Matchers._
+import org.mockito.Matchers.{eq => eql}
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
@@ -15,7 +16,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
       val bodySchema = mock[Definition]
       val response = OperationResponse(Some(bodySchema), Seq.empty)
 
-      when(bodySchema.validate(any(), any(), any())(any())).thenReturn(ValidationResult.success)
+      when(bodySchema.validate(any(), any(), any(classOf[CheckJsValue]))(eql(CheckJsValue.adapter))).thenReturn(ValidationResult.success(CheckJsObject.empty))
 
       response.verify(swaggerChecks, Map.empty, "{}").isSuccess mustBe true
 
@@ -27,7 +28,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
       val headerSchema = mock[Definition]
       val response = OperationResponse(None, Seq("some header" -> headerSchema))
 
-      when(headerSchema.validate(any(), any(), any())(any())).thenReturn(ValidationResult.success)
+      when(headerSchema.validate(any(), any(), any(classOf[CheckJsValue]))(eql(CheckJsValue.adapter))).thenReturn(ValidationResult.success(CheckJsObject.empty))
 
       response.verify(swaggerChecks, Map.empty, "{}").isSuccess mustBe true
 

@@ -14,7 +14,7 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
 
       val definition = IntegerDefinition(None, None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "accept values that match the defined format" in {
@@ -24,11 +24,11 @@ class IntegerDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers
       val format = mock[ValueFormat[BigInt]]
 
       when(schema.findIntegerFormat("theformat")).thenReturn(Some(format))
-      when(format.validate(path, BigInt(12345))).thenReturn(ValidationResult.success)
+      when(format.validate(path, BigInt(12345))).thenReturn(ValidationResult.success(BigInt(12345)))
 
       val definition = IntegerDefinition(Some("theformat"), None, None)
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(schema).findIntegerFormat("theformat")
       verify(format).validate(path, BigInt(12345))

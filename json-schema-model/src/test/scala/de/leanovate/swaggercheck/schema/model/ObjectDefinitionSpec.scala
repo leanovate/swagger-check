@@ -13,7 +13,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(None, None, Left(true))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
     }
 
     "succeed if non-required fields are missing" in {
@@ -25,7 +25,7 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
 
       val definition = ObjectDefinition(None, Some(Map("field3" -> field3Definition, "field4" -> field4Definition)), Left(true))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verifyZeroInteractions(field3Definition, field4Definition)
     }
@@ -37,8 +37,8 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val field3Definition = mock[Definition]
       val field4Definition = mock[Definition]
 
-      when(field3Definition.validate(schema, path.field("field3"), TestNode(isNull = true))).thenReturn(ValidationResult.error("error1"))
-      when(field4Definition.validate(schema, path.field("field4"), TestNode(isNull = true))).thenReturn(ValidationResult.error("error2"))
+      when(field3Definition.validate(schema, path.field("field3"), TestNode(isNull = true))).thenReturn(ValidationResult.error[TestNode]("error1"))
+      when(field4Definition.validate(schema, path.field("field4"), TestNode(isNull = true))).thenReturn(ValidationResult.error[TestNode]("error2"))
 
       val definition = ObjectDefinition(Some(Set("field3", "field4")), Some(Map("field3" -> field3Definition, "field4" -> field4Definition)), Left(true))
 
@@ -58,14 +58,14 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val field3Definition = mock[Definition]
       val field4Definition = mock[Definition]
 
-      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success)
-      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success)
-      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success)
+      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success(field2))
+      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success(field3))
+      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success(field4))
 
       val definition = ObjectDefinition(Some(Set("field3", "field4")),
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)), Left(true))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(field2Definition).validate(schema, path.field("field2"), field2)
       verify(field3Definition).validate(schema, path.field("field3"), field3)
@@ -85,10 +85,10 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val field3Definition = mock[Definition]
       val field4Definition = mock[Definition]
 
-      when(additionalDefinition.validate(schema, path.field("field1"), field1)).thenReturn(ValidationResult.error("error"))
-      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success)
-      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success)
-      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success)
+      when(additionalDefinition.validate(schema, path.field("field1"), field1)).thenReturn(ValidationResult.error[TestNode]("error"))
+      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success(field2))
+      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success(field3))
+      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success(field4))
 
       val definition = ObjectDefinition(Some(Set("field3", "field4")),
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)),
@@ -112,16 +112,16 @@ class ObjectDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers 
       val field3Definition = mock[Definition]
       val field4Definition = mock[Definition]
 
-      when(additionalDefinition.validate(schema, path.field("field1"), field1)).thenReturn(ValidationResult.success)
-      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success)
-      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success)
-      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success)
+      when(additionalDefinition.validate(schema, path.field("field1"), field1)).thenReturn(ValidationResult.success(field1))
+      when(field2Definition.validate(schema, path.field("field2"), field2)).thenReturn(ValidationResult.success(field2))
+      when(field3Definition.validate(schema, path.field("field3"), field3)).thenReturn(ValidationResult.success(field3))
+      when(field4Definition.validate(schema, path.field("field4"), field4)).thenReturn(ValidationResult.success(field4))
 
       val definition = ObjectDefinition(Some(Set("field3", "field4")),
         Some(Map("field2" -> field2Definition, "field3" -> field3Definition, "field4" -> field4Definition)),
         Right(additionalDefinition))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(additionalDefinition).validate(schema, path.field("field1"), field1)
       verify(field2Definition).validate(schema, path.field("field2"), field2)

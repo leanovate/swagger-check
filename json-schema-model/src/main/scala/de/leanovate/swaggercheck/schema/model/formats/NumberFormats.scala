@@ -5,10 +5,10 @@ import de.leanovate.swaggercheck.schema.model.{JsonPath, ValidationResult}
 object NumberFormats {
 
   object FloatNumber extends ValueFormat[BigDecimal] {
-    override def validate(path: JsonPath, value: BigDecimal): ValidationResult = {
+    override def validate(path: JsonPath, value: BigDecimal): ValidationResult[BigDecimal] = {
       if (value.isDecimalDouble && value >= BigDecimal.decimal(Float.MinValue) && value <= BigDecimal.decimal(Float.MaxValue))
         // We have to be somewhat lenient here, most implementation do not produce valid float decimals
-        ValidationResult.success
+        ValidationResult.success(value)
       else {
         val parsed = BigDecimal.decimal(value.toFloat)
         ValidationResult.error(s"$value is not a float ($value != $parsed): $path")
@@ -17,9 +17,9 @@ object NumberFormats {
   }
 
   object DoubleNumber extends ValueFormat[BigDecimal] {
-    override def validate(path: JsonPath, value: BigDecimal): ValidationResult =
+    override def validate(path: JsonPath, value: BigDecimal): ValidationResult[BigDecimal] =
       if (value.isDecimalDouble)
-        ValidationResult.success
+        ValidationResult.success(value)
       else {
         val parsed = BigDecimal.decimal(value.toDouble)
         ValidationResult.error(s"$value is not a double ($value != $parsed): $path")

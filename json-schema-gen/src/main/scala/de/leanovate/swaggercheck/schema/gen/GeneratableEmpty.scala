@@ -9,5 +9,5 @@ object GeneratableEmpty extends GeneratableDefinition {
   override def generate(schema: GeneratableSchema): Gen[CheckJsValue] = Gen.const(CheckJsNull)
 
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = ValidationResult.success
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = ValidationResult.success(node)
 }

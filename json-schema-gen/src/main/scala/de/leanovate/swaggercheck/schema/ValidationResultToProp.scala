@@ -10,8 +10,8 @@ object ValidationResultToProp {
   /**
     * Convert to a scala-check `Prop`.
     */
-  implicit def verifyProp(verifyResult: ValidationResult): Prop = verifyResult match {
-    case ValidationSuccess => Prop.proved
+  implicit def verifyProp(verifyResult: ValidationResult[_]): Prop = verifyResult match {
+    case ValidationSuccess(_) => Prop.proved
     case ValidationFailure(failures) => Prop(Result(status = Prop.False, labels = failures.toSet))
   }
 }

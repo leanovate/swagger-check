@@ -10,7 +10,7 @@ case class StringDefinition (
                          enum: Option[List[String]]
                        ) extends Definition {
   override def validate[T](schema: Schema, path: JsonPath, node: T)
-                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult = {
+                          (implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T] = {
     nodeAdapter.asString(node) match {
       case Some(value) =>
         if (minLength.exists(_ > value.length))
@@ -22,7 +22,7 @@ case class StringDefinition (
         else if (enum.exists(e => e.nonEmpty && !e.contains(value)))
           ValidationResult.error(s"'$value' has to be one of ${enum.map(_.mkString(", ")).mkString} in path $path")
         else
-          format.flatMap(schema.findStringFormat).map(_.validate(path, value)).getOrElse(ValidationResult.success)
+          format.flatMap(schema.findStringFormat).map(_.validate(path, value).map(_ => node)).getOrElse(ValidationResult.success(node))
       case _ =>
         ValidationResult.error(s"$node should be a string in path $path")
     }

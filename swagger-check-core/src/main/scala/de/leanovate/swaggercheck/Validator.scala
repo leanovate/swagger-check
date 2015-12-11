@@ -9,5 +9,5 @@ trait Validator[T] {
   /**
    * Verifies that a value matches a criteria.
    */
-  def verify(value: T): ValidationResult
+  def verify(value: T): ValidationResult[Unit]
 }

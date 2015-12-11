@@ -14,13 +14,13 @@ class AllOfDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
       val path = JsonPath("path")
       val node = TestNode()
 
-      when(definition1.validate(schema, path, node)).thenReturn(ValidationResult.success)
-      when(definition2.validate(schema, path, node)).thenReturn(ValidationResult.success)
-      when(definition3.validate(schema, path, node)).thenReturn(ValidationResult.success)
+      when(definition1.validate(schema, path, node)).thenReturn(ValidationResult.success(node))
+      when(definition2.validate(schema, path, node)).thenReturn(ValidationResult.success(node))
+      when(definition3.validate(schema, path, node)).thenReturn(ValidationResult.success(node))
 
       val definition = AllOfDefinition(Seq(definition1, definition2, definition3))
 
-      definition.validate(schema, path, node) mustBe ValidationSuccess
+      definition.validate(schema, path, node) mustBe ValidationSuccess(node)
 
       verify(definition1).validate(schema, path, node)
       verify(definition2).validate(schema, path, node)
@@ -35,9 +35,9 @@ class AllOfDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
       val path = JsonPath("path")
       val node = TestNode()
 
-      when(definition1.validate(schema, path, node)).thenReturn(ValidationResult.success)
-      when(definition2.validate(schema, path, node)).thenReturn(ValidationResult.error("error"))
-      when(definition3.validate(schema, path, node)).thenReturn(ValidationResult.success)
+      when(definition1.validate(schema, path, node)).thenReturn(ValidationResult.success(node))
+      when(definition2.validate(schema, path, node)).thenReturn(ValidationResult.error[TestNode]("error"))
+      when(definition3.validate(schema, path, node)).thenReturn(ValidationResult.success(node))
 
       val definition = AllOfDefinition(Seq(definition1, definition2, definition3))
 

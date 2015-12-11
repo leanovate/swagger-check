@@ -15,7 +15,7 @@ trait Definition {
     * @param nodeAdapter adapter for the various json node implementations one might find
     * @return validation result
     */
-  def validate[T](schema: Schema, path: JsonPath, node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult
+  def validate[T](schema: Schema, path: JsonPath, node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult[T]
 }
 
 object Definition {
