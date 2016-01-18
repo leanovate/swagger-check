@@ -9,7 +9,7 @@ object Main {
   val nodeFactory = JsonNodeFactory.instance
 
   def main(args: Array[String]): Unit = {
-    val swaggerAPI = SwaggerAPI.parse(getClass.getClassLoader.getResourceAsStream("thing_api.yaml"))
+    val swaggerAPI = SwaggerAPI.parse(getClass.getClassLoader.getResourceAsStream("bookdb_api.yaml"))
 
     println(swaggerAPI)
     //    println(UUID.randomUUID().toString)
