@@ -5,12 +5,13 @@ import java.io.InputStream
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.{DeserializationFeature, MappingJsonFactory, ObjectMapper}
+import com.fasterxml.jackson.databind.{DeserializationFeature, JsonNode, MappingJsonFactory, ObjectMapper}
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import de.leanovate.swaggercheck.schema.jackson.JsonSchemaModule
 import de.leanovate.swaggercheck.schema.model.Definition
 
+import scala.collection.JavaConversions._
 import scala.io.Source
 
 @JsonDeserialize(builder = classOf[SwaggerAPIBuilder])
@@ -46,7 +47,7 @@ class SwaggerAPIBuilder @JsonCreator()(
                                         @JsonProperty("basePath") basePath: Option[String],
                                         @JsonProperty("consumes") consumes: Option[Seq[String]],
                                         @JsonProperty("produces") produces: Option[Seq[String]],
-                                        @JsonProperty("paths") paths: Option[Map[String, Map[String, Operation]]],
+                                        @JsonProperty("paths") paths: Option[Map[String, JsonNode]],
                                         @JsonProperty("definitions") definitions: Option[Map[String, Definition]]
                                       ) {
   def build(): SwaggerAPI = {
@@ -54,11 +55,19 @@ class SwaggerAPIBuilder @JsonCreator()(
     val defaultProduces = produces.map(_.toSet).getOrElse(Set.empty)
     SwaggerAPI(basePath,
       paths.getOrElse(Map.empty).map {
-        case (path, operations) =>
-          basePath.map(_ + path).getOrElse(path) -> operations.map {
-            case (method, operation) =>
-              method.toUpperCase -> operation.withDefaults(defaultConsumes, defaultProduces)
-          }
+        case (path, pathDefinition) =>
+          val defaultParameters = Option(pathDefinition.get("parameters")).map {
+             node =>
+               node.iterator().map {
+                 element => SwaggerAPI.jsonMapper.treeToValue(element, classOf[OperationParameter])
+               }.toSeq
+          }.getOrElse(Seq.empty)
+
+          basePath.map(_ + path).getOrElse(path) -> pathDefinition.fields().filter(_.getKey != "parameters").map {
+            entry =>
+              val operation = SwaggerAPI.jsonMapper.treeToValue(entry.getValue, classOf[Operation])
+              entry.getKey.toUpperCase -> operation.withDefaults(defaultParameters, defaultConsumes, defaultProduces)
+          }.toMap
       },
       definitions.getOrElse(Map.empty))
   }

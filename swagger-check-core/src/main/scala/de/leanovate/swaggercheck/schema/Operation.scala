@@ -17,10 +17,10 @@ case class Operation(
                       produces: Set[String],
                       parameters: Seq[OperationParameter],
                       responses: Map[String, OperationResponse]
-                      ) {
+                    ) {
 
-  def withDefaults(defaultConsumes: Set[String], defaultProduces: Set[String]): Operation =
-    copy(consumes = consumes ++ defaultConsumes, produces = produces ++ defaultProduces)
+  def withDefaults(defaultParameters: Seq[OperationParameter], defaultConsumes: Set[String], defaultProduces: Set[String]): Operation =
+    copy(parameters = parameters ++ defaultParameters, consumes = consumes ++ defaultConsumes, produces = produces ++ defaultProduces)
 
   def generateRequest[R](context: SwaggerChecks, method: String, path: String)
                         (implicit requestCreator: RequestCreator[R]): Gen[R] = {
@@ -91,6 +91,7 @@ object Operation {
       }
     }
   }
+
 }
 
 class OperationBuilder @JsonCreator()(
@@ -98,7 +99,7 @@ class OperationBuilder @JsonCreator()(
                                        @JsonProperty("produces") produces: Option[Seq[String]],
                                        @JsonProperty("parameters") parameters: Option[Seq[OperationParameter]],
                                        @JsonProperty("responses") responses: Option[Map[String, OperationResponse]]
-                                       ) {
+                                     ) {
   def build(): Operation = Operation(
     consumes.map(_.toSet).getOrElse(Set.empty),
     produces.map(_.toSet).getOrElse(Set.empty),
