@@ -3,7 +3,6 @@ package de.leanovate.swaggercheck.schema
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.SwaggerChecks
-import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
 import de.leanovate.swaggercheck.schema.jackson.DefinitionBuilder
 import de.leanovate.swaggercheck.schema.model.Definition
 import org.scalacheck.Gen
@@ -16,7 +15,7 @@ case class OperationParameter(
                                required: Boolean,
                                schema: Definition
                                ) {
-  def applyTo(context: SwaggerChecks, builder: RequestBuilder): RequestBuilder = (name, in) match {
+  def applyTo(context: SwaggerChecks, builder: OperationRequestBuilder): OperationRequestBuilder = (name, in) match {
     case (Some(paramName), "path") =>
       builder.withPathParam(schema.generate(context).map(value => Some(paramName -> value.asText(""))))
     case (Some(paramName), "query") if required =>

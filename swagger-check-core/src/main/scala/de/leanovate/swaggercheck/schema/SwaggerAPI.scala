@@ -57,7 +57,7 @@ class SwaggerAPIBuilder @JsonCreator()(
         case (path, operations) =>
           basePath.map(_ + path).getOrElse(path) -> operations.map {
             case (method, operation) =>
-              method.toUpperCase -> operation.withDefaults(defaultConsumes, defaultProduces)
+              method.toUpperCase -> operation.withDefaults(method.toUpperCase, basePath + path, defaultConsumes, defaultProduces)
           }
       },
       definitions.getOrElse(Map.empty))

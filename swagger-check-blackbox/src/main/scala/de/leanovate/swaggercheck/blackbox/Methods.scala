@@ -3,19 +3,19 @@ package de.leanovate.swaggercheck.blackbox
 import de.leanovate.swaggercheck.SwaggerChecks
 import de.leanovate.swaggercheck.schema.Operation
 
-class Methods(uri: String, operationsByMethod: Map[String, Operation])(implicit swaggerChecks: SwaggerChecks) {
-  def method(method: String): OperationBuilder = operationsByMethod.get(method.toLowerCase) match {
-    case Some(operation) => new OperationBuilder(uri, operation)
-    case None => throw new RuntimeException(s"No operation for $method $uri")
+class Methods(baseUrl: String, operationsByMethod: Map[String, Operation])(implicit swaggerChecks: SwaggerChecks) {
+  def method(method: String): OperationBuilder = operationsByMethod.get(method.toUpperCase) match {
+    case Some(operation) => new OperationBuilder(baseUrl, operation)
+    case None => throw new RuntimeException(s"No operation for $method $baseUrl")
   }
 
-  def get = method("get")
+  def GET = method("GET")
 
-  def post = method("post")
+  def POST = method("POST")
 
-  def patch = method("patch")
+  def PATCH = method("PATCH")
 
-  def put = method("put")
+  def PUT = method("PUT")
 
-  def delete = method("delete")
+  def DELETE = method("DELETE")
 }

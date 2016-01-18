@@ -18,10 +18,10 @@ case class OperationResponse(
     }.getOrElse(ValidationResult.success)
 
     headers.foldLeft(bodyVerify) {
-      case (result, (name, schema)) =>
+      case (result, (name, bodyDefinition)) =>
         result.combine(
           requestHeader.get(name.toLowerCase)
-            .map(value => schema.validate[CheckJsValue](context, JsonPath(), CheckJsString.formatted(value)))
+            .map(value => bodyDefinition.validate[CheckJsValue](context, JsonPath(), CheckJsString.formatted(value)))
             .getOrElse(ValidationResult.success))
     }
   }
