@@ -55,14 +55,31 @@ case class SwaggerChecks(
       .getOrElse(throw new RuntimeException(s"Swagger does not contain a model $name"))
 
   /**
-    * Create a generator for requests based on a swagger file.
+    * Create a generator for request based on a swagger specification.
+    * @param method request method
+    * @param path request path (as in swagger file)
+    * @param requestBuilder implicit creator for request instances
+    * @tparam R request class (depends on the web framework, in play FakeRequest might be desired)
+    * @return generator for requests
+    */
+  def requestGenerator[R](method: String, path:String)
+                         (implicit requestBuilder: RequestCreator[R]): Gen[R] = {
+    val operations = swaggerAPI.paths.getOrElse(path, throw new RuntimeException(s"No operation for path $path"))
+    val operation = operations.getOrElse(method.toUpperCase, throw new RuntimeException(s"No operation for $method $path"))
+
+    operation.generateRequest(this, method.toUpperCase(), path)
+  }
+
+  /**
+    * Create a generator for requests based on a swagger specification.
     *
     * @param pathFilter Optional filter for paths (exact match)
     * @param requestBuilder implicit creator for request instances
     * @tparam R request class (depends on the web framework, in play FakeRequest might be desired)
     * @return generator for requests
     */
-  def requestGenerator[R](pathFilter: String => Boolean = _ => true)(implicit requestBuilder: RequestCreator[R]): Gen[R] = {
+  def requestGenerator[R](pathFilter: String => Boolean = _ => true)
+                         (implicit requestBuilder: RequestCreator[R]): Gen[R] = {
     val operations = swaggerAPI.paths.filterKeys(pathFilter)
 
     for {

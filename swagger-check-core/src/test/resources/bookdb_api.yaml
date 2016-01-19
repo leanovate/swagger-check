@@ -56,7 +56,7 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /author/{id}:
+  /authors/{id}:
     parameters:
       - name: id
         in: path

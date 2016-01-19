@@ -1,16 +1,13 @@
 package de.leanovate.swaggercheck
 
-import de.leanovate.swaggercheck.ThingApiSpecification._
-import de.leanovate.swaggercheck.ThingApiSpecification.swaggerChecks
-import de.leanovate.swaggercheck.UberApiSpecification._
+import java.util.UUID
+
 import de.leanovate.swaggercheck.fixtures.bookdb.Author
-import de.leanovate.swaggercheck.fixtures.model.Thing
-import org.scalacheck.{Shrink, Arbitrary, Properties}
-import play.api.libs.json.Json
-import org.scalacheck.Prop.{BooleanOperators, forAll}
-import de.leanovate.swaggercheck.schema.ValidationResultToProp
+import de.leanovate.swaggercheck.schema.ValidationResultToProp._
 import de.leanovate.swaggercheck.simple._
-import ValidationResultToProp._
+import org.scalacheck.Prop.{BooleanOperators, forAll}
+import org.scalacheck.{Arbitrary, Properties, Shrink}
+import play.api.libs.json.{JsSuccess, Json}
 
 object BookDbApiSpecification extends Properties("BookDB API") {
   val swaggerChecks = SwaggerChecks(getClass.getClassLoader.getResourceAsStream("bookdb_api.yaml"))
@@ -39,6 +36,27 @@ object BookDbApiSpecification extends Properties("BookDB API") {
           } :| "All shrinked variants conform to schema"
     }
   }
+
+  property("Request generator POST /author") = {
+    val verifier = swaggerChecks.jsonVerifier("Author")
+
+    forAll(swaggerChecks.requestGenerator("POST", "/v1/authors")) {
+      request =>
+        (request.method == "POST") :| "Method" &&
+          (request.path == "/v1/authors") :| "Path" &&
+          request.body.isDefined :| "Has body" &&
+          verifier.verify(request.body.get.minified).isSuccess :| "Body is author"
+    }
+  }
+
+  property("Request generator GET /author/{id}") =
+    forAll(swaggerChecks.requestGenerator("GET", "/v1/authors/{id}")) {
+      request =>
+        (request.method == "GET") :| "Method" &&
+          request.path.startsWith("/v1/authors") :| "Path" &&
+          (UUID.fromString(request.path.substring(12)) ne null) :| "Id is uuid" &&
+          request.body.isEmpty :| "Has no body"
+    }
 
   property("Operation verifier") = forAll(swaggerChecks.operationVerifier[SimpleRequest, SimpleResponse](_ == "/v1/authors")) {
     case operationVerifier: SimpleOperationVerifier if operationVerifier.request.method == "GET" =>
