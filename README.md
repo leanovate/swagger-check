@@ -58,7 +58,7 @@ The project is now separated in modules to (eventually) support a multiple frame
 * swagger-check-core
   * Uses the above to create a tool box for creating ScalaCheck tests based on a swagger definition
 
-### Why is there just another implmenetation of JsValue? 
+### Why is there just another implementation of JsValue? 
 (Aren't there enough of those already?)
 
 Good point, but: We would like to generate json based on a given schema. One major feature of ScalaCheck is that it is not only able to generate arbitrary samples, but also shrink them down to find a minimum set of arguments to create a failure.
