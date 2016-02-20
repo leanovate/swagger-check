@@ -23,7 +23,6 @@ class CheckJsArraySpec extends WordSpec with MustMatchers {
         value =>
           value.minSize mustBe empty
           value.elements.length must be <= 6
-          value.minified.length must be < originalJson.length
       }
     }
 
@@ -46,7 +45,6 @@ class CheckJsArraySpec extends WordSpec with MustMatchers {
           value.minSize mustBe Some(4)
           value.elements.length must be <= 6
           value.elements.length must be >= 4
-          value.minified.length must be < originalJson.length
       }
     }
 

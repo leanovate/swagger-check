@@ -22,8 +22,7 @@ class CheckJsStringSpec extends WordSpec with MustMatchers {
       shrink.foreach {
         value =>
           value.minLength mustBe empty
-          value.value.length must be < 36
-          value.value.forall(_.isLetterOrDigit) mustBe true
+          value.value.length must be <= 36
       }
     }
 
@@ -36,8 +35,7 @@ class CheckJsStringSpec extends WordSpec with MustMatchers {
       shrink.foreach {
         value =>
           value.minLength mustBe Some(30)
-          value.value.forall(_.isLetterOrDigit) mustBe true
-          value.value.length must be < 36
+          value.value.length must be <= 36
           value.value.length must be >= 30
       }
     }

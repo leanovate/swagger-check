@@ -6,7 +6,7 @@ import sbtrelease.ReleaseStateTransformations._
 import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Common {
-  val scalaCheckVersion = "1.12.5"
+  val scalaCheckVersion = "1.13.0"
 
   val jacksonVersion = "2.5.4"
 

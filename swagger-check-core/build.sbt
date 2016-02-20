@@ -4,7 +4,7 @@ Common.settings
 
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
-  "org.scalacheck" %% "scalacheck" % "1.12.5",
+  "org.scalacheck" %% "scalacheck" % Common.scalaCheckVersion,
   "com.fasterxml.jackson.core" % "jackson-annotations" % "2.5.4",
   "com.fasterxml.jackson.core" % "jackson-core" % "2.5.4",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.5.4",

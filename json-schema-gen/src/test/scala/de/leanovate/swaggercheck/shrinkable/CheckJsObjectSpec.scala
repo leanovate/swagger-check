@@ -22,7 +22,6 @@ class CheckJsObjectSpec extends WordSpec with MustMatchers {
       shrink.foreach {
         value =>
           value.fields.keySet -- original.fields.keySet mustBe empty
-          value.minified.length must be < originalJson.length
       }
     }
 
@@ -43,7 +42,6 @@ class CheckJsObjectSpec extends WordSpec with MustMatchers {
       shrink.foreach {
         value =>
           value.fields must have size 6
-          value.minified.length must be < originalJson.length
       }
     }
   }
