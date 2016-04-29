@@ -1,4 +1,3 @@
-
 import sbt.Keys._
 import sbt._
 import sbtrelease.ReleasePlugin.autoImport._
@@ -8,9 +7,9 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object Common {
   val scalaCheckVersion = "1.13.0"
 
-  val jacksonVersion = "2.5.4"
+  val jacksonVersion = "2.7.3"
 
-  val playVersion = "2.4.3"
+  val playVersion = "2.5.1"
 
   val settings = Seq(
 
