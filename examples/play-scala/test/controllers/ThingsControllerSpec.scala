@@ -22,15 +22,16 @@ class ThingsControllerSpec extends PlaySpecification with ScalaCheck with ThingA
   "ThingController" should {
     "support all /things routes" in {
       implicit val arbitraryRequest = Arbitrary[PlayOperationVerifier](swaggerCheck.operationVerifier())
+      val app = testApp()
 
       prop {
         requestVerifier: PlayOperationVerifier =>
-          val Some(result) = route(requestVerifier.request)
+          val Some(result) = route(app, requestVerifier.request)
 
           status(result) must between(200, 300)
 
           requestVerifier.responseVerifier.verify(result) must be equalTo ValidationResult.success
-      }.setContext(new WithApplication(testApp()) {})
+      }
     }
   }
 
