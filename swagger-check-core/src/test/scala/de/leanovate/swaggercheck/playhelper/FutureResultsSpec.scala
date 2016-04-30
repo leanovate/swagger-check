@@ -15,8 +15,7 @@ class FutureResultsSpec extends WordSpec with MustMatchers {
       FutureResults.responseExtractor.body(futureResult) mustBe "{}"
       FutureResults.responseExtractor.headers(futureResult) mustBe Map(
         "some" -> "header",
-        "something" -> "else",
-        "Content-Type" -> "text/plain; charset=utf-8")
+        "something" -> "else")
     }
   }
 }
