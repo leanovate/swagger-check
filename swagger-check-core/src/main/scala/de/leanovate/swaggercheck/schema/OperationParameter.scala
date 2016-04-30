@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.SwaggerChecks
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
+import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
 import de.leanovate.swaggercheck.schema.jackson.DefinitionBuilder
 import de.leanovate.swaggercheck.schema.model.Definition
 import org.scalacheck.Gen
-import de.leanovate.swaggercheck.schema.gen.GeneratableDefinition._
 
 @JsonDeserialize(builder = classOf[OperationParameterBuilder])
 case class OperationParameter(
@@ -15,10 +15,12 @@ case class OperationParameter(
                                in: String,
                                required: Boolean,
                                schema: Definition
-                               ) {
+                             ) {
   def applyTo(context: SwaggerChecks, builder: RequestBuilder): RequestBuilder = (name, in) match {
     case (Some(paramName), "path") =>
-      builder.withPathParam(schema.generate(context).map(value => Some(paramName -> value.asText(""))))
+      builder.withPathParam(schema.generate(context)
+        .map(value => Some(paramName -> value.asText("")))
+        .suchThat(_.get._2.length > 0))
     case (Some(paramName), "query") if required =>
       builder.withQueryParam(schema.generate(context).map(value => Some(paramName -> value.asText(""))))
     case (Some(paramName), "query") =>
@@ -40,7 +42,7 @@ class OperationParameterBuilder @JsonCreator()(
                                                 @JsonProperty("type") schemaType: Option[String],
                                                 @JsonProperty("format") format: Option[String],
                                                 @JsonProperty("schema") schema: Option[Definition]
-                                                ) {
+                                              ) {
   def build(): OperationParameter = {
     OperationParameter(
       name,
