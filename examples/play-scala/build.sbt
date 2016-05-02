@@ -5,8 +5,8 @@ version := "1.0-SNAPSHOT"
 lazy val root = (project in file("."))
   .settings(conflictManager := ConflictManager.latestCompatible)
   .settings(dependencyOverrides := Set(
-    "org.scala-lang"              % "scala-library"             % "2.11.7",
-    "org.scala-lang"              % "scala-reflect"             % "2.11.7",
+    "org.scala-lang"              % "scala-library"             % "2.11.8",
+    "org.scala-lang"              % "scala-reflect"             % "2.11.8",
     "org.scala-lang.modules"      %% "scala-xml"                % "1.0.1",
     "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.4",
     "com.google.guava"            % "guava"                     % "19.0",
@@ -18,7 +18,7 @@ lazy val root = (project in file("."))
   ))
   .enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
 
