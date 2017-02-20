@@ -4,16 +4,19 @@ import de.leanovate.swaggercheck.schema.model.DefaultSchema
 import de.leanovate.swaggercheck.schema.play.Implicits._
 import de.leanovate.swaggercheck.schema.play.model.ProductModel
 import org.scalatest.{MustMatchers, WordSpec}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json, Reads}
 
 class ValidatingReadsSpec extends WordSpec with MustMatchers {
-  val schema = Json.parse(getClass.getClassLoader.getResourceAsStream("schema/simple1.json")).as[DefaultSchema]
+  val schema: DefaultSchema = Json
+    .parse(getClass.getClassLoader.getResourceAsStream("schema/simple1.json"))
+    .as[DefaultSchema]
 
-  val valdiatingReads = ValidatingReads.validating[Seq[ProductModel]](schema)
+  val atLeastOneTagRead: Reads[Seq[ProductModel]] =
+    ValidatingReads.validating[Seq[ProductModel]](schema)
 
   "ValidatingReads" should {
-    val json = Json.parse(
-      """[
+    "reject invalid json input" in {
+      val json = Json.parse("""[
         |    {
         |        "id": 12345678,
         |        "name": "thename",
@@ -22,9 +25,9 @@ class ValidatingReadsSpec extends WordSpec with MustMatchers {
         |    }
         |]""".stripMargin)
 
-    json.validate[Seq[ProductModel]].isSuccess mustBe true
-    val result = json.validate[Seq[ProductModel]](valdiatingReads)
+      val result = json.validate(atLeastOneTagRead)
 
-    result.isSuccess mustBe false
+      result mustBe a[JsError]
+    }
   }
 }

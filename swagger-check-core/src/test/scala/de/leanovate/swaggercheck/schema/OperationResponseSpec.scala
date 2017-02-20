@@ -3,9 +3,9 @@ package de.leanovate.swaggercheck.schema
 import de.leanovate.swaggercheck.SwaggerChecks
 import de.leanovate.swaggercheck.schema.model.{Definition, JsonPath, ValidationResult}
 import de.leanovate.swaggercheck.shrinkable.{CheckJsString, CheckJsValue}
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 
 class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar {
