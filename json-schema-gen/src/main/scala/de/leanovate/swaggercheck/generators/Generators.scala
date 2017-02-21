@@ -19,11 +19,11 @@ object Generators {
    * @param regex the regular expression each generated string has to satisfy
    */
   def regexMatch(regex: String): Gen[String] =
-    new GenRegexMatch().regexGenerator(regex).map(_.mkString).suchThat(!_.isEmpty)
+    GenRegexMatch(regex).map(_.mkString).suchThat(!_.isEmpty)
 
   /**
    * Generate simple email addresses.
-   * (Just covers the simple cases. Complexer email addresses reguire additional work)
+   * (Just covers the simple cases. Complexer email addresses require additional work)
    */
   def email: Gen[String] = for {
     name <- Gen.listOfN(20, Gen.alphaLowerChar).map(_.mkString)
