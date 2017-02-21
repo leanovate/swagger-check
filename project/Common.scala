@@ -7,9 +7,9 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object Common {
   val scalaCheckVersion = "1.13.1"
 
-  val jacksonVersion = "2.7.3"
+  val jacksonVersion = "2.8.6"
 
-  val playVersion = "2.5.3"
+  val playVersion = "2.5.12"
 
   val settings = Seq(
 
@@ -26,8 +26,8 @@ object Common {
     publishMavenStyle := true,
 
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "2.2.6" % "test",
-      "org.mockito" % "mockito-core" % "1.10.19" % "test"
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "org.mockito" % "mockito-core" % "2.7.10" % "test"
     ),
 
     pomExtra := {

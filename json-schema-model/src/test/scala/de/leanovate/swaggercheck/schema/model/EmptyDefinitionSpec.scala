@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema.model
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 
 class EmptyDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {

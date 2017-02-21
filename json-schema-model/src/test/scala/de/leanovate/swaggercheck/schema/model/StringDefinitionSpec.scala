@@ -3,7 +3,7 @@ package de.leanovate.swaggercheck.schema.model
 import de.leanovate.swaggercheck.schema.model.formats.ValueFormat
 import org.mockito.Mockito._
 import org.scalatest.{MustMatchers, WordSpec}
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 
 class StringDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
   "StringDefinition" should {
