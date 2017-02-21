@@ -173,8 +173,7 @@ object CheckJsValue {
       this
     }
 
-    override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.toSeq)
-
+    override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.to[List])
     override val isEmpty: Boolean = false
   }
 

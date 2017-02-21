@@ -25,19 +25,19 @@ case class DefaultSchema(
   /**
     * Add a self-defined string format.
     */
-  def withStringFormats(formats: (String, ValueFormat[String])*) =
+  def withStringFormats(formats: (String, ValueFormat[String])*): DefaultSchema =
     copy(stringFormats = stringFormats ++ Map(formats: _*))
 
   /**
     * Add a self-defined integer format.
     */
-  def withIntegerFormats(formats: (String, ValueFormat[BigInt])*) =
+  def withIntegerFormats(formats: (String, ValueFormat[BigInt])*): DefaultSchema =
     copy(integerFormats = integerFormats ++ Map(formats: _*))
 
   /**
     * Add a self-defined number format.
     */
-  def withNumberFormats(formats: (String, ValueFormat[BigDecimal])*) =
+  def withNumberFormats(formats: (String, ValueFormat[BigDecimal])*): DefaultSchema =
     copy(numberFormats = numberFormats ++ Map(formats: _*))
 
   def validate[T](node: T)(implicit nodeAdapter: NodeAdapter[T]): ValidationResult =

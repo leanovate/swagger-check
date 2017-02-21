@@ -7,7 +7,7 @@ import java.util.UUID
 
 import de.leanovate.swaggercheck.generators.Generators
 import org.scalacheck.{Arbitrary, Gen}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import scala.util.Try
 
@@ -26,7 +26,7 @@ case class AnyThing(
                      anEnum: String,
                      aMap: Map[String, String]
                    ) {
-  def isValid(): Boolean = {
+  def isValid: Boolean = {
     Try {
       UUID.fromString(anUUID)
       new URL(anURL)
@@ -36,7 +36,7 @@ case class AnyThing(
 }
 
 object AnyThing {
-  implicit val jsonFormat = Json.format[AnyThing]
+  implicit val jsonFormat: OFormat[AnyThing] = Json.format[AnyThing]
 
   implicit val arbitrary = Arbitrary(for {
     anUUID <- Gen.uuid.map(_.toString)
