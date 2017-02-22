@@ -96,8 +96,8 @@ object ThingApiSpecification extends Properties("Thing API") {
       json =>
         val JsSuccess(anyThing, _) = Json.parse(json.minified).validate[AnyThing]
 
-        anyThing.isValid() :| "Json can be deserialized" &&
-          verifier.verify(json.minified).isSuccess :| "Json conforms to own schema"  &&
+        anyThing.isValid :| "Json can be deserialized" &&
+          verifier.verify(json.minified).isSuccess :| "Json conforms to own schema" &&
           Shrink.shrink(json).take(100).forall {
             shrinked =>
               verifier.verify(shrinked.minified).isSuccess
@@ -121,7 +121,7 @@ object ThingApiSpecification extends Properties("Thing API") {
     operationVerifier: SimpleOperationVerifier =>
       val negativeResponse = SimpleResponse(400, Map.empty, "")
 
-      (operationVerifier.request.path.startsWith("/")) :| "Path startsWith /" &&
+      operationVerifier.request.path.startsWith("/") :| "Path startsWith /" &&
         (operationVerifier.request.method == "GET" || operationVerifier.request.method == "POST") :| "Method" &&
         !operationVerifier.responseVerifier.verify(negativeResponse).isSuccess :| "Response verifier"
   }

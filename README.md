@@ -59,16 +59,6 @@ The project is now separated in modules to (eventually) support a multiple frame
 * swagger-check-core
   * Uses the above to create a tool box for creating ScalaCheck tests based on a swagger definition
 
-### Why is there just another implementation of JsValue? 
-(Aren't there enough of those already?)
-
-Good point, but: We would like to generate json based on a given schema. One major feature of ScalaCheck is that it is not only able to generate arbitrary samples, but also shrink them down to find a minimum set of arguments to create a failure.
-
-Obviously it is not feasible to just shrink a json like any other string (mostly likely one would just create strings that are not a valid json any more).
-Shrinking down a tree of json nodes (e.g. from jackson-databind or simliar implementations) is not feasible either, as one would create json which might no longer match the given schema. What we want is a tree of json nodes that can be shrinked with respect to a given schema. 
-
-... and that's why there is just another implementation of JsValue.
-
 ## License
 
 [MIT Licence](http://opensource.org/licenses/MIT)

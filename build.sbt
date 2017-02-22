@@ -16,4 +16,6 @@ lazy val jsonSchemaJackson = project.in(file("json-schema-jackson")).dependsOn(j
 
 lazy val swaggerCheckCore = project.in(file("swagger-check-core")).dependsOn(jsonSchemaGen, jsonSchemaJackson)
 
+lazy val playExample = project.in(file("examples/play-scala"))
+
 Common.settings

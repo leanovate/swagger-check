@@ -50,7 +50,8 @@ trait CheckJsValue {
 object CheckJsValue {
   val jsonFactory = new JsonFactory()
 
-  def parse(json: String) = deserialize(jsonFactory.createParser(json), EmptyState)
+  def parse(json: String): CheckJsValue =
+    deserialize(jsonFactory.createParser(json), EmptyState)
 
   implicit lazy val shrinkJsValue: Shrink[CheckJsValue] = Shrink[CheckJsValue](_.shrink)
 
@@ -62,7 +63,7 @@ object CheckJsValue {
         jsValue.prettyfied
   }
 
-  implicit val adapter = new NodeAdapter[CheckJsValue] {
+  implicit object Adapter extends NodeAdapter[CheckJsValue] {
     override def asArray(node: CheckJsValue): Option[Seq[CheckJsValue]] = node match {
       case CheckJsArray(_, elements) => Some(elements)
       case _ => None
@@ -89,9 +90,7 @@ object CheckJsValue {
       case _ => None
     }
 
-    override def createNull: CheckJsValue = CheckJsNull
-
-    override def isNull(node: CheckJsValue): Boolean = node == CheckJsNull
+    override val createNull: CheckJsValue = CheckJsNull
 
     override def asObject(node: CheckJsValue): Option[Map[String, CheckJsValue]] = node match {
       case CheckJsObject(_, _, fields) => Some(fields)
@@ -124,7 +123,7 @@ object CheckJsValue {
     jp.nextToken()
 
     optValue match {
-      case Some(v) if next.isEmpty => v
+      case Some(v) if next == EmptyState => v
       case _ =>
         optValue.foreach(next.addValue)
         deserialize(jp, next)
@@ -133,8 +132,6 @@ object CheckJsValue {
 
   sealed trait State {
     def parent: State
-
-    def isEmpty: Boolean
 
     def addValue(value: CheckJsValue): State
 
@@ -163,8 +160,6 @@ object CheckJsValue {
     override def addValue(value: CheckJsValue): State = {
       throw new RuntimeException("We should have been value, something got wrong")
     }
-
-    override val isEmpty: Boolean = true
   }
 
   class InArrayState(val parent: State, content: ListBuffer[CheckJsValue] = ListBuffer.empty) extends State {
@@ -173,9 +168,7 @@ object CheckJsValue {
       this
     }
 
-    override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.toSeq)
-
-    override val isEmpty: Boolean = false
+    override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.to[List])
   }
 
   class InObjectState(val parent: State, content: ListBuffer[(String, CheckJsValue)] = ListBuffer.empty) extends State {
@@ -199,8 +192,6 @@ object CheckJsValue {
     }
 
     override def asJsObject: CheckJsObject = CheckJsObject.fixed(content)
-
-    override val isEmpty: Boolean = false
   }
 
 }

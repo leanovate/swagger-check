@@ -10,7 +10,7 @@ resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
 
 libraryDependencies ++= Seq(
   "de.leanovate.swaggercheck" %% "swagger-check-core" % "0.99.4" % Test,
-  "org.specs2" %% "specs2-scalacheck" % "3.8.8" % Test,
+  "org.specs2" %% "specs2-scalacheck" % "3.7.3" % Test,
   specs2 % Test
 )
 

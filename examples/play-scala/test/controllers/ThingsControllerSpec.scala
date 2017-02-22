@@ -4,7 +4,7 @@ import java.util.UUID
 
 import dal.ThingsRepository
 import de.leanovate.swaggercheck.playhelper._
-import de.leanovate.swaggercheck.schema.model.ValidationResult
+import de.leanovate.swaggercheck.schema.model.ValidationSuccess
 import models.Thing
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
@@ -24,13 +24,12 @@ class ThingsControllerSpec extends PlaySpecification with ScalaCheck with ThingA
       implicit val arbitraryRequest = Arbitrary[PlayOperationVerifier](swaggerCheck.operationVerifier())
       val app = testApp()
 
-      prop {
-        requestVerifier: PlayOperationVerifier =>
-          val Some(result) = route(app, requestVerifier.request)
+      prop { requestVerifier: PlayOperationVerifier =>
+        val Some(result) = route(app, requestVerifier.request)
 
-          status(result) must between(200, 300)
+        status(result) must between(200, 300)
 
-          requestVerifier.responseVerifier.verify(result) must be equalTo ValidationResult.success
+        requestVerifier.responseVerifier.verify(result) must be equalTo ValidationSuccess
       }
     }
   }
