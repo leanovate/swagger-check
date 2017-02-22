@@ -2,7 +2,7 @@ language: scala
 scala:
 - 2.11.7
 script:
-- sbt clean coverage test
+- sbt clean coverage test playExample/test
 jdk:
 - oraclejdk8
 sudo: false
