@@ -5,7 +5,7 @@ import sbtrelease.ReleaseStateTransformations._
 import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Common {
-  val scalaCheckVersion = "1.13.1"
+  val scalaCheckVersion = "1.13.4"
 
   val jacksonVersion = "2.8.6"
 
@@ -22,6 +22,10 @@ object Common {
     scalacOptions := Seq("-deprecation", "-feature"),
 
     fork in run := true,
+
+    fork in Test := true,
+
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-v", "2", "-w", "1", "-x", "10"),
 
     publishMavenStyle := true,
 

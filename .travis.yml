@@ -1,6 +1,6 @@
 language: scala
 scala:
-- 2.11.7
+- 2.11.8
 script:
 - sbt clean coverage test
 jdk:
@@ -11,3 +11,7 @@ after_success:
 notifications:
   slack:
     secure: HaS+sT8Yy+AGBBWTXMp1tmu02QhWL32b8iRuTVHh4mTjTo6SreV84klJEtc/n9naQ0cKBIvVvlOIN5A6EdqBa5uJT6kJlH9VIZF4C53Zfox5ziB4TjsBUE9UWS/as3P7gJaC231lGpC5Gxf3lLDM+YpFp8Z9QK+bk+8tVFejyjLFK76Atn8TJw1YiYWRRKCVPuVStcrPckivtsFOpc322hdybJfLHbYdBpNIb03Bn9esst6UfwdYGg1sRAF3piZnaeaS2siPBBalWIiBN14yaSCDcA4Q6S/kls8QA0isq3HjD8AMwhekktnrKRQ9p8QB7iUly1NQjhxEjmJX0YP/c0t4zyDQfHdIH9KTRsC6k803SL0UwoVFMFAV8s9qSUqnJalUZ2PYh4KaMUqiB82uinExZKnAyR8f155afChbauMlUVyQzkko2uHWWN8UDdP8nZg2U2+b8GRJ+wcoXKummKGMzIj9/llELuyWqgYmupfOyNoa8EsqYYA4xWXMuzMtQ4n/AaXuRdZDkJhAl2MFj3qR522y5YU+sIe68EkwstHjNXF06+pNUrSGNxlnD7RsxxvKL0X/ePr2rKJtOHaaOVAD6k/vbmVnYcUo7dOokFx2C9y3UBUxz7JP27XJzxgl6CioXPZc/xjJLk5GcMnnmF5Sj5I5cWj9FH0CiGKqmaY=
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
