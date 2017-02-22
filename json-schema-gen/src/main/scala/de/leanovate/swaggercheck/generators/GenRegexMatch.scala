@@ -19,7 +19,7 @@ object GenRegexMatch {
   private object GenRegexParser extends Parsers {
 
     def apply(s: CharSequenceReader): Gen[List[Char]] = GenRegexParser.regex(s) match {
-      case result: Success[Gen[List[Char]]] => result.get
+      case Success(result, _) => result
       case error: NoSuccess => throw new RuntimeException(error.msg)
     }
 
