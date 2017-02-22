@@ -40,7 +40,7 @@ object ThingApiSpecification extends Properties("Thing API") {
       json =>
         Json.parse(json.minified).validate[Thing].isSuccess :| "Json can be deserialized" &&
           verifier.verify(json.minified).isSuccess :| "Json conforms to own schema" &&
-          Shrink.shrink(json).forall {
+          Shrink.shrink(json).take(100).forall {
             shrinked =>
               verifier.verify(shrinked.minified).isSuccess
           } :| "All shrinked variants conform to schema"
@@ -98,10 +98,11 @@ object ThingApiSpecification extends Properties("Thing API") {
 
         anyThing.isValid :| "Json can be deserialized" &&
           verifier.verify(json.minified).isSuccess :| "Json conforms to own schema" &&
-          Shrink.shrink(json).forall {
+          Shrink.shrink(json).take(100).forall {
             shrinked =>
               verifier.verify(shrinked.minified).isSuccess
           } :| "All shrinked variants conform to schema"
+
     }
   }
 
