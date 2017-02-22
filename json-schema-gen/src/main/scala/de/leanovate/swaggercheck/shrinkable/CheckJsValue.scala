@@ -123,7 +123,7 @@ object CheckJsValue {
     jp.nextToken()
 
     optValue match {
-      case Some(v) if next.isEmpty => v
+      case Some(v) if next == EmptyState => v
       case _ =>
         optValue.foreach(next.addValue)
         deserialize(jp, next)
@@ -132,8 +132,6 @@ object CheckJsValue {
 
   sealed trait State {
     def parent: State
-
-    def isEmpty: Boolean
 
     def addValue(value: CheckJsValue): State
 
@@ -162,8 +160,6 @@ object CheckJsValue {
     override def addValue(value: CheckJsValue): State = {
       throw new RuntimeException("We should have been value, something got wrong")
     }
-
-    override val isEmpty: Boolean = true
   }
 
   class InArrayState(val parent: State, content: ListBuffer[CheckJsValue] = ListBuffer.empty) extends State {
@@ -173,7 +169,6 @@ object CheckJsValue {
     }
 
     override def asJsArray: CheckJsArray = CheckJsArray.fixed(content.to[List])
-    override val isEmpty: Boolean = false
   }
 
   class InObjectState(val parent: State, content: ListBuffer[(String, CheckJsValue)] = ListBuffer.empty) extends State {
@@ -197,8 +192,6 @@ object CheckJsValue {
     }
 
     override def asJsObject: CheckJsObject = CheckJsObject.fixed(content)
-
-    override val isEmpty: Boolean = false
   }
 
 }
