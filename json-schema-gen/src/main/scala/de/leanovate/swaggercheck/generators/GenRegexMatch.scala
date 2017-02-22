@@ -13,14 +13,14 @@ import scala.util.parsing.input.CharSequenceReader
   */
 object GenRegexMatch {
 
-
-  def apply(s: String): Gen[List[Char]] = GenRegexParser(new CharSequenceReader(s))
+  def apply(s: String): Gen[List[Char]] =
+    GenRegexParser(new CharSequenceReader(s))
 
   private object GenRegexParser extends Parsers {
 
     def apply(s: CharSequenceReader): Gen[List[Char]] = GenRegexParser.regex(s) match {
-      case Success(result, _) => result
-      case errorMsg => throw new RuntimeException(errorMsg.toString)
+      case result: Success[Gen[List[Char]]] => result.get
+      case error: NoSuccess => throw new RuntimeException(error.msg)
     }
 
     type Elem = Char
@@ -28,44 +28,58 @@ object GenRegexMatch {
     type Composition = Parser[Gen[List[Char]]]
     type Transformer = Parser[Gen[List[Char]] => Gen[List[Char]]]
 
-    val metacharacters = Set('.', '*', '-', '+', '?', '(', ')', '{', '}', '[', ']', '\\', '$', '^', '|')
+    val metacharacters = Set('.', '*', '-', '+', '?', '(', ')', '{', '}', '[',
+      ']', '\\', '$', '^', '|')
 
-    val wildcard = elem('.')
-    val alternation = elem('|')
+    val wildcard: Parser[Char] = elem('.')
+    val alternation: Parser[Char] = elem('|')
 
-    val zeroOrOne = elem('?')
-    val zeroOrMore = elem('*')
-    val oneOrMore = elem('+')
+    val zeroOrOne: Parser[Char] = elem('?')
+    val zeroOrMore: Parser[Char] = elem('*')
+    val oneOrMore: Parser[Char] = elem('+')
 
-    val startBoundedReps = elem('{')
-    val endBoundedReps = elem('}')
-    val startCharClass = elem('[')
-    val endCharClass = elem(']')
-    val startSubexpr = elem('(')
-    val endSubexpr = elem(')')
-    val optionNeg = elem('^')
-    val charRangeDelim = elem('-')
-    val escape = elem('\\')
-    val literalChar = elem("Literal char", !metacharacters.contains(_))
-    val anyChar = elem("Any char", _ => true)
-    val digit = elem("Digit", _.isDigit)
+    val startBoundedReps: Parser[Char] = elem('{')
+    val endBoundedReps: Parser[Char] = elem('}')
+    val startCharClass: Parser[Char] = elem('[')
+    val endCharClass: Parser[Char] = elem(']')
+    val startSubexpr: Parser[Char] = elem('(')
+    val endSubexpr: Parser[Char] = elem(')')
+    val optionNeg: Parser[Char] = elem('^')
+    val charRangeDelim: Parser[Char] = elem('-')
+    val escape: Parser[Char] = elem('\\')
+    val literalChar: Parser[Char] =
+      elem("Literal char", !metacharacters.contains(_))
+    val anyChar: Parser[Char] = elem("Any char", _ => true)
+    val digit: Parser[Char] = elem("Digit", _.isDigit)
 
     def regex: Composition = phrase(topLevelGroup)
 
     def repetitions: Transformer = (
-      zeroOrOne ^^^ { term: Gen[List[Char]] => Gen.oneOf(term, Gen.const(Nil)) }
-        | zeroOrMore ^^^ { term: Gen[List[Char]] => Gen.listOf(term).map(_.flatten) }
-        | oneOrMore ^^^ { term: Gen[List[Char]] => Gen.nonEmptyListOf(term).map(_.flatten) }
-        | startBoundedReps ~> number <~ endBoundedReps ^^ { size => term: Gen[List[Char]] => Gen.listOfN(size, term).map(_.flatten) }
-        | startBoundedReps ~> number ~ ',' ~ number <~ endBoundedReps ^^ {
-        case min ~ _ ~ max => term: Gen[List[Char]] => Gen.choose(min, max).flatMap(Gen.listOfN(_, term).map(_.flatten))
+      zeroOrOne ^^^ { term: Gen[List[Char]] =>
+        Gen.oneOf(term, Gen.const(Nil))
       }
-      )
+        | zeroOrMore ^^^ { term: Gen[List[Char]] =>
+          Gen.listOf(term).map(_.flatten)
+        }
+        | oneOrMore ^^^ { term: Gen[List[Char]] =>
+          Gen.nonEmptyListOf(term).map(_.flatten)
+        }
+        | startBoundedReps ~> number <~ endBoundedReps ^^ {
+          size => term: Gen[List[Char]] =>
+            Gen.listOfN(size, term).map(_.flatten)
+        }
+        | startBoundedReps ~> number ~ ',' ~ number <~ endBoundedReps ^^ {
+          case min ~ _ ~ max =>
+            term: Gen[List[Char]] =>
+              Gen.choose(min, max).flatMap(Gen.listOfN(_, term).map(_.flatten))
+        }
+    )
 
-    def topLevelGroup: Composition = rep1sep(topLevelSequence, alternation) ^^ {
-      case a :: b :: rest => Gen oneOf(a, b, rest: _*)
-      case List(unique) => unique
-    }
+    def topLevelGroup: Composition =
+      rep1sep(topLevelSequence, alternation) ^^ {
+        case a :: b :: rest => Gen.oneOf(a, b, rest: _*)
+        case List(unique) => unique
+      }
 
     def topLevelSequence: Composition =
       startSubexpr ~> elem('^') ~> sequence <~ opt(elem('$')) <~ endSubexpr |
@@ -74,7 +88,8 @@ object GenRegexMatch {
     def sequence: Composition = alt.* ^^ combine
 
     def alt: Composition = rep1sep(reps.+, alternation) ^^ {
-      case a :: b :: rest => Gen oneOf(combine(a), combine(b), rest.map(combine): _*)
+      case a :: b :: rest =>
+        Gen.oneOf(combine(a), combine(b), rest.map(combine): _*)
       case List(unique) => combine(unique)
     }
 
@@ -123,11 +138,12 @@ object GenRegexMatch {
       escaped
         | charRange
         | elem("In Range", _ != ']') ^^ (Set(_))
-      )
+    )
 
-    def charRange = literalChar ~ charRangeDelim ~ literalChar ^^ {
-      case from ~ _ ~ to => rangeChar(from, to).toSet
-    }
+    def charRange: Parser[Set[Char]] =
+      (literalChar <~ charRangeDelim) ~ literalChar ^^ {
+        case from ~ to => rangeChar(from, to).toSet
+      }
 
     def number: Parser[Int] = digit.+ ^^ (_.mkString.toInt)
 
@@ -145,15 +161,17 @@ object GenRegexMatch {
 
     val alphaSet: Set[Char] = anySet.filter(_.isLetter)
 
-    val alphaNumSet: Set[Char] = anySet.filter(ch => ch.isLetterOrDigit || ch == '_')
+    val alphaNumSet: Set[Char] =
+      anySet.filter(ch => ch.isLetterOrDigit || ch == '_')
 
-    val nonAlphaNumSet: Set[Char] = anySet.filter(ch => !ch.isLetterOrDigit && ch != '_')
+    val nonAlphaNumSet: Set[Char] =
+      anySet.filter(ch => !ch.isLetterOrDigit && ch != '_')
 
     val whiteSpaceSet: Set[Char] = Set(' ', '\t')
 
-    val nonWhiteSpaceSet: Set[Char] = anySet -(' ', '\t')
+    val nonWhiteSpaceSet: Set[Char] = anySet - (' ', '\t')
 
-    val genWildcard = Gen choose(32: Char, 126: Char)
+    val genWildcard: Gen[Char] = Gen choose (32: Char, 126: Char)
   }
 
 }
