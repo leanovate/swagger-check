@@ -63,7 +63,7 @@ object CheckJsValue {
         jsValue.prettyfied
   }
 
-  implicit val adapter = new NodeAdapter[CheckJsValue] {
+  implicit object Adapter extends NodeAdapter[CheckJsValue] {
     override def asArray(node: CheckJsValue): Option[Seq[CheckJsValue]] = node match {
       case CheckJsArray(_, elements) => Some(elements)
       case _ => None
@@ -90,9 +90,7 @@ object CheckJsValue {
       case _ => None
     }
 
-    override def createNull: CheckJsValue = CheckJsNull
-
-    override def isNull(node: CheckJsValue): Boolean = node == CheckJsNull
+    override val createNull: CheckJsValue = CheckJsNull
 
     override def asObject(node: CheckJsValue): Option[Map[String, CheckJsValue]] = node match {
       case CheckJsObject(_, _, fields) => Some(fields)

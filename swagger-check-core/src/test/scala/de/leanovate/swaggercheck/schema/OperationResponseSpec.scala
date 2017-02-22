@@ -19,7 +19,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
 
       response.verify(swaggerChecks, Map.empty, "{}").isSuccess mustBe true
 
-      verify(bodySchema).validate(swaggerChecks, JsonPath(), CheckJsValue.parse("{}"))(CheckJsValue.adapter)
+      verify(bodySchema).validate(swaggerChecks, JsonPath(), CheckJsValue.parse("{}"))(CheckJsValue.Adapter)
     }
 
     "verify response headers" in {
@@ -35,7 +35,7 @@ class OperationResponseSpec extends WordSpec with MustMatchers with MockitoSugar
 
       response.verify(swaggerChecks, Map("some header" -> "something"), "{}").isSuccess mustBe true
 
-      verify(headerSchema).validate[CheckJsValue](swaggerChecks, JsonPath(), CheckJsString.formatted("something"))(CheckJsValue.adapter)
+      verify(headerSchema).validate[CheckJsValue](swaggerChecks, JsonPath(), CheckJsString.formatted("something"))(CheckJsValue.Adapter)
     }
   }
 }

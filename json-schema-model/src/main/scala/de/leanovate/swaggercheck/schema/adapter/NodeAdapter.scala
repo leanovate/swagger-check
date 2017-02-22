@@ -57,5 +57,6 @@ trait NodeAdapter[T] {
   /**
     * Check if a node is null.
     */
-  def isNull(node: T): Boolean
+  def isNull(node: T): Boolean =
+    node == createNull
 }

@@ -13,7 +13,7 @@ case class TestNode(
                    )
 
 object TestNode {
-  implicit val adapter = new NodeAdapter[TestNode] {
+  implicit object Adapter extends NodeAdapter[TestNode] {
     override def asArray(node: TestNode): Option[Seq[TestNode]] = node.array
 
     override def asNumber(node: TestNode): Option[BigDecimal] = node.number
