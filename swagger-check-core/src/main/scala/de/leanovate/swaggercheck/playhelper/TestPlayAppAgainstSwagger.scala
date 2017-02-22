@@ -12,10 +12,10 @@ import play.api.test.Helpers
 /**
   * Generates many requests and tests the responses.
   *
-  * Excerpt form example application:
+  * Excerpt from example application:
   * {{{
   *   class ThingsControllerSpec("./ThingApi.yaml")({
-  *     val mockThingsRepository = mock[ThingsRepository]
+  *     val mockedData: ThingRepository = new ThingRepository { ... }
   *
   *     new GuiceApplicationBuilder()
   *       .overrides(bind[ThingsRepository].toInstance(mockThingsRepository))

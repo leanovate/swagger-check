@@ -50,7 +50,8 @@ trait CheckJsValue {
 object CheckJsValue {
   val jsonFactory = new JsonFactory()
 
-  def parse(json: String) = deserialize(jsonFactory.createParser(json), EmptyState)
+  def parse(json: String): CheckJsValue =
+    deserialize(jsonFactory.createParser(json), EmptyState)
 
   implicit lazy val shrinkJsValue: Shrink[CheckJsValue] = Shrink[CheckJsValue](_.shrink)
 
