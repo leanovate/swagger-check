@@ -25,6 +25,8 @@ object Common {
 
     fork in Test := true,
 
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-v", "2", "-w", "1", "-x", "10"),
+    
     publishMavenStyle := true,
 
     libraryDependencies ++= Seq(

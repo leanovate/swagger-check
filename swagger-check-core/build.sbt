@@ -11,3 +11,4 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % Common.jacksonVersion,
   "com.typesafe.play" %% "play-test" % Common.playVersion % "provided"
 )
+
