@@ -1,6 +1,5 @@
 package de.leanovate.swaggercheck.playhelper
 
-
 import de.leanovate.swaggercheck.ResponseExtractor
 import play.api.http.{HeaderNames, Status}
 import play.api.mvc.Result
