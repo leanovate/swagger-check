@@ -10,6 +10,11 @@ object Common {
   val jacksonVersion = "2.8.6"
 
   val playVersion = "2.5.12"
+  val playVersion26 = "2.6.0"
+  val playVersion26RC = "2.6.0-RC2"
+
+  val scalaVersion11 = "2.11.8"
+  val scalaVersion12 = "2.12.2"
 
   val settings = Seq(
 
@@ -17,13 +22,14 @@ object Common {
 
     sonatypeProfileName := "de.leanovate",
 
-    scalaVersion := "2.11.8",
-
     scalacOptions := Seq("-deprecation", "-feature"),
 
     fork in run := true,
 
     fork in Test := true,
+
+    scalaVersion := scalaVersion12,
+    crossScalaVersions := Seq(scalaVersion11, scalaVersion12),
 
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-v", "2", "-w", "1", "-x", "10"),
 
@@ -31,7 +37,7 @@ object Common {
 
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "org.mockito" % "mockito-core" % "2.7.10" % "test"
+      "org.mockito" % "mockito-core" % "2.8.47" % "test"
     ),
 
     pomExtra := {
