@@ -40,6 +40,8 @@ object Common {
       "org.mockito" % "mockito-core" % "2.8.47" % "test"
     ),
 
+    releaseCrossBuild := true,
+    
     pomExtra := {
       <url>https://github.com/leanovate/swagger-check</url>
         <licenses>
