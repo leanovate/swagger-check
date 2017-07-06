@@ -3,7 +3,7 @@ package de.leanovate.swaggercheck.schema.jackson
 import com.fasterxml.jackson.core.Version
 import com.fasterxml.jackson.databind.Module
 import com.fasterxml.jackson.databind.Module.SetupContext
-import de.leanovate.swaggercheck.schema.model.Definition
+import de.leanovate.swaggercheck.schema.model.{Definition, Parameter}
 
 object JsonSchemaModule extends Module {
   override def getModuleName: String = "SchemaModule"
@@ -13,5 +13,6 @@ object JsonSchemaModule extends Module {
   override def setupModule(context: SetupContext): Unit = {
 
     context.setMixInAnnotations(classOf[Definition], classOf[DefinitionMixin])
+    context.setMixInAnnotations(classOf[Parameter], classOf[ParameterMixin])
   }
 }

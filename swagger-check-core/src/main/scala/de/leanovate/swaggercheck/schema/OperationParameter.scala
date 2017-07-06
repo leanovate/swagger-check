@@ -34,17 +34,30 @@ case class OperationParameter(
   }
 }
 
+class ReferenceOperationParameter(globalRef: String) extends OperationParameter(None, "", false, null) {
+  require(globalRef.startsWith("#/parameters/"), "Global parameters references need to start with #/parameters/")
+  val ref = globalRef.substring(13)
+
+  override def applyTo(context: SwaggerChecks, builder: RequestBuilder): RequestBuilder = throw new IllegalStateException("Not resolved ReferenceParameter")
+}
+
+object ReferenceOperationParameter {
+  def unapply(parameter: ReferenceOperationParameter): Option[String] = Some(parameter.ref)
+}
 
 class OperationParameterBuilder @JsonCreator()(
                                                 @JsonProperty("name") name: Option[String],
+                                                @JsonProperty("$ref") ref: Option[String],
                                                 @JsonProperty("in") in: String,
                                                 @JsonProperty("required") required: Option[Boolean],
                                                 @JsonProperty("type") schemaType: Option[String],
                                                 @JsonProperty("format") format: Option[String],
                                                 @JsonProperty("schema") schema: Option[Definition]
                                               ) {
-  def build(): OperationParameter = {
-    OperationParameter(
+  def build(): OperationParameter =
+    ref match {
+      case Some(reference) => new ReferenceOperationParameter(reference)
+      case None => OperationParameter(
       name,
       in,
       required.getOrElse(false),
