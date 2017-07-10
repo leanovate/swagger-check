@@ -5,6 +5,7 @@ import java.net.URLEncoder
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.leanovate.swaggercheck.schema.Operation.RequestBuilder
+import de.leanovate.swaggercheck.schema.model.Parameter
 import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import org.scalacheck.Gen
@@ -21,6 +22,15 @@ case class Operation(
 
   def withDefaults(defaultParameters: Seq[OperationParameter], defaultConsumes: Set[String], defaultProduces: Set[String]): Operation =
     copy(parameters = parameters ++ defaultParameters, consumes = consumes ++ defaultConsumes, produces = produces ++ defaultProduces)
+
+  def resolveGlobalParameters(globalParameters: Map[String, Parameter]): Operation =
+    copy(parameters = parameters.map {
+      case ReferenceOperationParameter(ref) => {
+        val Parameter(name, in, required, schema) = globalParameters(ref)
+        OperationParameter(Some(name), in, required, schema)
+      }
+      case p => p
+    })
 
   def generateRequest[R](context: SwaggerChecks, method: String, path: String)
                         (implicit requestCreator: RequestCreator[R]): Gen[R] = {

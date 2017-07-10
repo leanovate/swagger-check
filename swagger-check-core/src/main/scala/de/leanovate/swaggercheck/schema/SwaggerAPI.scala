@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.{DeserializationFeature, JsonNode, Mapping
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import de.leanovate.swaggercheck.schema.jackson.JsonSchemaModule
-import de.leanovate.swaggercheck.schema.model.Definition
+import de.leanovate.swaggercheck.schema.model.{Definition, Parameter}
 
 import scala.collection.JavaConversions._
 import scala.io.Source
@@ -48,7 +48,8 @@ class SwaggerAPIBuilder @JsonCreator()(
                                         @JsonProperty("consumes") consumes: Option[Seq[String]],
                                         @JsonProperty("produces") produces: Option[Seq[String]],
                                         @JsonProperty("paths") paths: Option[Map[String, JsonNode]],
-                                        @JsonProperty("definitions") definitions: Option[Map[String, Definition]]
+                                        @JsonProperty("definitions") definitions: Option[Map[String, Definition]],
+                                        @JsonProperty("parameters") globalParameters: Option[Map[String, Parameter]]
                                       ) {
   def build(): SwaggerAPI = {
     val defaultConsumes = consumes.map(_.toSet).getOrElse(Set.empty)
@@ -66,7 +67,7 @@ class SwaggerAPIBuilder @JsonCreator()(
           basePath.map(_ + path).getOrElse(path) -> pathDefinition.fields().filter(_.getKey != "parameters").map {
             entry =>
               val operation = SwaggerAPI.jsonMapper.treeToValue(entry.getValue, classOf[Operation])
-              entry.getKey.toUpperCase -> operation.withDefaults(defaultParameters, defaultConsumes, defaultProduces)
+              entry.getKey.toUpperCase -> operation.withDefaults(defaultParameters, defaultConsumes, defaultProduces).resolveGlobalParameters(globalParameters.getOrElse(Map()))
           }.toMap
       },
       definitions.getOrElse(Map.empty))

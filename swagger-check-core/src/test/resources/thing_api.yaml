@@ -60,11 +60,7 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-          format: uuid
+        - $ref: "#/parameters/Id"
         - name: x-flow-id
           in: header
           required: true
@@ -78,6 +74,16 @@ paths:
           description: links
           schema:
             $ref: '#/definitions/Thing'
+
+parameters:
+  Id:
+    name: id
+    in: path
+    required: true
+    type: string
+    minLength: 4
+    maxLength: 8
+
 definitions:
   ServiceDocument:
     type: object

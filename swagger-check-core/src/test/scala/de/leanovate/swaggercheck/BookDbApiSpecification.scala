@@ -7,7 +7,7 @@ import de.leanovate.swaggercheck.schema.ValidationResultToProp._
 import de.leanovate.swaggercheck.simple._
 import org.scalacheck.Prop.{BooleanOperators, forAll}
 import org.scalacheck.{Arbitrary, Properties, Shrink}
-import play.api.libs.json.{JsSuccess, Json}
+import play.api.libs.json.Json
 
 object BookDbApiSpecification extends Properties("BookDB API") {
   val swaggerChecks = SwaggerChecks(getClass.getClassLoader.getResourceAsStream("bookdb_api.yaml"))
