@@ -9,10 +9,12 @@ import org.scalacheck.{Arbitrary, Gen}
 trait Arbitraries {
   implicit val arbitraryUUID = Arbitrary[UUID](Gen.uuid)
 
+  implicit val arbitraryThingType = Arbitrary[ThingType.Value](Gen.oneOf(ThingType.Primary, ThingType.Secondary, ThingType.Other))
+
   implicit val arbitraryThing = Arbitrary[Thing](for {
     id <- Arbitrary.arbitrary[UUID]
     name <- Gen.choose(1, 100).flatMap(Gen.listOfN(_, Gen.alphaNumChar).map(_.mkString))
-    thingType <- Gen.oneOf(ThingType.Primary, ThingType.Secondary, ThingType.Other)
+    thingType <- Arbitrary.arbitrary[ThingType.Value]
   } yield Thing(id, name, thingType))
 
   implicit val arbitraryLink = Arbitrary[Link](for {

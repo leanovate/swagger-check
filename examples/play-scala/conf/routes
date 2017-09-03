@@ -2,7 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /v1/things            controllers.ThingsController.getPage(offset :Int ?= 0, limit: Int ?= 20)
+GET         /v1/things            controllers.ThingsController.getPage(thingType: Option[models.ThingType.Type], offset :Int ?= 0, limit: Int ?= 20)
 POST        /v1/things            controllers.ThingsController.createThing
 GET         /v1/things/:id        controllers.ThingsController.getThing(id: java.util.UUID)
 
