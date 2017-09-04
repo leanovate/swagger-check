@@ -11,7 +11,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import de.leanovate.swaggercheck.schema.jackson.JsonSchemaModule
 import de.leanovate.swaggercheck.schema.model.{Definition, Parameter}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.io.Source
 
 @JsonDeserialize(builder = classOf[SwaggerAPIBuilder])
@@ -59,12 +59,12 @@ class SwaggerAPIBuilder @JsonCreator()(
         case (path, pathDefinition) =>
           val defaultParameters = Option(pathDefinition.get("parameters")).map {
              node =>
-               node.iterator().map {
+               node.iterator().asScala.map {
                  element => SwaggerAPI.jsonMapper.treeToValue(element, classOf[OperationParameter])
                }.toSeq
           }.getOrElse(Seq.empty)
 
-          basePath.map(_ + path).getOrElse(path) -> pathDefinition.fields().filter(_.getKey != "parameters").map {
+          basePath.map(_ + path).getOrElse(path) -> pathDefinition.fields().asScala.filter(_.getKey != "parameters").map {
             entry =>
               val operation = SwaggerAPI.jsonMapper.treeToValue(entry.getValue, classOf[Operation])
               entry.getKey.toUpperCase -> operation.withDefaults(defaultParameters, defaultConsumes, defaultProduces).resolveGlobalParameters(globalParameters.getOrElse(Map()))

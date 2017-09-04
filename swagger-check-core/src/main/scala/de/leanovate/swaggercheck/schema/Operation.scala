@@ -10,7 +10,7 @@ import de.leanovate.swaggercheck.shrinkable.CheckJsValue
 import de.leanovate.swaggercheck.{RequestCreator, SwaggerChecks}
 import org.scalacheck.Gen
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @JsonDeserialize(builder = classOf[OperationBuilder])
 case class Operation(
@@ -83,11 +83,11 @@ object Operation {
         headers <- Gen.sequence(headerGens)
         optBody <- bodyGen
       } yield {
-        val queryString = queryParams.flatMap(_.toSeq).map {
+        val queryString = queryParams.asScala.flatMap(_.toSeq).map {
           case (name, value) =>
             URLEncoder.encode(name, "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8")
         }.mkString("&")
-        val pathWithParams = pathParams.foldLeft(path) {
+        val pathWithParams = pathParams.asScala.foldLeft(path) {
           case (result, Some((name, value))) =>
             result.replace(s"{$name}", value)
           case (result, _) => result
@@ -95,8 +95,8 @@ object Operation {
         val fullPath = if (queryString.isEmpty) pathWithParams else pathWithParams + "?" + queryString
 
         optBody match {
-          case Some(body) => requestCreator.createJson(method.toUpperCase, fullPath, headers.flatMap(_.toSeq), body)
-          case None => requestCreator.createEmpty(method.toUpperCase, fullPath, headers.flatMap(_.toSeq))
+          case Some(body) => requestCreator.createJson(method.toUpperCase, fullPath, headers.asScala.flatMap(_.toSeq), body)
+          case None => requestCreator.createEmpty(method.toUpperCase, fullPath, headers.asScala.flatMap(_.toSeq))
         }
       }
     }

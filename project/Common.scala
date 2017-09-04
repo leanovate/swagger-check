@@ -9,11 +9,10 @@ object Common {
 
   val jacksonVersion = "2.8.6"
 
-  val playVersion = "2.5.12"
-  val playVersion26 = "2.6.0"
-  val playVersion26RC = "2.6.0-RC2"
+  val playVersion = "2.5.16"
+  val playVersion26 = "2.6.3"
 
-  val scalaVersion11 = "2.11.8"
+  val scalaVersion11 = "2.11.11"
   val scalaVersion12 = "2.12.2"
 
   val settings = Seq(

@@ -19,6 +19,7 @@ lazy val jsonSchemaPlay = project.in(file("json-schema-play"))
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 12)) => Seq("com.typesafe.play" %% "play-json" % Common.playVersion26)
         case Some((2, _)) => Seq("com.typesafe.play" %% "play-json" % Common.playVersion)
+        case _ => fail("Invalid scala version")
       }
     }
   )
@@ -32,8 +33,9 @@ lazy val swaggerCheckCore = project.in(file("swagger-check-core"))
     name := "swagger-check-core",
     libraryDependencies ++=
       (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 12)) => Seq("com.typesafe.play" %% "play-test" % Common.playVersion26RC % "provided")
+        case Some((2, 12)) => Seq("com.typesafe.play" %% "play-test" % Common.playVersion26 % "provided")
         case Some((2, _)) => Seq("com.typesafe.play" %% "play-test" % Common.playVersion % "provided")
+        case _ => fail("Invalid scala version")
       }) ++ Seq(
         "org.scalacheck" %% "scalacheck" % Common.scalaCheckVersion,
         "com.fasterxml.jackson.core" % "jackson-annotations" % Common.jacksonVersion,

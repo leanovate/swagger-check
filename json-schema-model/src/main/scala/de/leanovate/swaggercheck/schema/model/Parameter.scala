@@ -39,6 +39,7 @@ object Parameter {
       case Some("integer") => Parameter(name, in, required.getOrElse(false), IntegerDefinition(format, minimum.map(_.longValue()), maximum.map(_.longValue())))
       case Some("number") => Parameter(name, in, required.getOrElse(false), NumberDefinition(format, minimum.map(_.doubleValue()), maximum.map(_.doubleValue())))
       case Some("boolean") => Parameter(name, in, required.getOrElse(false), BooleanDefinition)
+      case _ => throw new RuntimeException(s"Unkown schemaType: $schemaType")
     }
   }
 }

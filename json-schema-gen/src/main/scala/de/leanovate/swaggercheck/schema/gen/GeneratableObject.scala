@@ -6,7 +6,7 @@ import de.leanovate.swaggercheck.schema.model.{JsonPath, ObjectDefinition, Schem
 import de.leanovate.swaggercheck.shrinkable.{CheckJsNull, CheckJsObject, CheckJsValue}
 import org.scalacheck.Gen
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 case class GeneratableObject(
                               definition: ObjectDefinition
@@ -46,7 +46,7 @@ case class GeneratableObject(
       for {
         fields <- Gen.sequence(propertyGens)
         additionalFields <- additionalPropertyGen
-      } yield CheckJsObject(definition.required.getOrElse(Set.empty), None, (fields ++ additionalFields).toMap)
+      } yield CheckJsObject(definition.required.getOrElse(Set.empty), None, (fields.asScala ++ additionalFields).toMap)
     }
   }
 }
