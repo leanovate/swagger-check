@@ -5,7 +5,7 @@ import java.util.UUID
 import dal.ThingsRepository
 import de.leanovate.swaggercheck.playhelper._
 import de.leanovate.swaggercheck.schema.model.ValidationSuccess
-import models.Thing
+import models.{Thing, ThingType}
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.specs2.mock.Mockito
@@ -37,7 +37,7 @@ class ThingsControllerSpec extends PlaySpecification with ScalaCheck with ThingA
   def testApp(): Application = {
     val mockThingsRepository = mock[ThingsRepository]
 
-    mockThingsRepository.getPage(any[Int], any[Int]) answers { _ => Future.successful(Gen.nonEmptyListOf(Arbitrary.arbitrary[Thing]).sample.getOrElse(Seq.empty)) }
+    mockThingsRepository.getPage(any[Option[ThingType.Value]], any[Int], any[Int]) answers { _ => Future.successful(Gen.nonEmptyListOf(Arbitrary.arbitrary[Thing]).sample.getOrElse(Seq.empty)) }
     mockThingsRepository.getById(any[UUID]) answers { _ => Future.successful(Arbitrary.arbitrary[Thing].sample)}
 
     new GuiceApplicationBuilder()

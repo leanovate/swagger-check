@@ -17,6 +17,15 @@ paths:
       description: |
         Get a list of all the things.
       parameters:
+        - name: thingType
+          in: query
+          description: Thing type
+          required: false
+          type: string
+          enum:
+            - Primary
+            - Secondary
+            - Other
         - name: offset
           in: query
           description: Page offset

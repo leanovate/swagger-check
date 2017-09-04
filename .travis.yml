@@ -2,7 +2,7 @@ language: scala
 scala:
 - 2.11.8
 script:
-- sbt clean coverage test playExample/test
+- sbt ++$TRAVIS_SCALA_VERSION clean +publishLocal coverage test playExample/test -Dcore.version=`awk -F'"' '$0=$2' version.sbt`
 jdk:
 - oraclejdk8
 sudo: false

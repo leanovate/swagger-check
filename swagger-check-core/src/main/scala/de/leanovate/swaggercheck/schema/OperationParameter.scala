@@ -52,7 +52,8 @@ class OperationParameterBuilder @JsonCreator()(
                                                 @JsonProperty("required") required: Option[Boolean],
                                                 @JsonProperty("type") schemaType: Option[String],
                                                 @JsonProperty("format") format: Option[String],
-                                                @JsonProperty("schema") schema: Option[Definition]
+                                                @JsonProperty("schema") schema: Option[Definition],
+                                                @JsonProperty("enum") enum: Option[List[String]]
                                               ) {
   def build(): OperationParameter =
     ref match {
@@ -61,7 +62,7 @@ class OperationParameterBuilder @JsonCreator()(
       name,
       in,
       required.getOrElse(false),
-      schema.getOrElse(new DefinitionBuilder(schemaType = schemaType, format = format).build()))
+      schema.getOrElse(new DefinitionBuilder(schemaType = schemaType, format = format, enum = enum).build()))
 
   }
 }
