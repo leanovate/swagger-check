@@ -1,8 +1,13 @@
 language: scala
 scala:
-- 2.11.8
+- 2.11.11
 script:
-- sbt ++$TRAVIS_SCALA_VERSION clean +publishLocal coverage test playExample/test -Dcore.version=`awk -F'"' '$0=$2' version.sbt`
+- echo Publish local
+- sbt ++$TRAVIS_SCALA_VERSION clean +publishLocal
+- echo Coverage
+- sbt ++$TRAVIS_SCALA_VERSION coverage test
+- echo Play example
+- sbt -Dcore.version=`awk -F'"' '$0=$2' version.sbt` ++$TRAVIS_SCALA_VERSION playExample/test
 jdk:
 - oraclejdk8
 sudo: false

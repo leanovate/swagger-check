@@ -35,6 +35,7 @@ object Common {
     publishMavenStyle := true,
 
     libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6",
       "org.scalatest" %% "scalatest" % "3.0.1" % "test",
       "org.mockito" % "mockito-core" % "2.8.47" % "test"
     ),
