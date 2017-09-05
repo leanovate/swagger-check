@@ -32,7 +32,7 @@ As an additional party gimmic there is also ein generator to generate matches to
 Add the following to your `build.sbt`
 
 ```
-libraryDependencies += "de.leanovate.swaggercheck" %% "swagger-check-core" % "0.99" % "test"
+libraryDependencies += "de.leanovate.swaggercheck" %% "swagger-check-core" % "0.99.13" % "test"
 ```
 
 ## Examples
@@ -58,6 +58,12 @@ The project is now separated in modules to (eventually) support a multiple frame
   * Requires `jackson-core` for json parsing and generation
 * swagger-check-core
   * Uses the above to create a tool box for creating ScalaCheck tests based on a swagger definition
+
+
+## Compatibility with play
+
+* For Play Version 2.5 please use the 0.99.x versions (legacy branch)
+* For Play Version 2.6 use the 1.0.x versions
 
 ## License
 
