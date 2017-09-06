@@ -5,7 +5,7 @@ script:
 - echo Publish local
 - sbt ++$TRAVIS_SCALA_VERSION clean +publishLocal
 - echo Coverage
-- sbt ++$TRAVIS_SCALA_VERSION coverage test
+- sbt ++$TRAVIS_SCALA_VERSION coverage test coverageReport
 - echo Play example
 - sbt -Dcore.version=`awk -F'"' '$0=$2' version.sbt` ++$TRAVIS_SCALA_VERSION playExample/test
 jdk:
