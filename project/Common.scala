@@ -7,7 +7,7 @@ import xerial.sbt.Sonatype.SonatypeKeys._
 object Common {
   val scalaCheckVersion = "1.13.4"
 
-  val jacksonVersion = "2.8.6"
+  val jacksonVersion = "2.9.7"
 
   val playVersion26 = "2.6.3"
 
