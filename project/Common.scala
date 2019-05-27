@@ -11,7 +11,7 @@ object Common {
 
   val playVersion27 = "2.7.2"
 
-  val scalaVersion11 = "2.11.11"
+  val scalaVersion11 = "2.11.12"
   val scalaVersion12 = "2.12.8"
 
   val settings = Seq(
