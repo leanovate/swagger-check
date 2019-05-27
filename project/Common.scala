@@ -5,14 +5,14 @@ import sbtrelease.ReleaseStateTransformations._
 import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Common {
-  val scalaCheckVersion = "1.13.4"
+  val scalaCheckVersion = "1.14.0"
 
-  val jacksonVersion = "2.9.7"
+  val jacksonVersion = "2.9.9"
 
-  val playVersion26 = "2.6.3"
+  val playVersion27 = "2.7.2"
 
   val scalaVersion11 = "2.11.11"
-  val scalaVersion12 = "2.12.3"
+  val scalaVersion12 = "2.12.8"
 
   val settings = Seq(
 
@@ -34,9 +34,9 @@ object Common {
     publishMavenStyle := true,
 
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6",
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-      "org.mockito" % "mockito-core" % "2.8.47" % "test"
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
+      "org.scalatest" %% "scalatest" % "3.0.7" % "test",
+      "org.mockito" % "mockito-core" % "2.27.0" % "test"
     ),
 
     releaseCrossBuild := true,

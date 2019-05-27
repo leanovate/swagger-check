@@ -5,6 +5,7 @@
 /project/target/
 target/
 .idea/
+.bloop/
 /example/.idea/
 /example/RUNNING_PID
 /example/logs/

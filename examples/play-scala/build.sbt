@@ -4,13 +4,13 @@ version := "1.0-SNAPSHOT"
 
 enablePlugins(PlayScala)
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.8"
 
 resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases"
 
 libraryDependencies ++= Seq(
-  "de.leanovate.swaggercheck" %% "swagger-check-core" % System.getProperty("core.version", "1.0.0-SNAPSHOT") % Test,
-  "org.specs2" %% "specs2-scalacheck" % "3.9.5" % Test,
+  "de.leanovate.swaggercheck" %% "swagger-check-core" % System.getProperty("core.version", "1.0.2-SNAPSHOT") % Test,
+  "org.specs2" %% "specs2-scalacheck" % "4.3.6" % Test,
   specs2 % Test
 )
 
