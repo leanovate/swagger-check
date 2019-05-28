@@ -1,6 +1,6 @@
 package de.leanovate.swaggercheck.schema.model
 
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 import org.mockito.Mockito._
 

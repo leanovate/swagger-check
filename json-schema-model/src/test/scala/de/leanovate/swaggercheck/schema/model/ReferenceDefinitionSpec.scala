@@ -1,8 +1,8 @@
 package de.leanovate.swaggercheck.schema.model
 
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 
 class ReferenceDefinitionSpec extends WordSpec with MockitoSugar with MustMatchers {
   "ReferenceDefinition" should {

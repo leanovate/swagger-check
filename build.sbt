@@ -1,12 +1,11 @@
 import sbt._
 import sbt.Keys._
-import sbt.CrossVersion
 
 name := "swagger-check"
 
 lazy val root = project
   .in(file("."))
-  .settings(publishArtifact := false)
+  .settings(Common.settings)
   .aggregate(jsonSchemaModel,
              jsonSchemaGen,
              jsonSchemaPlay,
@@ -30,5 +29,3 @@ lazy val swaggerCheckCore = project
   .dependsOn(jsonSchemaGen, jsonSchemaJackson)
 
 lazy val playExample = project.in(file("examples/play-scala"))
-
-Common.settings
