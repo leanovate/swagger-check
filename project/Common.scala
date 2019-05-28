@@ -15,6 +15,7 @@ object Common {
   val scalaVersion12 = "2.12.8"
 
   val settings = Seq(
+    publishTo := sonatypePublishTo.value,
 
     organization := "de.leanovate.swaggercheck",
 
